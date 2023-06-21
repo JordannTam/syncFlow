@@ -2,10 +2,11 @@ import React from 'react';
 import './App.css';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import LoginScreen from './screens/LoginScreen';
-import RegisterScreen from './screens/RegisterScreen';
+// import RegisterScreen from './screens/RegisterScreen';
 import DashboardScreen from './screens/DashboardScreen';
 import LoggedInRoute from './utils/LoggedInRoute';
 import ProtectedRoute from './utils/ProtectedRoute';
+import SignupPage from './screens/SignupScreen';
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
         <Routes>
           <Route element={<LoggedInRoute />}>
             <Route path="/login" element={<LoginScreen />} />
-            <Route path="/register" element={<RegisterScreen />} />
+            <Route path="/register" element={<SignupPage />} />
           </Route>
           <Route element={<ProtectedRoute />}>
             <Route path="/home" element={<DashboardScreen />} />
