@@ -16,10 +16,14 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import HomeIcon from '@mui/icons-material/Home';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import GroupsIcon from '@mui/icons-material/Groups';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { Outlet } from 'react-router-dom';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { ColumnBox, RowBox } from './FlexBox';
 
 
 const drawerWidth = 240;
@@ -90,10 +94,10 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 const menuItems = [
-  { text: 'Home', link: '/', icon: <InboxIcon /> },
-  { text: 'Profile', link: '/profile', icon: <MailIcon /> },
-  { text: 'Connections', link: '/', icon: <InboxIcon /> },
-  { text: 'Schedule', link: '/', icon: <MailIcon /> },
+  { text: 'Home', link: '/', icon: <HomeIcon /> },
+  { text: 'Profile', link: '/profile', icon: <AccountBoxIcon /> },
+  { text: 'Connections', link: '/', icon: <GroupsIcon /> },
+  { text: 'Schedule', link: '/', icon: <EventNoteIcon /> },
 ];
 
 export default function MiniDrawer() {
@@ -130,13 +134,14 @@ export default function MiniDrawer() {
           </Typography> */}
         </Toolbar>
       </AppBar>
-      <Drawer variant="permanent" open={open}>
+      <Drawer variant="permanent" open={open} >
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </IconButton>
         </DrawerHeader>
         <Divider />
+        <Box height='100%' display='flex' flexDirection='column' justifyContent='space-between'>
         <List>
           {menuItems.map((item, index) => (
             <ListItem key={index} disablePadding sx={{ display: 'block' }}>
@@ -163,9 +168,11 @@ export default function MiniDrawer() {
             </ListItem>
           ))}
         </List>
+        <Box>
+
         <Divider />
         <List>
-          {[{ text: 'Log out', link: '/login', icon: <MailIcon /> }].map((item, index) => (
+          {[{ text: 'Log out', link: '/login', icon: <LogoutIcon /> }].map((item, index) => (
             <ListItem key={index} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 component={RouterLink}
@@ -190,6 +197,9 @@ export default function MiniDrawer() {
             </ListItem>
           ))}
         </List>
+        </Box>
+
+        </Box>
       </Drawer>
       {/* This causes extra top margin */}
       {/* <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
