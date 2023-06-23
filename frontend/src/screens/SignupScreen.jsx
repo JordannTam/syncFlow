@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { ColumnBox } from '../components/FlexBox'
 // import { Context, useContext } from '../../../context';
 
-export default function SignupPage () {
+export default function SignupScreen () {
   // const { setters } = useContext(Context);
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -36,19 +36,19 @@ export default function SignupPage () {
   }
 
   return (
-    <PageContainer padding='10px' border='1px solid #ddd' maxWidth='xs'>
-      <ColumnBox rowGap='20px'>
-        <Box margin={'auto'}>
+    <PageContainer sx={{ border: '1px solid #ddd', padding: '10px', marginTop: '-100px' }} maxWidth='xs'>
+      <ColumnBox rowGap='10px' margin={'-20px auto 0'}>
+        <Box margin={'-10px auto 0'}>
           <h2>Register</h2>
         </Box>
-        <TextField helperText="Must be between six and 50 characters long" label="name" variant="outlined" value={name} onChange={(e) => setName(e.target.value)} />
-        <TextField error={ hasError } helperText="Please enter a valid email" label="email" variant="outlined" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <TextField helperText='Must be between eight and 32 characters long' label="Password" type='password' variant="outlined" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <TextField helperText="Must be between 1 and 50 characters long" label="Name" variant="outlined" value={name} onChange={(e) => setName(e.target.value)} />
+        <TextField error={ hasError } helperText="Please enter a valid email" label="Email" variant="outlined" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <TextField helperText='Must be between 8 and 32 characters long' label="Password" type='password' variant="outlined" value={password} onChange={(e) => setPassword(e.target.value)} />
         { hasError && <Alert severity="error" onClose={() => { setHasError(false) }}>{error}</Alert> }
 
         <BigButton variant='contained' onClick={() => signupAPI()}>Register</BigButton>
         <Divider />
-        <BigButton variant='outlined' onClick={() => navigate('/login')}>Already have a account?</BigButton>
+        <BigButton variant='outlined' onClick={() => navigate('/login')}>Already have account?</BigButton>
         <br />
       </ColumnBox>
     </PageContainer>
