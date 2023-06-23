@@ -7,7 +7,7 @@ import { Box, Typography } from '@mui/material';
 const ProfileScreen = () => {
   return (
     <>
-      <SideBar/>
+      {/* <SideBar/> */}
         <PageContainer marginTop="10px" maxWidth="lg">
         <Typography variant="h3" component="h2" marginBottom="15px">
           Profile
@@ -32,7 +32,7 @@ const ProfileScreen = () => {
         <Typography variant="h6" component="h2" marginBottom="20px">
           Date of Birth: 06/06/2001
         </Typography>
-        <TaskList/>
+        <TaskList rowNums='5'/>
       </PageContainer>
     </>
   );

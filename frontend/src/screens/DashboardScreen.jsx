@@ -9,14 +9,7 @@ const DashboardScreen = () => {
         <Typography variant="h3" component="h2">
           Dashboard
         </Typography>
-        <TaskList />
-        <a className='register-link' href="/profile">
-            to profile page
-        </a>
-
-        <a className='register-link' href="/login">
-            logout
-        </a>
+        <TaskList rowNums='10' height='800'/>
     </PageContainer>
   );
 };

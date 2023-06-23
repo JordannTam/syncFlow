@@ -13,7 +13,7 @@ import { Box } from '@mui/material';
 function App() {
   return (
     <BrowserRouter>
-        <Navbar />
+        {/* <Navbar /> */}
         <Box marginTop="64px"></Box>
         <Routes>
           <Route element={<LoggedInRoute />}>
