@@ -2,15 +2,20 @@ import React from 'react';
 import './App.css';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import LoginScreen from './screens/LoginScreen';
-import SignupScreen from './screens/SignupScreen';
+import SideBar from './components/SideBar';
 import DashboardScreen from './screens/DashboardScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import LoggedInRoute from './utils/LoggedInRoute';
 import ProtectedRoute from './utils/ProtectedRoute';
+import SignupPage from './screens/SignupScreen';
+import Navbar from './components/Navbar'
+import { Box } from '@mui/material';
 
 function App() {
   return (
     <BrowserRouter>
+        <Navbar />
+        <Box marginTop="64px"></Box>
         <Routes>
           <Route element={<LoggedInRoute />}>
             <Route path="/login" element={<LoginScreen />} />
