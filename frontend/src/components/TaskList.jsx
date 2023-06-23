@@ -8,7 +8,7 @@ const columns = [
   {
     field: 'age',
     headerName: 'Deadline',
-    type: 'date',
+    type: 'Date',
     width: 200,
   },
   {
