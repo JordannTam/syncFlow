@@ -36,7 +36,7 @@ export default function SignupPage () {
   }
 
   return (
-    <PageContainer sx={{ border: '1px solid #ddd', padding: '10px' }} maxWidth='xs'>
+    <PageContainer padding='10px' border='1px solid #ddd' maxWidth='xs'>
       <ColumnBox rowGap='20px'>
         <Box margin={'auto'}>
           <h2>Register</h2>
