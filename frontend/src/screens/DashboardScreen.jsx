@@ -7,7 +7,7 @@ const DashboardScreen = () => {
   return (
     <PageContainer>
         <Typography variant="h3" component="h2">
-          Dash Board
+          Dashboard
         </Typography>
         <TaskList />
         <a className='register-link' href="/profile">

@@ -2,7 +2,6 @@ import React from 'react';
 import './App.css';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import LoginScreen from './screens/LoginScreen';
-import SideBar from './components/SideBar';
 import DashboardScreen from './screens/DashboardScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import LoggedInRoute from './utils/LoggedInRoute';
