@@ -19,7 +19,7 @@ function App() {
         <Routes>
           <Route element={<LoggedInRoute />}>
             <Route path="/login" element={<LoginScreen />} />
-            <Route path="/register" element={<SignupScreen />} />
+            <Route path="/register" element={<SignupPage />} />
           </Route>
           <Route element={<ProtectedRoute />}>
             <Route path="/home" element={<DashboardScreen />} />
