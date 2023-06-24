@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { BigButton } from '../components/Button';
+import { Alert, Box, Divider, TextField, Typography } from '@mui/material';
+import PageContainer from '../components/PageContainer';
+import { useNavigate } from 'react-router-dom';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('');
+  const [hasError, setHasError] = React.useState(false);
+  const [error, setError] = React.useState('');
+  const navigate = useNavigate();
 
   const login = async (e) => {
     e.preventDefault()
@@ -12,32 +19,34 @@ const LoginScreen = () => {
     data.append('password', password)
     try {
       const response = await axios.post('http://localhost:8000/login', data)
+      localStorage.setItem('token', data.token);
+      navigate('/home')
     } catch (err) {
       console.error(err)
+      setHasError(true)
+      setError(err)
     }
   }
 
+
   return (
-    <>
-      <h1>Login</h1>
-      <form onSubmit={login}>
-        <label>
-          Email
-          <input type="text" value={email} onChange={e => setEmail(e.target.value)} required />
-        </label>
-        <label>
-          Password
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)} required />
-        </label>
-        <button type="submit">Login</button>
-      </form>
-      <h2>
-        <a className='register-link' href="/register">
-          SIGN UP
-        </a>
-      </h2>
-    </>
-  );
+      <PageContainer sx={{ marginTop: '-200px' }} maxWidth='xs' >
+        <Box display='flex' flexDirection='row' justifyContent='space-around'>
+          <Box display='flex' flexDirection='column' rowGap='20px' maxWidth='400px'>
+            <Box margin={'-10px auto 0'}>
+                <h2>Login</h2>
+            </Box>
+            <TextField error={ hasError } label="Email" variant="outlined" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <TextField error={ hasError } type='password' label="Password" variant="outlined" value={password} onChange={(e) => setPassword(e.target.value)} />
+            { hasError && <Alert severity="error" onClose={() => { setHasError(false) }}>{error}</Alert> }
+            <BigButton variant='contained' onClick={() => login()}>Login</BigButton>
+            <Divider />
+            <BigButton variant='outlined' onClick={() => navigate('/register')}>Register</BigButton>
+          </Box>
+          {/* <Box width='450px' height='450px' component="img" src="" /> */}
+        </Box>
+      </PageContainer>
+  )
 };
 
 export default LoginScreen;

@@ -1,18 +1,18 @@
 import React from 'react';
+import PageContainer from '../components/PageContainer';
+import { Typography } from '@mui/material';
+import TaskList from '../components/TaskList'
 
 const DashboardScreen = () => {
   return (
-    <>
-        This is dashboard Screen
-        <a className='register-link' href="/profile">
-            to profile page
-        </a>
-
-        <a className='register-link' href="/login">
-            logout
-        </a>
-    </>
+    <PageContainer>
+        <Typography variant="h3" component="h2">
+          Dashboard
+        </Typography>
+        <TaskList rowNums='10' height='800'/>
+    </PageContainer>
   );
 };
 
 export default DashboardScreen;
+
