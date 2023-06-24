@@ -27,16 +27,16 @@
 // ];
 
 // const rowsInit = [
-//   { id: 1, task: 'Snow', assignee: 'Jon', deadline: '10/10/2016', state: 'Completed' },
-//   { id: 2, task: 'Lannister', assignee: 'Cersei', deadline: '10/10/2012', state: 'In Progress' },
-//   { id: 3, task: 'Lannister', assignee: 'Jaime', deadline: '10/10/2016', state: 'In Progress' },
-//   { id: 4, task: 'Stark', assignee: 'Arya', deadline: '10/10/2016', state: 'In Progress' },
-//   { id: 5, task: 'Targaryen', assignee: 'Daenerys', deadline: '10/10/2016', state: 'Not Started' },
-//   { id: 6, task: 'Melisandre', assignee: null, deadline: '10/10/2016', state: 'Not Started' },
-//   { id: 7, task: 'Clifford', assignee: 'Ferrara', deadline: '10/10/2016', state: 'Not Started' },
-//   { id: 8, task: 'Frances', assignee: 'Rossini', deadline: null , state: 'Blocked' },
-//   { id: 9, task: 'Roxie', assignee: 'Harvey', deadline: null, state: 'Blocked' },
-//   { id: 10, task: 'Roxie', assignee: 'Harvey', deadline: null, state: 'Blocked' },
+//   { id: 1, title: 'Snow', assignee: 'Jon', deadline: '10/10/2016', state: 'Completed' },
+//   { id: 2, title: 'Lannister', assignee: 'Cersei', deadline: '10/10/2012', state: 'In Progress' },
+//   { id: 3, title: 'Lannister', assignee: 'Jaime', deadline: '10/10/2016', state: 'In Progress' },
+//   { id: 4, title: 'Stark', assignee: 'Arya', deadline: '10/10/2016', state: 'In Progress' },
+//   { id: 5, title: 'Targaryen', assignee: 'Daenerys', deadline: '10/10/2016', state: 'Not Started' },
+//   { id: 6, title: 'Melisandre', assignee: null, deadline: '10/10/2016', state: 'Not Started' },
+//   { id: 7, title: 'Clifford', assignee: 'Ferrara', deadline: '10/10/2016', state: 'Not Started' },
+//   { id: 8, title: 'Frances', assignee: 'Rossini', deadline: null , state: 'Blocked' },
+//   { id: 9, title: 'Roxie', assignee: 'Harvey', deadline: null, state: 'Blocked' },
+//   { id: 10, title: 'Roxie', assignee: 'Harvey', deadline: null, state: 'Blocked' },
 // ];
 
 
@@ -101,16 +101,16 @@ import { useNavigate } from 'react-router-dom';
 
 
 const initialRows = [
-  { id: 1, task: 'Snow', assignee: [2], deadline: '10/10/2016', state: 'Completed' },
-  { id: 2, task: 'Lannister', assignee: [5], deadline: '10/10/2012', state: 'In Progress' },
-  { id: 3, task: 'Lannister', assignee: [4], deadline: '10/10/2016', state: 'In Progress' },
-  { id: 4, task: 'Stark', assignee: [3], deadline: '10/10/2016', state: 'In Progress' },
-  { id: 5, task: 'Targaryen', assignee: [1], deadline: '10/10/2016', state: 'Not Started' },
-  { id: 6, task: 'Melisandre', assignee: null, deadline: '10/10/2016', state: 'Not Started' },
-  { id: 7, task: 'Clifford', assignee: [7, 8], deadline: '10/10/2016', state: 'Not Started' },
-  { id: 8, task: 'Frances', assignee: [4], deadline: null , state: 'Blocked' },
-  { id: 9, task: 'Roxie', assignee: [2], deadline: null, state: 'Blocked' },
-  { id: 10, task: 'Roxie', assignee: [1], deadline: null, state: 'Blocked' },
+  { id: 1, description: "ABC",  title: 'Snow', assignee: [2], deadline: '10/10/2016', state: 'Completed' },
+  { id: 2, description: "ABC",  title: 'Lannister', assignee: [5], deadline: '10/10/2012', state: 'In Progress' },
+  { id: 3, description: "ABC",  title: 'Lannister', assignee: [4], deadline: '10/10/2016', state: 'In Progress' },
+  { id: 4, description: "ABC",  title: 'Stark', assignee: [3], deadline: '10/10/2016', state: 'In Progress' },
+  { id: 5, description: "ABC",  title: 'Targaryen', assignee: [1], deadline: '10/10/2016', state: 'Not Started' },
+  { id: 6, description: "ABC",  title: 'Melisandre', assignee: null, deadline: '10/10/2016', state: 'Not Started' },
+  { id: 7, description: "ABC",  title: 'Clifford', assignee: [7, 8], deadline: '10/10/2016', state: 'Not Started' },
+  { id: 8, description: "ABC",  title: 'Frances', assignee: [4], deadline: null , state: 'Blocked' },
+  { id: 9, description: "ABC",  title: 'Roxie', assignee: [2], deadline: null, state: 'Blocked' },
+  { id: 10, description: "ABC",  title: 'Roxie', assignee: [1], deadline: null, state: 'Blocked' },
 ];
 
 export default function ColumnTypesGrid(props) {
