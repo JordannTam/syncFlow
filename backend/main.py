@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import psycopg2
 import hashlib
 from typing import Annotated
+from typing import Optional, List
+
 
 app = FastAPI()
 
@@ -75,3 +77,38 @@ async def login(
     conn.close()
 
     return {"jwt token": "TODO"} # TODO
+
+@app.post("/create_task")
+async def create_task(
+    title: Annotated[List[int], Form(...)],
+    assignee_ids: Annotated[str, Form(...)],
+    deadline: Optional[Annotated[str, Form(...)]] = None,
+    description: Optional[Annotated[str, Form(...)]] = None,
+):
+    conn = get_db_conn()
+    cur = conn.cursor()
+    
+    # Insert the new task.
+    insert_task_sql = """
+        INSERT INTO tasks (deadline, description)
+        VALUES (%s, %s)
+        RETURNING id
+    """
+    cur.execute(insert_task_sql, (deadline, description))
+    task_id = cur.fetchone()[0]
+    
+    # Insert the assignees for the new task.
+    insert_assignees_sql = """
+        INSERT INTO task_assignees (task_id, profile_id)
+        VALUES (%s, %s)
+    """
+    for assignee_id in assignee_ids:
+        cur.execute(insert_assignees_sql, (task_id, assignee_id))
+
+    conn.commit()
+    
+    cur.close()
+    conn.close()
+    
+
+    return {"detail": "Task created successfully"}
