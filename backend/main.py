@@ -18,7 +18,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-)f
+)
 
 def get_db_conn():
     conn = psycopg2.connect(
@@ -80,21 +80,21 @@ async def login(
 
 @app.post("/create_task")
 async def create_task(
-    title: Annotated[List[int], Form(...)],
-    assignee_ids: Annotated[str, Form(...)],
-    deadline: Optional[Annotated[str, Form(...)]] = None,
+    title: Annotated[str, Form(...)],
+    assignee_ids: Annotated[List[int], Form(...)],
     description: Optional[Annotated[str, Form(...)]] = None,
+    deadline: Optional[Annotated[str, Form(...)]] = None
 ):
     conn = get_db_conn()
     cur = conn.cursor()
     
     # Insert the new task.
     insert_task_sql = """
-        INSERT INTO tasks (deadline, description)
-        VALUES (%s, %s)
+        INSERT INTO tasks (title, deadline, description)
+        VALUES (%s, %s, %s)
         RETURNING id
     """
-    cur.execute(insert_task_sql, (deadline, description))
+    cur.execute(insert_task_sql, (title, deadline, description))
     task_id = cur.fetchone()[0]
     
     # Insert the assignees for the new task.
@@ -112,3 +112,27 @@ async def create_task(
     
 
     return {"detail": "Task created successfully"}
+
+
+@app.post("/assign_task")
+async def assign_task(
+    task_id: Annotated[int, Form(...)],
+    assignee_ids: Annotated[List[int], Form(...)],
+):
+    conn = get_db_conn()
+    cur = conn.cursor()
+    
+    # Insert the assignees for the new task.
+    insert_assignees_sql = """
+        INSERT INTO task_assignees (task_id, profile_id)
+        VALUES (%s, %s)
+    """
+    
+    
+    for assignee_id in assignee_ids:
+        cur.execute(insert_assignees_sql, (task_id, assignee_id))
+
+    conn.commit()
+    
+    cur.close()
+    conn.close()
