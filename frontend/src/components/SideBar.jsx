@@ -24,7 +24,23 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { Outlet } from 'react-router-dom';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { ColumnBox, RowBox } from './FlexBox';
+import { createTheme } from '@mui/material/styles';
 
+const themeAB = createTheme({
+  status: {
+    danger: '#e53e3e',
+  },
+  palette: {
+    primary: {
+      main: '#22223B',
+      darker: '#053e85',
+    },
+    neutral: {
+      main: '#64748B',
+      contrastText: '#fff',
+    },
+  },
+});
 
 const drawerWidth = 240;
 
@@ -115,7 +131,7 @@ export default function MiniDrawer() {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
+      <AppBar theme={themeAB} color='primary' position="fixed" open={open}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -202,10 +218,10 @@ export default function MiniDrawer() {
         </Box>
       </Drawer>
       {/* This causes extra top margin */}
-      {/* <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
         <Outlet />
-      </Box> */}
+      </Box>
     </Box>
   );
 }

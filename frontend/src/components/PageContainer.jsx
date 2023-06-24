@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 import { Box } from '@mui/material';
 
 const EditContainer = styled(ContainerMUI)(({ marginTop }) => ({
-  marginTop: marginTop || '140px',
   borderRadius: '20px',
   backgroundColor: 'white',
   padding: '40px',
@@ -17,7 +16,7 @@ export default function PageContainer(props) {
 
   return (
     <Box padding='10px'>
-      <EditContainer {...restProps} marginTop={marginTop} elevation={3}>
+      <EditContainer style={{marginTop: marginTop || '0px'}} {...restProps} elevation={3}>
         {children}
       </EditContainer>
     </Box>

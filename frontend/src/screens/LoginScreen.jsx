@@ -30,7 +30,7 @@ const LoginScreen = () => {
 
 
   return (
-      <PageContainer sx={{ marginTop: '-200px' }} maxWidth='xs' >
+      <PageContainer marginTop='160px' maxWidth='xs' >
         <Box display='flex' flexDirection='row' justifyContent='space-around'>
           <Box display='flex' flexDirection='column' rowGap='20px' maxWidth='400px'>
             <Box margin={'-10px auto 0'}>

@@ -12,9 +12,9 @@ import { Box } from '@mui/material';
 
 function App() {
   return (
+    <Box bgcolor='#F7F1EE' minHeight='100vh'>
     <BrowserRouter>
         {/* <Navbar /> */}
-        <Box marginTop="64px"></Box>
         <Routes>
           <Route element={<LoggedInRoute />}>
             <Route path="/login" element={<LoginScreen />} />
@@ -32,6 +32,7 @@ function App() {
           } />
         </Routes>
     </BrowserRouter>
+    </Box>
   );
 }
 

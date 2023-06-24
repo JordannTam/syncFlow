@@ -39,8 +39,8 @@ const rows = [
 
 export default function TaskList(props) {
 
-  const handleClick = () => {
-    console.log("Click Cell");
+  const handleClick = (id) => {
+    console.log(id);
   }
 
   return (
@@ -53,8 +53,9 @@ export default function TaskList(props) {
             paginationModel: { page: 0, pageSize: props.rowNums },
           },
         }}
+        getRowId={(row)=> row.id}
         pageSizeOptions={[5, 10]}
-        onCellClick={() => handleClick()}
+        onCellClick={(row) => handleClick(row.id)}
         // autoPageSize='true'
       />
     </div>
