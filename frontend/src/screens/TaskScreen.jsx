@@ -6,7 +6,7 @@ import TaskList from '../components/TaskList';
 import { Box, TextField, Typography } from '@mui/material';
 import { ColumnBox, RowBox } from '../components/FlexBox';
 import Button from '../components/Button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { apiCall } from '../utils/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTask, setTasks } from '../actions';
@@ -18,39 +18,17 @@ const TaskScreen = () => {
     const [assignee, setAssignee] = useState([])
     const dispatch = useDispatch()
     const tasks = useSelector(state => state.taskReducer)
+    const params = useParams()
+    let targetTask = tasks.find((a) => a.id === parseInt(params.id))
 
     const navigate = useNavigate()
 
-    const handleSubmit = async () => {
-        const object = {
-            title,
-            description,
-            deadline,
-            assignee,
-          }
-          try {
-            // const data = await apiCall('/task', object, 'POST', undefined);
-            // navigate('/home')
-            // object.id = data.id
-            object.id = 5 // DELETE after backend implemented
-            dispatch(addTask(object))
-          } catch (err) {
-            console.log(err);
-          }
-    }
-
-    const handleFetchTasks = async () => {
-      try {
-        // const tasks = await apiCall('/task', object, 'GET', undefined);
-        // dispatch(setTasks(tasks))
-      } catch (err) {
-        console.log(err);
-      }
-
+    const handleEdit = async () => {
+        navigate('/task/' + `${params.id}` + '/edit')
     }
 
     useEffect(() => {
-        handleFetchTasks()
+        // console.log(tasks, targetTask, params.id);
     }, [])
   return (
     <>
@@ -61,20 +39,26 @@ const TaskScreen = () => {
             </Typography>
         <ColumnBox rowGap='40px' padding='0px 100px'>
 
-            <TextField id="outlined-basic" value={title} onChange={(e) => setTitle(e.target.value)} label="Title" variant="standard" />
-            <TextField id="outlined-basic" value={description} onChange={(e) => setDescription(e.target.value)} label="Description" variant="standard" />
-            
-            <ColumnBox>
-                <Typography variant="h6" component="h6" marginBottom="15px">
-                  Deadline
-                </Typography>
-                <TextField value={deadline} onChange={(e) => setDeadline(e.target.value)} id="outlined-basic" type='Date' variant="outlined" />
-            </ColumnBox>
-            <AssigneeTransferList right={assignee} setRight={setAssignee} />
+            <Typography variant="h5" component="h5" marginBottom="15px">
+                Title: {targetTask.title}
+            </Typography>
+            <Typography variant="h5" component="h5" marginBottom="15px">
+                Description: {targetTask.description}
+            </Typography>
+            <Typography variant="h5" component="h5" marginBottom="15px">
+                Deadline: {targetTask.deadline}
+            </Typography>
+            <Typography variant="h5" component="h5" marginBottom="15px">
+                Assignees: {}
+            </Typography>
+            {targetTask.assignee.map((name, index) => (
+            <Typography key={index} variant="h5" component="h5" marginBottom="15px">
+                {name}
+            </Typography>))}
+
             <RowBox columnGap='20px'>
                 <Button variant='contained' onClick={() => navigate('/home')} >Back</Button>
-                <Button variant='contained' onClick={() => handleSubmit()}>Create Task</Button>
-                <Button variant='contained' onClick={() => dispatch(setTasks([{id: 5, string: 'abc'}, {id: 4, string: 'def'}]))}>Set Task</Button>
+                <Button variant='contained' onClick={() => handleEdit()}>Edit Task</Button>
             </RowBox>
         </ColumnBox>
       </PageContainer>
