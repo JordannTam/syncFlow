@@ -9,11 +9,11 @@ const theme = createTheme({
   },
   palette: {
     primary: {
-      main: '#023047',
+      main: '#9A8C98',
       darker: '#053e85',
     },
     neutral: {
-      main: '#219EBC',
+      main: '#4A4E69',
       contrastText: '#fff',
     },
   },

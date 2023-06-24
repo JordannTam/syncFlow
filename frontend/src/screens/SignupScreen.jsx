@@ -36,7 +36,7 @@ export default function SignupScreen () {
   }
 
   return (
-    <PageContainer sx={{ border: '1px solid #ddd', padding: '10px', marginTop: '-100px' }} maxWidth='xs'>
+    <PageContainer sx={{ border: '1px solid #ddd', padding: '10px' }} marginTop='140px' maxWidth='xs'>
       <ColumnBox rowGap='10px' margin={'-20px auto 0'}>
         <Box margin={'-10px auto 0'}>
           <h2>Register</h2>

@@ -8,7 +8,7 @@ const ProfileScreen = () => {
   return (
     <>
       {/* <SideBar/> */}
-        <PageContainer marginTop="10px" maxWidth="lg">
+        <PageContainer marginTop="0px" maxWidth="lg">
         <Typography variant="h3" component="h2" marginBottom="15px">
           Profile
         </Typography>
@@ -32,7 +32,7 @@ const ProfileScreen = () => {
         <Typography variant="h6" component="h2" marginBottom="20px">
           Date of Birth: 06/06/2001
         </Typography>
-        <TaskList rowNums='5'/>
+        <TaskList rowNums={5} height='400'/>
       </PageContainer>
     </>
   );
