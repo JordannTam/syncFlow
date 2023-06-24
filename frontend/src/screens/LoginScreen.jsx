@@ -4,6 +4,7 @@ import { BigButton } from '../components/Button';
 import { Alert, Box, Divider, TextField, Typography } from '@mui/material';
 import PageContainer from '../components/PageContainer';
 import { useNavigate } from 'react-router-dom';
+import { apiCall } from '../utils/api';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('')
@@ -12,19 +13,17 @@ const LoginScreen = () => {
   const [error, setError] = React.useState('');
   const navigate = useNavigate();
 
-  const login = async (e) => {
-    e.preventDefault()
-    const data = new FormData();
-    data.append('email', email)
-    data.append('password', password)
+  const login = async () => {
+    const object = {
+      email,
+      password,
+    }
     try {
-      const response = await axios.post('http://localhost:8000/login', data)
-      localStorage.setItem('token', data.token);
+      const res = await apiCall('/login', object, 'POST');
+      localStorage.setItem('token', res.token);
       navigate('/home')
     } catch (err) {
-      console.error(err)
-      setHasError(true)
-      setError(err)
+      console.log(err);
     }
   }
 
