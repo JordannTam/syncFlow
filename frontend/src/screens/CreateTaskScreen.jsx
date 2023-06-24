@@ -24,7 +24,7 @@ const ProfileScreen = () => {
             assignee,
           }
           try {
-            await apiCall('/task', object, 'POST');
+            await apiCall('/task', object, 'POST', undefined);
             navigate('/home')
           } catch (err) {
             console.log(err);
