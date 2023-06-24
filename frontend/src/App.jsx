@@ -8,6 +8,7 @@ import LoggedInRoute from './utils/LoggedInRoute';
 import ProtectedRoute from './utils/ProtectedRoute';
 import SignupPage from './screens/SignupScreen';
 import Navbar from './components/Navbar'
+import CreateTaskScreen from './screens/CreateTaskScreen'
 import { Box } from '@mui/material';
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
             <Route path="/home" element={<DashboardScreen />} />
             <Route path="/" element={<Navigate to="/home" replace />} />
             <Route path="/profile" element={<ProfileScreen />} />
+            <Route path="/newtask" element={<CreateTaskScreen />} />
           </Route>
           <Route path="*" element={
             <div>
