@@ -11,7 +11,7 @@ import { apiCall } from '../utils/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTask, setTasks } from '../actions';
 
-const CreateTaskScreen = () => {
+const TaskScreen = () => {
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
     const [deadline, setDeadline] = useState("")
@@ -57,7 +57,7 @@ const CreateTaskScreen = () => {
       {/* <SideBar/> */}
         <PageContainer marginTop="0px" maxWidth="lg">
             <Typography variant="h3" component="h2" marginBottom="15px">
-            Create Task
+            Task
             </Typography>
         <ColumnBox rowGap='40px' padding='0px 100px'>
 
@@ -76,13 +76,10 @@ const CreateTaskScreen = () => {
                 <Button variant='contained' onClick={() => handleSubmit()}>Create Task</Button>
                 <Button variant='contained' onClick={() => dispatch(setTasks([{id: 5, string: 'abc'}, {id: 4, string: 'def'}]))}>Set Task</Button>
             </RowBox>
-            <Box>
-              {tasks.map((ob, index) => <div key={index}>id = {ob.id}, string = {ob.string}</div>)}
-            </Box>
         </ColumnBox>
       </PageContainer>
     </>
   );
 };
 
-export default CreateTaskScreen
+export default TaskScreen
