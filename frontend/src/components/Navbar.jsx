@@ -5,12 +5,29 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { HeaderButton } from './Button';
+import { createTheme } from '@mui/material';
+const themeAB = createTheme({
+  status: {
+    danger: '#e53e3e',
+  },
+  palette: {
+    primary: {
+      main: '#22223B',
+      darker: '#053e85',
+    },
+    neutral: {
+      main: '#64748B',
+      contrastText: '#fff',
+    },
+  },
+});
+
 
 function Navbar () {
   const narviage = useNavigate();
   return (
     <Box sx={{ flexGrow: 1, zIndex: 99 }}>
-      <AppBar position="fixed" color='inherit'>
+      <AppBar theme={themeAB} position="fixed" color='primary'>
         <Toolbar>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1, pt: 1.5 }}>
               {/* <Link to='/'><Box component='img' sx={{
@@ -20,7 +37,7 @@ function Navbar () {
               src={logo} /></Link> */}
             </Typography>
             <Box display='flex' columnGap='30px' >
-              <HeaderButton size='medium' variant='outlined' onClick={() => {
+              <HeaderButton size='medium' variant='contained' onClick={() => {
                 narviage('/register')
               }}>Register</HeaderButton>
               <HeaderButton size='medium' variant='contained' onClick={() => {
