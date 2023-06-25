@@ -154,3 +154,23 @@ async def assign_task(
     cur.close()
     conn.close()
     return {"detail": "Task assigned successfully"}
+
+
+def get_tasks(profile_id):
+    
+    conn = get_db_conn()
+    cur = conn.cursor()
+    
+    select_task_list = """
+    SELECT tasks.id, tasks.title FROM tasks
+        JOIN task_assignees ON tasks.id = task_assignees.task_id
+        JOIN profiles ON task_assignees.profile_id = profiles.id
+    WHERE profiles.id = %s;
+    """
+    cur.execute(select_task_list, (profile_id,))
+    tasks = cur.fetchall()
+    
+    cur.close()
+    conn.close()
+    
+    return tasks
