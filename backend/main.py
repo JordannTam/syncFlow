@@ -157,7 +157,7 @@ async def assign_task(
             "task_id": task_id}
 
 
-def get_tasks(profile_id):
+def get_tasks(profile_id: Annotated[str, Form(...)]):
     
     conn = get_db_conn()
     cur = conn.cursor()
