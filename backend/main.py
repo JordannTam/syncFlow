@@ -22,7 +22,7 @@ class Task(BaseModel):
 class Assign(BaseModel):
     task_id: Annotated[int, Form(...)]
     assignee_ids: Annotated[List[int], Form(...)]
-    
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
