@@ -19,7 +19,7 @@ const LoginScreen = () => {
       password,
     }
     try {
-      const res = await apiCall('/login', object, 'POST');
+      const res = await apiCall('/login', object, 'POST', undefined);
       localStorage.setItem('token', res.token);
       navigate('/home')
     } catch (err) {

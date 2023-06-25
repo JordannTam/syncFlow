@@ -98,7 +98,6 @@ async def create_task(task: Task):
     description = task.description
     deadline = task.deadline
     
-    print("anything?")
     conn = get_db_conn()
     cur = conn.cursor()
     

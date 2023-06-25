@@ -1,10 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import SideBar from '../components/SideBar';
 import PageContainer from '../components/PageContainer'
 import TaskList from '../components/TaskList';
 import { Box, Typography } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 
 const ProfileScreen = () => {
+  const dispatch = useDispatch()
+  const tasks = useSelector(state => state.taskReducer)
+
+  const handleFetchTasks = async () => {
+    try {
+      // const tasks = await apiCall('/task', object, 'GET', undefined);
+      // dispatch(setTasks(tasks))
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  useEffect(() => {
+      handleFetchTasks()
+  }, [])
+
   return (
     <>
       {/* <SideBar/> */}
@@ -32,7 +49,7 @@ const ProfileScreen = () => {
         <Typography variant="h6" component="h2" marginBottom="20px">
           Date of Birth: 06/06/2001
         </Typography>
-        <TaskList rowNums={5} height='400'/>
+        <TaskList tasks={tasks} rowNums={5} height='400'/>
       </PageContainer>
     </>
   );

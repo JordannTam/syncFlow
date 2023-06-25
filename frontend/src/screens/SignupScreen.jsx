@@ -26,14 +26,13 @@ export default function SignupScreen () {
     last_name: lastName,
     }
     try {
-      const data = await apiCall('/register', object, 'POST');
+      const data = await apiCall('/register', object, 'POST', undefined);
       // setters.setLoggedIn(true);
       // setters.setToken(data.token);
       localStorage.setItem('token', data.token);
       navigate('/home')
     } catch (err) {
-      setHasError(true)
-      setError(err)
+      console.log(err);
     }
   }
 
