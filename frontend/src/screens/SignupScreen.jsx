@@ -18,10 +18,12 @@ export default function SignupScreen () {
   const navigate = useNavigate();
 
   const signupAPI = async () => {
+    const [firstName, lastName] = name.split(' ');  // split the name into first and last name
     const object = {
-      email,
-      password,
-      name,
+    email,
+    password,
+    first_name: firstName,
+    last_name: lastName,
     }
     try {
       const data = await apiCall('/register', object, 'POST');

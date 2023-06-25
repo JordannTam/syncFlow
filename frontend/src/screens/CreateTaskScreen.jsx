@@ -19,9 +19,9 @@ const ProfileScreen = () => {
     const handleSubmit = async () => {
         const object = {
             title,
+            assignee,
             description,
             deadline,
-            assignee,
           }
           try {
             await apiCall('/task', object, 'POST');
