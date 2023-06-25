@@ -18,7 +18,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-)f
+)
 
 def get_db_conn():
     conn = psycopg2.connect(

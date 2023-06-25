@@ -1,22 +1,40 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PageContainer from '../components/PageContainer';
 import { Box, Typography } from '@mui/material';
 import TaskList from '../components/TaskList'
 import Button from '../components/Button';
 import { RowBox } from '../components/FlexBox';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { setTasks } from '../actions';
 
 const DashboardScreen = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const tasks = useSelector(state => state.taskReducer)
+
+  const handleFetchTasks = async () => {
+    try {
+      // const tasks = await apiCall('/task', object, 'GET', undefined); //Uncomment
+      // dispatch(setTasks(tasks)) //Uncomment
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  useEffect(() => {
+      handleFetchTasks()
+  }, [])
+
   return (
     <PageContainer maxWidth="lg" marginTop="0px" >
       <RowBox justifyContent='space-between' marginBottom='50px'>
         <Typography variant="h3" component="h2">
           Dashboard
         </Typography>
-        <Button variant='contained' onClick={() => navigate('/newtask')}>Create Task</Button>
+        <Button variant='contained' onClick={() => navigate('/task/new')}>Create Task</Button>
       </RowBox>
-        <TaskList rowNums={10} height='800'/>
+        <TaskList tasks={tasks} rowNums={10} height='800'/>
     </PageContainer>
   );
 };
