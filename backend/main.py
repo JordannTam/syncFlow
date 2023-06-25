@@ -111,7 +111,7 @@ async def create_task(task: Task):
     cur.execute(insert_task_sql, (title, deadline, description))
     
     task_id = cur.fetchone()[0]
-    print(task_id)
+    
     # Insert the assignees for the new task.
     insert_assignees_sql = """
         INSERT INTO task_assignees (task_id, profile_id)
