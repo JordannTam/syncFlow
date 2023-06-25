@@ -24,9 +24,9 @@ const CreateTaskScreen = () => {
     const handleSubmit = async () => {
         const object = {
             title,
+            assignee,
             description,
             deadline,
-            assignee,
           }
           try {
             // const data = await apiCall('/task', object, 'POST', undefined);
