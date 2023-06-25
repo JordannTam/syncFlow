@@ -153,7 +153,8 @@ async def assign_task(
     
     cur.close()
     conn.close()
-    return {"detail": "Task assigned successfully"}
+    return {"detail": "Task assigned successfully",
+            "task_id": task_id}
 
 
 def get_tasks(profile_id):
