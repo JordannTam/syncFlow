@@ -9,6 +9,7 @@ CREATE table profiles (
 
 CREATE TABLE tasks (
     id SERIAL PRIMARY KEY,
+    title TExt NOT NULL,
     deadline DATE,
     description TEXT
 );
@@ -22,3 +23,5 @@ CREATE TABLE task_assignees (
 );
 
 ALTER table profiles owner to teamendgame;
+ALTER table tasks owner to teamendgame;
+ALTER table task_assignees owner to teamendgame;
