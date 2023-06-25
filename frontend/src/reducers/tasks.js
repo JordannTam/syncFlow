@@ -43,7 +43,6 @@ const task = (state, action) => {
                 assignee: action.assignee,
                 state: action.state,
             };
-
         default:
             return state;
     }

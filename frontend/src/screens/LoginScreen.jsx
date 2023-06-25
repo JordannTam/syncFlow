@@ -5,6 +5,7 @@ import { Alert, Box, Divider, TextField, Typography } from '@mui/material';
 import PageContainer from '../components/PageContainer';
 import { useNavigate } from 'react-router-dom';
 import { apiCall } from '../utils/api';
+import { useDispatch } from 'react-redux';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('')
@@ -12,6 +13,7 @@ const LoginScreen = () => {
   const [hasError, setHasError] = React.useState(false);
   const [error, setError] = React.useState('');
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
   const login = async () => {
     const object = {
@@ -20,7 +22,7 @@ const LoginScreen = () => {
     }
     try {
       const res = await apiCall('/login', object, 'POST', undefined);
-      localStorage.setItem('token', res.token);
+      // dispatch(login())
       navigate('/home')
     } catch (err) {
       console.log(err);

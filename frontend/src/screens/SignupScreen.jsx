@@ -25,9 +25,7 @@ export default function SignupScreen () {
     }
     try {
       const data = await apiCall('/register', object, 'POST', undefined);
-      // setters.setLoggedIn(true);
-      // setters.setToken(data.token);
-      localStorage.setItem('token', data.token);
+      // dispatch(login())
       navigate('/home')
     } catch (err) {
       console.log(err);

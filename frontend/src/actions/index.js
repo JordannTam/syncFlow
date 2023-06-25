@@ -43,6 +43,17 @@ export const setTasks = (tasks) => {
 // Login Function
 // **************
 
+export const setProfile = (profile) => {
+    return {
+        type: "SET_PROFILE",
+        profile,
+    };
+};
+
+// **************
+// Login Function
+// **************
+
 export const login = () => {
     return {
         type: "LOGIN",
@@ -52,5 +63,12 @@ export const login = () => {
 export const logout = () => {
     return {
         type: "LOGOUT",
+    };
+};
+
+export const setToken = (token) => {
+    return {
+        type: "SET_TOKEN",
+        token,
     };
 };

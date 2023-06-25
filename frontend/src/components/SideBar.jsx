@@ -25,6 +25,7 @@ import { Outlet } from 'react-router-dom';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { ColumnBox, RowBox } from './FlexBox';
 import { createTheme } from '@mui/material/styles';
+import { apiCall } from '../utils/api';
 
 const themeAB = createTheme({
   status: {
@@ -109,6 +110,16 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
+const handleLogout = async () => {
+  try {
+    // const res = await apiCall('/logout', {}, 'POST', undefined);
+    // dispatch(logout())
+    navigate('/login')
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const menuItems = [
   { text: 'Home', link: '/', icon: <HomeIcon /> },
   { text: 'Profile', link: '/profile', icon: <AccountBoxIcon /> },
@@ -188,11 +199,10 @@ export default function MiniDrawer() {
 
         <Divider />
         <List>
-          {[{ text: 'Log out', link: '/login', icon: <LogoutIcon /> }].map((item, index) => (
-            <ListItem key={index} disablePadding sx={{ display: 'block' }}>
+          <ListItem key='logout' disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 component={RouterLink}
-                to={item.link}
+                onClick={handleLogout}
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? 'initial' : 'center',
@@ -206,18 +216,16 @@ export default function MiniDrawer() {
                     justifyContent: 'center',
                   }}
                 >
-                  {item.icon}
+                  <LogoutIcon />
                 </ListItemIcon>
-                <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary='Log out' sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
-          ))}
         </List>
         </Box>
 
         </Box>
       </Drawer>
-      {/* This causes extra top margin */}
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
         <Outlet />

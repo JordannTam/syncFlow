@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 const ProfileScreen = () => {
   const dispatch = useDispatch()
   const tasks = useSelector(state => state.taskReducer)
+  const profile = useSelector(state => state.taskReducer)
 
   const handleFetchTasks = async () => {
     try {
@@ -17,9 +18,18 @@ const ProfileScreen = () => {
       console.log(err);
     }
   }
+  const handleFetchProfile = async () => {
+    try {
+      // const profile = await apiCall('/profile', object, 'GET', undefined);
+      // dispatch(setProfile(profile))
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   useEffect(() => {
       handleFetchTasks()
+      handleFetchProfile()
   }, [])
 
   return (
@@ -41,7 +51,7 @@ const ProfileScreen = () => {
           src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&w=350&dpr=2"
         />
         <Typography variant="h6" component="h2" marginTop="10px">
-          Username: name
+          Username: {profile.name}
         </Typography>
         <Typography variant="h6" component="h2">
           Email: email@gmail.com
