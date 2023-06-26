@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordBearer
 from typing import Union
-from utility import get_db_conn
+from utility import get_db_conn, oauth2_scheme
 from datetime import datetime, timedelta, date
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -16,10 +15,10 @@ class RegisterProfile(BaseModel):
     first_name: str
     last_name: str
     password: str
+    dob: str
 
 @router.post("/register")
 async def register(user: RegisterProfile):
-    print(user.email, user.first_name, user.last_name, user.password)
     conn = get_db_conn()
     cur = conn.cursor()
 
@@ -29,8 +28,8 @@ async def register(user: RegisterProfile):
 
     password_hash = get_password_hash(user.password)
 
-    cur.execute(f"INSERT INTO profiles (email_address, first_name, last_name, password_hash) \
-                VALUES ('{user.email}', '{user.first_name}', '{user.last_name}', '{password_hash}')")
+    cur.execute("INSERT INTO profiles (email_address, first_name, last_name, date_of_birth, password_hash) \
+                VALUES (%s, %s, %s, %s, %s)", (user.email, user.first_name, user.last_name, user.dob, password_hash))
     conn.commit()
     cur.close()
     conn.close()
@@ -121,7 +120,6 @@ def login_for_access_token(login_data: LoginData):
 
 # ---------- PROFILE
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 def get_profile(profile_id: str):
     conn = get_db_conn()

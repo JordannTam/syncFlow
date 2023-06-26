@@ -6,14 +6,13 @@ import { apiCall } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 import { ColumnBox } from '../components/FlexBox'
 import Cookies from 'js-cookie';
-// import { Context, useContext } from '../../../context';
 
 export default function SignupScreen () {
-  // const { setters } = useContext(Context);
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [first_name, setFirstName] = React.useState('');
   const [last_name, setLastName] = React.useState('');
+  const [dob, setDob] = React.useState('');
   const [hasError, setHasError] = React.useState(false);
   const [error, setError] = React.useState('');
 
@@ -21,33 +20,39 @@ export default function SignupScreen () {
 
   const signupAPI = async () => {
     const object = {
+<<<<<<< HEAD
     email,
     password,
     first_name,
     last_name,
+=======
+      email,
+      password,
+      first_name,
+      last_name,
+      dob,
+>>>>>>> 813f05e1dce83f6f31de6b2a7257dff1420f4c6e
     }
     try {
-      const res = await apiCall('/register', object, 'POST', undefined);
-      const token = res.data.token;
-      // Calculate the expiry date 2 minutes from the current time
-      const expiryDate = new Date();
-      expiryDate.setTime(expiryDate.getTime() + 2 * 60 * 1000);
-      Cookies.set('loginToken', token, { expires: expiryDate });
+      await apiCall('/register', object, 'POST', undefined);
       navigate('/login')
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }
 
   return (
     <PageContainer sx={{ border: '1px solid #ddd', padding: '10px' }} marginTop='140px' maxWidth='xs'>
-      <ColumnBox rowGap='10px' margin={'-20px auto 0'}>
+      <ColumnBox rowGap='20px' margin={'-20px auto 0'}>
         <Box margin={'-10px auto 0'}>
           <h2>Register</h2>
         </Box>
-        <TextField helperText="Must be between 1 and 50 characters long" label="First Name" variant="outlined" value={first_name} onChange={(e) => setFirstName(e.target.value)} />
-        <TextField helperText="Must be between 1 and 50 characters long" label="Last Name" variant="outlined" value={last_name} onChange={(e) => setLastName(e.target.value)} />
+        <Box display='flex' flexDirection='row' columnGap='20px'>
+        <TextField  label="First Name" variant="outlined" value={first_name} onChange={(e) => setFirstName(e.target.value)} />
+        <TextField  label="Last Name" variant="outlined" value={last_name} onChange={(e) => setLastName(e.target.value)} />
+        </Box>
         <TextField error={ hasError } helperText="Please enter a valid email" label="Email" variant="outlined" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <TextField helperText="Date of birth" type='date' variant="outlined" value={dob} onChange={(e) => setDob(e.target.value)} />
         <TextField helperText='Must be between 8 and 32 characters long' label="Password" type='password' variant="outlined" value={password} onChange={(e) => setPassword(e.target.value)} />
         { hasError && <Alert severity="error" onClose={() => { setHasError(false) }}>{error}</Alert> }
 

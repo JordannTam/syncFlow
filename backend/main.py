@@ -1,24 +1,28 @@
-from fastapi import FastAPI, HTTPException, Form
+from fastapi import FastAPI, HTTPException, Form, Depends
 from typing import Annotated
-from typing import Optional, List
+from typing import List, Union
 from pydantic import BaseModel
-from utility import get_db_conn
+from utility import get_db_conn, oauth2_scheme
 import routers.taskmasters
 from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
-
-
+from datetime import datetime
+from utility import oauth2_scheme, verify_token
 
 class Task(BaseModel):
     title: str
     assignee_ids: List[int]
-    description: Optional[str] = None
-    deadline: Optional[str] = None
+    description: Union[str, None] 
+    deadline: Union[str, None]
 
-class Assign(BaseModel):
+class Edit_Task(BaseModel):
     task_id: int
-    assignee_ids: List[int]
-
+    progress: Union[str, None]
+    assignee_ids: Union[List[int], None]
+    unassignee_ids: Union[List[int], None]
+    title: Union[str, None]
+    description: Union[str, None]
+    
 
 origins = [
     "http://localhost:3000",
@@ -31,7 +35,6 @@ middleware = [
     Middleware(
         CORSMiddleware,
         allow_origins=origins,
-        # allow_origins=['*'],
         allow_credentials=True,
         allow_methods=['*'],
         allow_headers=['*']
@@ -42,23 +45,27 @@ middleware = [
 app = FastAPI(middleware=middleware)
 app.include_router(routers.taskmasters.router)
 
-@app.post("/create_task")
-async def create_task(task: Task):
+@app.post("/task")
+async def create_task(task: Task, token: str = Depends(oauth2_scheme)):
+    creator_id = verify_token(token)
+    
     title = task.title
     assignee_ids = task.assignee_ids
     description = task.description
     deadline = task.deadline
+    progress = "Not Started"
+    initial_time = str(datetime.now().date())
     
     conn = get_db_conn()
     cur = conn.cursor()
     
     # Insert the new task.
     insert_task_sql = """
-        INSERT INTO tasks (title, deadline, description)
-        VALUES (%s, %s, %s)
+        INSERT INTO tasks (title, creator_id, deadline, description, initial_date, progress)
+        VALUES (%s, %s, %s, %s, %s, %s)
         RETURNING id
     """
-    cur.execute(insert_task_sql, (title, deadline, description))
+    cur.execute(insert_task_sql, (title, creator_id, deadline, description, initial_time, progress))
     
     task_id = cur.fetchone()[0]
     
@@ -78,17 +85,47 @@ async def create_task(task: Task):
 
     return {"detail": "Task created successfully"}
 
-@app.post("/assign_task")
-async def assign_task(
-    # task_id: Annotated[int, Form(...)],
-    # assignee_ids: Annotated[List[int], Form(...)],
-    assign: Assign
-):
-    task_id = assign.task_id
-    assignee_ids = assign.assignee_ids
+@app.post("/edit_task")
+async def edit_task(
+    edit: Edit_Task, token: str = Depends(oauth2_scheme)
+):  
+    verify_token(token)
+    request = []
+    task_id = edit.task_id
+    assignee_ids = edit.assignee_ids
+    unassignee_ids = edit.unassignee_ids
+    
+    args = []
+    
+    if edit.progress is not None:
+        request.append(('progress', edit.progress))  
+    if edit.title is not None:
+        request.append(('title', edit.title)) 
+    if edit.description is not None:
+        request.append(('description', edit.description))
+
+    if request == []:
+        return
+    
+
+    update_sql = '''
+        UPDATE tasks
+        SET
+    '''
+    
+    for column, value in request:
+        update_sql += f' {column} = %s,'
+        args.append(value)
+    
+    update_sql = update_sql[:-1]
+    update_sql += '\nWHERE tasks.id = %s'
+    args.append(task_id)
     
     conn = get_db_conn()
     cur = conn.cursor()
+    
+    # update task details
+    cur.execute(update_sql, tuple(args))
     
     # Insert the assignees for the new task.
     insert_assignees_sql = """
@@ -96,16 +133,24 @@ async def assign_task(
         VALUES (%s, %s)
     """
     
+    remove_assignees_sql = '''
+        DELETE FROM task_assignees
+        WHERE task_id = %s AND profile_id = %s
+    '''
+    if assignee_ids is not None:
+        for assignee_id in assignee_ids:
+            cur.execute(insert_assignees_sql, (task_id, assignee_id))
     
-    for assignee_id in assignee_ids:
-        cur.execute(insert_assignees_sql, (task_id, assignee_id))
+    if unassignee_ids is not None:
+        for unassignee_id in unassignee_ids:
+            cur.execute(remove_assignees_sql, (task_id, unassignee_id))
+    
 
     conn.commit()
     
     cur.close()
     conn.close()
-    return {"detail": "Task assigned successfully",
-            "task_id": task_id}
+    return {"detail": "Task updated successfully"}
 
 @app.get("/tasks")
 def get_tasks(profile_id: str):
@@ -128,3 +173,4 @@ def get_tasks(profile_id: str):
     conn.close()
     
     return tasks
+
