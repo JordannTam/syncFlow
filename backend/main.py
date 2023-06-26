@@ -10,14 +10,14 @@ from starlette.middleware.cors import CORSMiddleware
 
 
 class Task(BaseModel):
-    title: Annotated[str, Form(...)]
-    assignee_ids: Annotated[List[int], Form(...)]
-    description: Optional[Annotated[str, Form(...)]] = None
-    deadline: Optional[Annotated[str, Form(...)]] = None
+    title: str
+    assignee_ids: List[int]
+    description: Optional[str] = None
+    deadline: Optional[str] = None
 
 class Assign(BaseModel):
-    task_id: Annotated[int, Form(...)]
-    assignee_ids: Annotated[List[int], Form(...)]
+    task_id: int
+    assignee_ids: List[int]
 
 
 origins = [
