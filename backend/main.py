@@ -156,7 +156,7 @@ async def assign_task(
     return {"detail": "Task assigned successfully",
             "task_id": task_id}
 
-
+@app.get("/tasks")
 def get_tasks(profile_id: Annotated[str, Form(...)]):
     
     conn = get_db_conn()
