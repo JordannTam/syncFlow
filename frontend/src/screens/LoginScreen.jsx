@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { apiCall } from '../utils/api';
 import { useDispatch } from 'react-redux';
 import Cookies from 'js-cookie';
+import { setProfile } from '../actions';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('')
@@ -14,8 +15,19 @@ const LoginScreen = () => {
   const [hasError, setHasError] = React.useState(false);
   const [error, setError] = React.useState('');
   const navigate = useNavigate();
-  // const dispatch = useDispatch()
-// 
+  const dispatch = useDispatch()
+
+
+  const handleFetchProfile = async (token) => {
+    try {
+      const profile_data = await apiCall('/profile', {}, 'GET', `bearer ${token}`);
+      dispatch(setProfile(profile_data))
+      console.log("User profile: ", profile_data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   const login = async () => {
     const object = {
       email,
@@ -26,9 +38,10 @@ const LoginScreen = () => {
       const token = res.access_token;
       // Calculate the expiry date 2 minutes from the current time
       const expiryDate = new Date();
-      expiryDate.setTime(expiryDate.getTime() + 2 * 60 * 1000);
+      expiryDate.setTime(expiryDate.getTime() + 10 * 60 * 1000);
       Cookies.set('loginToken', token, { expires: expiryDate });
       // dispatch(login())
+      handleFetchProfile(token)
       navigate('/home')
     } catch (err) {
       console.error(err);

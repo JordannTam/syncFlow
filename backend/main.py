@@ -69,14 +69,17 @@ async def create_task(task: Task, token: str = Depends(oauth2_scheme)):
     
     task_id = cur.fetchone()[0]
     
-    # Insert the assignees for the new task.
+    # Insert the creator for the new task.
     insert_assignees_sql = """
         INSERT INTO task_assignees (task_id, profile_id)
         VALUES (%s, %s)
     """
-    for assignee_id in assignee_ids:
-        cur.execute(insert_assignees_sql, (task_id, assignee_id))
+    cur.execute(insert_assignees_sql, (task_id, creator_id))
 
+    if assignee_ids is not None:
+        for assignee_id in assignee_ids:
+            cur.execute(insert_assignees_sql, (task_id, assignee_id))
+            
     conn.commit()
     
     cur.close()
@@ -153,22 +156,39 @@ async def edit_task(
     return {"detail": "Task updated successfully"}
 
 @app.get("/tasks")
-def get_tasks(profile_id: str):
-    
+def get_tasks(token: str = Depends(oauth2_scheme)):
+    user_id = verify_token(token)
     conn = get_db_conn()
     cur = conn.cursor()
     
     select_task_list = """
-    SELECT tasks.id as task_id, tasks.title, tasks.deadline
+    SELECT tasks.id as task_id, tasks.title, tasks.description, tasks.deadline, tasks.progress
     FROM tasks               
         JOIN task_assignees ON tasks.id = task_assignees.task_id
         JOIN profiles ON task_assignees.profile_id = profiles.id
     WHERE profiles.id = %s
     ORDER BY tasks.deadline;
     """
-    cur.execute(select_task_list, (profile_id,))
+    cur.execute(select_task_list, (user_id,))
     tasks = cur.fetchall()
+    # Get column names
+    column_names = [desc[0] for desc in cur.description]
     
+    # Convert to list of dictionaries
+    tasks = [dict(zip(column_names, task)) for task in tasks]
+    
+    
+    select_assignees_sql = '''
+    SELECT profile_id FROM task_assignees
+    WHERE task_id = %s
+    '''
+
+    # Fetch assignees for each task
+    for task in tasks:
+        cur.execute(select_assignees_sql, (task["task_id"],))
+        assignees = [item[0] for item in cur.fetchall()]
+        task["assignees"] = assignees
+
     cur.close()
     conn.close()
     
