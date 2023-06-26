@@ -3,7 +3,7 @@ import SideBar from '../components/SideBar';
 import PageContainer from '../components/PageContainer'
 import AssigneeTransferList from '../components/AssigneeTransferList'
 import TaskList from '../components/TaskList';
-import { Box, TextField, Typography } from '@mui/material';
+import { Avatar, Box, TextField, Typography } from '@mui/material';
 import { ColumnBox, RowBox } from '../components/FlexBox';
 import Button from '../components/Button';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -49,12 +49,12 @@ const TaskScreen = () => {
                 Deadline: {targetTask.deadline}
             </Typography>
             <Typography variant="h5" component="h5" marginBottom="15px">
-                Assignees: {}
+                Assignees: 
             </Typography>
-            {targetTask.assignees.map((name, index) => (
-            <Typography key={index} variant="h5" component="h5" marginBottom="15px">
-                {name}
-            </Typography>))}
+            <RowBox columnGap='10px'>
+                {targetTask.assignees.map((name, index) => (
+                <Avatar key={index} />))}
+            </RowBox>
 
             <RowBox columnGap='20px'>
                 <Button variant='contained' onClick={() => navigate('/home')} >Back</Button>
