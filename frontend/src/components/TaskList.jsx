@@ -1,88 +1,3 @@
-// import React, { useState } from 'react';
-// import { DataGrid, GridCellEditStopReasons } from '@mui/x-data-grid';
-// import { Avatar } from '@mui/material';
-// import { useDispatch } from 'react-redux';
-// import { editTask } from '../actions';
-
-// // eslint-disable-next-line react-hooks/rules-of-hooks
-// const columns = [
-//   { field: 'id', headerName: 'ID', width: 200, sortable: false},
-//   { field: 'assignee', headerName: 'Assignee', width: 200, renderCell:params=><Avatar src={params.row.photoURL} />, sortable: false},
-//   { field: 'task', headerName: 'Task Name', width: 200, sortable: false},
-//   {
-//     field: 'deadline',
-//     headerName: 'Deadline',
-//     type: 'Date',
-//     width: 200,
-//   },
-//   {
-//     field: 'state',
-//     headerName: 'Task State',
-//     sortable: false,
-//     width: 200,
-//     type: 'singleSelect',
-//     valueOptions:['Completed', 'In Progress', 'Not Started', 'Blocked'],
-//     editable:true
-//   },
-// ];
-
-// const rowsInit = [
-//   { id: 1, title: 'Snow', assignee: 'Jon', deadline: '10/10/2016', state: 'Completed' },
-//   { id: 2, title: 'Lannister', assignee: 'Cersei', deadline: '10/10/2012', state: 'In Progress' },
-//   { id: 3, title: 'Lannister', assignee: 'Jaime', deadline: '10/10/2016', state: 'In Progress' },
-//   { id: 4, title: 'Stark', assignee: 'Arya', deadline: '10/10/2016', state: 'In Progress' },
-//   { id: 5, title: 'Targaryen', assignee: 'Daenerys', deadline: '10/10/2016', state: 'Not Started' },
-//   { id: 6, title: 'Melisandre', assignee: null, deadline: '10/10/2016', state: 'Not Started' },
-//   { id: 7, title: 'Clifford', assignee: 'Ferrara', deadline: '10/10/2016', state: 'Not Started' },
-//   { id: 8, title: 'Frances', assignee: 'Rossini', deadline: null , state: 'Blocked' },
-//   { id: 9, title: 'Roxie', assignee: 'Harvey', deadline: null, state: 'Blocked' },
-//   { id: 10, title: 'Roxie', assignee: 'Harvey', deadline: null, state: 'Blocked' },
-// ];
-
-
-
-
-// export default function TaskList(props) {
-//   const [rows, setRows] = useState(rowsInit)
-//   const dispatch = useDispatch()
-
-//   const handleClick = (id) => {
-//     console.log(id);
-//   }
-  
-
-//   return (
-//     <div style={{ height: props.height, width: '100%' }}>
-//       <DataGrid
-//         rows={rows}
-//         columns={columns}
-//         initialState={{
-//           pagination: {
-//             paginationModel: { page: 0, pageSize: props.rowNums },
-//           },
-//         }}
-//         experimentalFeatures={{ newEditingApi: true }}
-
-//         getRowId={(row)=> row.id}
-//         pageSizeOptions={[5, 10]}
-//         onRowClick={(row) => handleClick(row.id)}
-//         // processRowUpdate={(params) => {
-//         //     handleStateChange(params)
-//         //   }
-//         // }
-//         // onProcessRowUpdateError={(error) => {
-//         //   // console.log(error);
-//         // }}
-//         disableRowSelectionOnClick
-      
-//         // autoPageSize='true'
-//       />
-//     </div>
-//   );
-// }
-
-
-
 import * as React from 'react';
 import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -113,15 +28,19 @@ const initialRows = [
   { task_id: 10, description: "ABC",  title: 'Roxie', assignee: [1], deadline: null, progress: 'Blocked' },
 ];
 
-export default function ColumnTypesGrid(props) {
+export default function TaskList(props) {
   const [rows, setRows] = React.useState(initialRows);
   const [loading, setLoading] = React.useState(false)
   const tasks = useSelector(state=>state.taskReducer)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
+
   const deleteUser = React.useCallback(
     (id) => () => {
+      console.log(props.tasks.find((a) => a.task_id === id))
+      console.log("id", id);
+      console.log("props.tasks", props.tasks);
       // setTimeout(() => {
       //   setRows((prevRows) => prevRows.filter((row) => row.id !== id));
       // });
@@ -199,22 +118,63 @@ export default function ColumnTypesGrid(props) {
           type: 'actions',
           getActions: (params) => [
           <GridActionsCellItem
-          icon={<CheckCircleIcon color={tasks.find((a) => a.task_id === params.id).progress === 'Completed' ? 'success' : 'disabled'} fontSize='large'/>}// Uncomment
-            // icon={<CheckCircleIcon color={initialRows.find((a) => a.id === params.id).state === 'Completed' ? 'success' : 'disabled'} fontSize='large'/>}
-            label="Completed"
+          icon={
+            (() => {
+              const task = props.tasks && props.tasks.find((a) => a.task_id === params.id);
+              return (
+                <CheckCircleIcon 
+                  color={
+                    task && task.progress === 'Completed' 
+                    ? 'success' 
+                    : 'disabled'
+                  } 
+                  fontSize='large'
+                />
+              );
+            })()
+          }
+                    label="Completed"
             onClick={handleCompleted(params.id)}
             // showInMenu
           />,
           <GridActionsCellItem
-          icon={<AutorenewIcon color={tasks.find((a) => a.task_id === params.id).progress === 'In Progress' ? 'primary' : 'disabled'} fontSize='large'/>}// Uncomment
-
+          icon={
+            (() => {
+              const task = tasks && tasks.find((a) => a.task_id === params.id);
+              return (
+                <AutorenewIcon 
+                  color={
+                    task && task.progress === 'In progress' 
+                    ? 'primary' 
+                    : 'disabled'
+                  } 
+                  fontSize='large'
+                />
+              );
+            })()
+          }
+        
             // icon={<AutorenewIcon color={initialRows.find((a) => a.id === params.id).state === 'In Progress' ? 'primary' : 'disabled'} fontSize='large'/>}
             label="In progress"
             onClick={handleInProgress(params.id)}
             // showInMenu
           />,
           <GridActionsCellItem
-          icon={<HourglassTopTwoToneIcon color={tasks.find((a) => a.task_id === params.id).progress === 'Not Started' ? 'warning' : 'disabled'} fontSize='large'/>} //Uncomment
+          icon={
+            (() => {
+              const task = tasks && tasks.find((a) => a.task_id === params.id);
+              return (
+                <HourglassTopTwoToneIcon 
+                  color={
+                    task && task.progress === 'Not Started'
+                    ? 'warning' 
+                    : 'disabled'
+                  } 
+                  fontSize='large'
+                />
+              );
+            })()
+          }
 
             // icon={<HourglassTopTwoToneIcon color={initialRows.find((a) => a.id === params.id).progress === 'Not Started' ? 'warning' : 'disabled'} fontSize='large'/>}
             label="Not Started"
@@ -222,7 +182,21 @@ export default function ColumnTypesGrid(props) {
             // showInMenu
           />,
           <GridActionsCellItem
-          icon={<RemoveCircleIcon color={tasks.find((a) => a.task_id === params.id).progress === 'Blocked' ? 'error' : 'disabled'} fontSize='large'/>} // Uncomment
+          icon={
+            (() => {
+              const task = tasks && tasks.find((a) => a.task_id === params.id);
+              return (
+                <RemoveCircleIcon 
+                  color={
+                    task && task.progress === 'Blocked'
+                    ? 'error' 
+                    : 'disabled'
+                  } 
+                  fontSize='large'
+                />
+              );
+            })()
+          }
           // icon={<RemoveCircleIcon color={initialRows.find((a) => a.id === params.id).progress === 'Blocked' ? 'error' : 'disabled'} fontSize='large'/>}
           label="Duplicate User"
           onClick={handleBlocked(params.id)}
@@ -257,11 +231,13 @@ export default function ColumnTypesGrid(props) {
         ],
       },
     ],
-    [handleBlocked, handleCompleted, handleInProgress, handleNotStarted, deleteUser],
+    [tasks, handleBlocked, handleCompleted, handleInProgress, handleNotStarted, deleteUser],
   );
+  if (!tasks) {
+    return <>Loading</>
+  }
 
   return (
-    loading ? <>Loading</> : 
     <div style={{ height: props.height, width: '100%' }}>
       <DataGrid 
       sx={{

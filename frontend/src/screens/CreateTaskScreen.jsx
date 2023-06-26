@@ -34,8 +34,8 @@ const CreateTaskScreen = () => {
             console.log(object)
             const data = await apiCall('/task', object, 'POST', `bearer ${token}`, );
             navigate('/home')
-            // object.id = data.id
-            object.id = 5 // DELETE after backend implemented
+            object.id = data.id
+            // object.id = 5 // DELETE after backend implemented
             dispatch(addTask(object))
           } catch (err) {
             console.error(err);
