@@ -158,7 +158,7 @@ def get_tasks(token: str = Depends(oauth2_scheme)):
     cur = conn.cursor()
     
     select_task_list = """
-    SELECT tasks.id as task_id, tasks.title, tasks.deadline
+    SELECT tasks.id as task_id, tasks.title, task.description, tasks.deadline
     FROM tasks               
         JOIN task_assignees ON tasks.id = task_assignees.task_id
         JOIN profiles ON task_assignees.profile_id = profiles.id
@@ -167,13 +167,24 @@ def get_tasks(token: str = Depends(oauth2_scheme)):
     """
     cur.execute(select_task_list, (user_id,))
     tasks = cur.fetchall()
-    
     # Get column names
     column_names = [desc[0] for desc in cur.description]
     
     # Convert to list of dictionaries
     tasks = [dict(zip(column_names, task)) for task in tasks]
     
+    
+    select_assignees_sql = '''
+    SELECT profile_id FROM task_assignees
+    WHERE task_id = %s
+    '''
+
+    # Fetch assignees for each task
+    for task in tasks:
+        cur.execute(select_assignees_sql, (task["task_id"],))
+        assignees = [item[0] for item in cur.fetchall()]
+        task["assignees"] = assignees
+
     cur.close()
     conn.close()
     
