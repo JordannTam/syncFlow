@@ -18,7 +18,7 @@ function intersection(a, b) {
 
 export default function TransferList(props) {
   const [checked, setChecked] = React.useState([]);
-  const [left, setLeft] = React.useState([0, 1, 2, 3]); // Delete after backend implemented
+  const [left, setLeft] = React.useState([1, 2, 3, 4]); // Delete after backend implemented
 //   const [left, setLeft] = React.useState([...props.connections])
   const right = props.right;
   const setRight = props.setRight;
@@ -84,7 +84,7 @@ export default function TransferList(props) {
                   }}
                 />
               </ListItemIcon>
-              <ListItemText id={labelId} primary={`List item ${value + 1}`} />
+              <ListItemText id={labelId} primary={`User ${value}`} />
             </ListItem>
           );
         })}

@@ -9,7 +9,8 @@ export const addTask = (object) => {
         title: object.title,
         description: object.description,
         deadline: object.deadline,
-        assignee: object.assignee,
+        assignees: object.assignees,
+        progress: "Not Started",
     };
 };
 export const editTask = (object) => {
@@ -19,7 +20,7 @@ export const editTask = (object) => {
         title: object.title,
         description: object.description,
         deadline: object.deadline,
-        assignee: object.assignee,
+        assignees: object.assignee,
         progress: object.progress,
     };
 };

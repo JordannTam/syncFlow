@@ -16,7 +16,7 @@ const CreateTaskScreen = () => {
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
     const [deadline, setDeadline] = useState("")
-    const [assignee, setAssignee] = useState([])
+    const [assignees, setAssignees] = useState([])
     const dispatch = useDispatch()
     const tasks = useSelector(state => state.taskReducer)
     const token = Cookies.get('loginToken');
@@ -26,7 +26,7 @@ const CreateTaskScreen = () => {
     const handleSubmit = async () => {
         const object = {
             title,
-            assignee_ids : assignee,
+            assignees,
             description,
             deadline,
           }
@@ -34,7 +34,7 @@ const CreateTaskScreen = () => {
             console.log(object)
             const data = await apiCall('/task', object, 'POST', `bearer ${token}`, );
             navigate('/home')
-            object.id = data.id
+            object.task_id = data.task_id
             // object.id = 5 // DELETE after backend implemented
             dispatch(addTask(object))
           } catch (err) {
@@ -73,7 +73,7 @@ const CreateTaskScreen = () => {
                 </Typography>
                 <TextField value={deadline} onChange={(e) => setDeadline(e.target.value)} id="outlined-basic" type='Date' variant="outlined" />
             </ColumnBox>
-            <AssigneeTransferList right={assignee} setRight={setAssignee} />
+            <AssigneeTransferList right={assignees} setRight={setAssignees} />
             <RowBox columnGap='20px'>
                 <Button variant='contained' onClick={() => navigate('/home')} >Back</Button>
                 <Button variant='contained' onClick={() => handleSubmit()}>Create Task</Button>

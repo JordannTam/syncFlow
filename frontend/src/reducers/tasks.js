@@ -17,7 +17,7 @@ const task = (state, action) => {
     switch (action.type) {
         case "ADD_TASK":
             return {
-                id: action.id,
+                task_id: action.task_id,
                 title: action.title,
                 description: action.description,
                 deadline: action.deadline,
@@ -25,7 +25,7 @@ const task = (state, action) => {
                 progress: "Not Started",
             };
         case "CHANGE_TASK_STATE":
-            if (state.id !== action.id) {
+            if (state.task_id !== action.task_id) {
                 return state;
             }
             return {
@@ -33,7 +33,7 @@ const task = (state, action) => {
                 progress: action.progress,
             };
         case "EDIT_TASK":
-            if (state.id !== action.id) {
+            if (state.task_id !== action.task_id) {
                 return state;
             }
             return {
