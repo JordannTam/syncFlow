@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PageContainer from '../components/PageContainer';
 import { Box, Typography } from '@mui/material';
 import TaskList from '../components/TaskList'
@@ -15,12 +15,14 @@ const DashboardScreen = () => {
   const dispatch = useDispatch()
   const tasks = useSelector(state => state.taskReducer)
   const token = Cookies.get('loginToken');
+  const [loading, setLoading] = useState(false)
 
   const handleFetchTasks = async () => {
     try {
       const tasks = await apiCall('/tasks', undefined, 'GET', `bearer ${token}`); //Uncomment
       dispatch(setTasks(tasks))
       console.log("tasks: ", tasks)
+
     } catch (err) {
       console.error(err);
     }
@@ -29,8 +31,14 @@ const DashboardScreen = () => {
   
 
   useEffect(() => {
+      // setLoading(true)
       handleFetchTasks()
   }, [])
+
+  if (!tasks && loading) {
+    return <div>Loading...</div>;
+  }
+
 
   return (
     <PageContainer maxWidth="lg" marginTop="0px" >

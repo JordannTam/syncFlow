@@ -5,7 +5,7 @@
 export const addTask = (object) => {
     return {
         type: "ADD_TASK",
-        id: object.id,
+        task_id: object.task_id,
         title: object.title,
         description: object.description,
         deadline: object.deadline,
@@ -15,7 +15,7 @@ export const addTask = (object) => {
 export const editTask = (object) => {
     return {
         type: "EDIT_TASK",
-        id: object.id,
+        task_id: object.task_id,
         title: object.title,
         description: object.description,
         deadline: object.deadline,

@@ -86,7 +86,7 @@ async def create_task(task: Task, token: str = Depends(oauth2_scheme)):
     conn.close()
     
 
-    return {"detail": "Task created successfully"}
+    return {"task_id": task_id}
 
 @app.post("/edit_task")
 async def edit_task(
