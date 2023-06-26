@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordBearer
 from typing import Union
-from utility import get_db_conn
+from utility import get_db_conn, oauth2_scheme
 from datetime import datetime, timedelta, date
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -121,7 +120,6 @@ def login_for_access_token(login_data: LoginData):
 
 # ---------- PROFILE
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 def get_profile(profile_id: str):
     conn = get_db_conn()

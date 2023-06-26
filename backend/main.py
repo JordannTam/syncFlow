@@ -1,12 +1,13 @@
-from fastapi import FastAPI, HTTPException, Form
+from fastapi import FastAPI, HTTPException, Form, Depends
 from typing import Annotated
 from typing import List, Union
 from pydantic import BaseModel
-from utility import get_db_conn
+from utility import get_db_conn, oauth2_scheme
 import routers.taskmasters
 from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
 from datetime import datetime
+from utility import oauth2_scheme, verify_token
 
 class Task(BaseModel):
     title: str
@@ -46,13 +47,14 @@ app = FastAPI(middleware=middleware)
 app.include_router(routers.taskmasters.router)
 
 @app.post("/task")
-async def create_task(task: Task):
-    
+async def create_task(task: Task, token: str = Depends(oauth2_scheme)):
+    verify_token(token)
     
     title = task.title
     assignee_ids = task.assignee_ids
     description = task.description
     deadline = task.deadline
+    creator_id = task.creator_id
     progress = "Not Started"
     initial_time = str(datetime.now().date())
     
@@ -61,11 +63,11 @@ async def create_task(task: Task):
     
     # Insert the new task.
     insert_task_sql = """
-        INSERT INTO tasks (title, deadline, description, initial_date, progress)
-        VALUES (%s, %s, %s, %s, %s)
+        INSERT INTO tasks (title, creator_id, deadline, description, initial_date, progress)
+        VALUES (%s, %s, %s, %s, %s, %s)
         RETURNING id
     """
-    cur.execute(insert_task_sql, (title, deadline, description, initial_time, progress))
+    cur.execute(insert_task_sql, (title, creator_id, deadline, description, initial_time, progress))
     
     task_id = cur.fetchone()[0]
     
@@ -87,8 +89,9 @@ async def create_task(task: Task):
 
 @app.post("/edit_task")
 async def edit_task(
-    edit: Edit_Task 
+    edit: Edit_Task, token: str = Depends(oauth2_scheme)
 ):  
+    verify_token(token)
     request = []
     task_id = edit.task_id
     assignee_ids = edit.assignee_ids

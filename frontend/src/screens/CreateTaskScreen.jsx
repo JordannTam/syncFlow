@@ -26,19 +26,20 @@ const CreateTaskScreen = () => {
     const handleSubmit = async () => {
         const object = {
             title,
+            creator_id : 2,
             assignee_ids : assignee,
             description,
             deadline,
           }
           try {
             console.log(object)
-            const data = await apiCall('/task', object, 'POST', token);
+            const data = await apiCall('/task', object, 'POST', `bearer ${token}`, );
             navigate('/home')
             // object.id = data.id
             object.id = 5 // DELETE after backend implemented
             dispatch(addTask(object))
           } catch (err) {
-            console.log(err);
+            console.error(err);
           }
     }
 
@@ -47,7 +48,7 @@ const CreateTaskScreen = () => {
         const tasks = await apiCall('/tasks', undefined, 'GET', token);
         dispatch(setTasks(tasks))
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
 
     }
