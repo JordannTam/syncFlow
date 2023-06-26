@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Form
 from typing import Annotated
-from typing import Optional, List
+from typing import List, Union
 from pydantic import BaseModel
 from utility import get_db_conn
 import routers.taskmasters
@@ -8,21 +8,20 @@ from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
 from datetime import datetime
 
-
 class Task(BaseModel):
     title: str
+    creator_id: int
     assignee_ids: List[int]
-    description: Optional[str] = None
-    deadline: Optional[str] = None
-    
+    description: Union[str, None] 
+    deadline: Union[str, None]
 
 class Edit_Task(BaseModel):
     task_id: int
-    progress: Optional[str] = None
-    assignee_ids: Optional[List[int]] = None
-    unassignee_ids: Optional[List[int]] = None
-    title: Optional[str] = None
-    description: Optional[str] = None
+    progress: Union[str, None]
+    assignee_ids: Union[List[int], None]
+    unassignee_ids: Union[List[int], None]
+    title: Union[str, None]
+    description: Union[str, None]
     
 
 origins = [
@@ -46,8 +45,10 @@ middleware = [
 app = FastAPI(middleware=middleware)
 app.include_router(routers.taskmasters.router)
 
-@app.post("/create_task")
+@app.post("/task")
 async def create_task(task: Task):
+    
+    
     title = task.title
     assignee_ids = task.assignee_ids
     description = task.description

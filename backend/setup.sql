@@ -9,11 +9,13 @@ CREATE table profiles (
 
 CREATE TABLE tasks (
     id SERIAL PRIMARY KEY,
+    creator_id INTEGER NOT NULL,
     title TEXT NOT NULL,
     deadline DATE,
     initial_date DATE,
     progress TEXT NOT NULL,
-    description TEXT
+    description TEXT,
+    FOREIGN Key (creator_id) REFERENCES profiles(id) ON DELETE CASCADE
 );
 
 CREATE TABLE task_assignees (

@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { apiCall } from '../utils/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTask, setTasks } from '../actions';
+import Cookies from 'js-cookie';
 
 const CreateTaskScreen = () => {
     const [title, setTitle] = useState("")
@@ -18,19 +19,21 @@ const CreateTaskScreen = () => {
     const [assignee, setAssignee] = useState([])
     const dispatch = useDispatch()
     const tasks = useSelector(state => state.taskReducer)
+    const token = Cookies.get('loginToken');
 
     const navigate = useNavigate()
 
     const handleSubmit = async () => {
         const object = {
             title,
-            assignee,
+            assignee_ids : assignee,
             description,
             deadline,
           }
           try {
-            // const data = await apiCall('/task', object, 'POST', undefined);
-            // navigate('/home')
+            console.log(object)
+            const data = await apiCall('/task', object, 'POST', token);
+            navigate('/home')
             // object.id = data.id
             object.id = 5 // DELETE after backend implemented
             dispatch(addTask(object))
@@ -41,8 +44,8 @@ const CreateTaskScreen = () => {
 
     const handleFetchTasks = async () => {
       try {
-        // const tasks = await apiCall('/task', object, 'GET', undefined);
-        // dispatch(setTasks(tasks))
+        const tasks = await apiCall('/tasks', undefined, 'GET', token);
+        dispatch(setTasks(tasks))
       } catch (err) {
         console.log(err);
       }
@@ -50,7 +53,7 @@ const CreateTaskScreen = () => {
     }
 
     useEffect(() => {
-        handleFetchTasks()
+        // handleFetchTasks()
     }, [])
   return (
     <>
