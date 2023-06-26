@@ -135,6 +135,7 @@ def get_profile(profile_id: str):
     first_name, last_name, email_address, date_of_birth = profile
 
     profile_dict = {
+        'profile_id': profile_id,
         'first_name': first_name,
         'last_name': last_name,
         'email': email_address,
@@ -144,6 +145,7 @@ def get_profile(profile_id: str):
     return profile_dict
 
 class UserProfile(BaseModel):
+    profile_id: int
     first_name: str
     last_name: str
     email: str
