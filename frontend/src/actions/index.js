@@ -20,15 +20,15 @@ export const editTask = (object) => {
         description: object.description,
         deadline: object.deadline,
         assignee: object.assignee,
-        state: object.state,
+        progress: object.progress,
     };
 };
 
-export const changeTaskState = (id, state) => {
+export const changeTaskState = (id, progress) => {
     return {
         type: "CHANGE_TASK_STATE",
         id,
-        state,
+        progress,
     };
 };
 

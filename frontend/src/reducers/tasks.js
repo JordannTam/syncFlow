@@ -22,7 +22,7 @@ const task = (state, action) => {
                 description: action.description,
                 deadline: action.deadline,
                 assignee: action.assignee,
-                state: "Not Started",
+                progress: "Not Started",
             };
         case "CHANGE_TASK_STATE":
             if (state.id !== action.id) {
@@ -30,7 +30,7 @@ const task = (state, action) => {
             }
             return {
                 ...state,
-                state: action.state,
+                progress: action.progress,
             };
         case "EDIT_TASK":
             if (state.id !== action.id) {
@@ -41,7 +41,7 @@ const task = (state, action) => {
                 description: action.description,
                 deadline: action.deadline,
                 assignee: action.assignee,
-                state: action.state,
+                progress: action.progress,
             };
         default:
             return state;

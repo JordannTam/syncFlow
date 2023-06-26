@@ -23,8 +23,8 @@ export default function SignupScreen () {
     const object = {
     email,
     password,
-    first_name: first_name,
-    last_name: last_name,
+    first_name,
+    last_name,
     }
     try {
       const res = await apiCall('/register', object, 'POST', undefined);

@@ -184,7 +184,7 @@ export default function ColumnTypesGrid(props) {
     () => [
         { field: 'id', headerName: 'ID', width: 200, sortable: false},
         { field: 'assignee', headerName: 'Assignee', width: 200, renderCell:params=><Avatar src={params.row.photoURL} />, sortable: false},
-        { field: 'task', headerName: 'Task Name', width: 200, sortable: false},
+        { field: 'title', headerName: 'Task Name', width: 200, sortable: false},
         {
           field: 'deadline',
           headerName: 'Deadline',
