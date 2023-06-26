@@ -9,8 +9,10 @@ CREATE table profiles (
 
 CREATE TABLE tasks (
     id SERIAL PRIMARY KEY,
-    title TExt NOT NULL,
+    title TEXT NOT NULL,
     deadline DATE,
+    initial_date DATE,
+    progress TEXT NOT NULL,
     description TEXT
 );
 
