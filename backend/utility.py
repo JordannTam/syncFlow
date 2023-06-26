@@ -23,9 +23,9 @@ def get_db_conn():
 def verify_token(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        profile_id: str = payload.get("sub")
-        if profile_id is None:
+        id: str = payload.get("sub")
+        if id is None:
             raise HTTPException(status_code=401)
-        return profile_id
+        return id
     except JWTError:
         raise HTTPException(status_code=401)
