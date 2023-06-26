@@ -69,13 +69,12 @@ async def create_task(task: Task, token: str = Depends(oauth2_scheme)):
     
     task_id = cur.fetchone()[0]
     
-    # Insert the assignees for the new task.
+    # Insert the creator for the new task.
     insert_assignees_sql = """
         INSERT INTO task_assignees (task_id, profile_id)
         VALUES (%s, %s)
     """
-    for assignee_id in assignee_ids:
-        cur.execute(insert_assignees_sql, (task_id, assignee_id))
+    cur.execute(insert_assignees_sql, (task_id, creator_id))
 
     conn.commit()
     
