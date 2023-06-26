@@ -31,7 +31,7 @@ const LoginScreen = () => {
       // dispatch(login())
       navigate('/home')
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }
 
