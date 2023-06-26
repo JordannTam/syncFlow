@@ -26,7 +26,6 @@ const CreateTaskScreen = () => {
     const handleSubmit = async () => {
         const object = {
             title,
-            creator_id : 2,
             assignee_ids : assignee,
             description,
             deadline,

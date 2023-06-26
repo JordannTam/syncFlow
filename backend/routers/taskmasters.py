@@ -15,10 +15,10 @@ class RegisterProfile(BaseModel):
     first_name: str
     last_name: str
     password: str
+    dob: str
 
 @router.post("/register")
 async def register(user: RegisterProfile):
-    print(user.email, user.first_name, user.last_name, user.password)
     conn = get_db_conn()
     cur = conn.cursor()
 
@@ -28,8 +28,8 @@ async def register(user: RegisterProfile):
 
     password_hash = get_password_hash(user.password)
 
-    cur.execute(f"INSERT INTO profiles (email_address, first_name, last_name, password_hash) \
-                VALUES ('{user.email}', '{user.first_name}', '{user.last_name}', '{password_hash}')")
+    cur.execute("INSERT INTO profiles (email_address, first_name, last_name, date_of_birth, password_hash) \
+                VALUES (%s, %s, %s, %s, %s)", (user.email, user.first_name, user.last_name, user.dob, password_hash))
     conn.commit()
     cur.close()
     conn.close()

@@ -11,7 +11,6 @@ from utility import oauth2_scheme, verify_token
 
 class Task(BaseModel):
     title: str
-    creator_id: int
     assignee_ids: List[int]
     description: Union[str, None] 
     deadline: Union[str, None]
@@ -48,13 +47,12 @@ app.include_router(routers.taskmasters.router)
 
 @app.post("/task")
 async def create_task(task: Task, token: str = Depends(oauth2_scheme)):
-    verify_token(token)
+    creator_id = verify_token(token)
     
     title = task.title
     assignee_ids = task.assignee_ids
     description = task.description
     deadline = task.deadline
-    creator_id = task.creator_id
     progress = "Not Started"
     initial_time = str(datetime.now().date())
     
