@@ -104,4 +104,25 @@ async def assign_task(
     
     cur.close()
     conn.close()
-    return {"detail": "Task assigned successfully"}
+    return {"detail": "Task assigned successfully",
+            "task_id": task_id}
+
+@app.get("/tasks")
+def get_tasks(profile_id: Annotated[str, Form(...)]):
+    
+    conn = get_db_conn()
+    cur = conn.cursor()
+    
+    select_task_list = """
+    SELECT tasks.id, tasks.title FROM tasks
+        JOIN task_assignees ON tasks.id = task_assignees.task_id
+        JOIN profiles ON task_assignees.profile_id = profiles.id
+    WHERE profiles.id = %s;
+    """
+    cur.execute(select_task_list, (profile_id,))
+    tasks = cur.fetchall()
+    
+    cur.close()
+    conn.close()
+    
+    return tasks
