@@ -158,7 +158,7 @@ def get_tasks(token: str = Depends(oauth2_scheme)):
     cur = conn.cursor()
     
     select_task_list = """
-    SELECT tasks.id as task_id, tasks.title, tasks.description, tasks.deadline
+    SELECT tasks.id as task_id, tasks.title, tasks.description, tasks.deadline, tasks.progress
     FROM tasks               
         JOIN task_assignees ON tasks.id = task_assignees.task_id
         JOIN profiles ON task_assignees.profile_id = profiles.id
