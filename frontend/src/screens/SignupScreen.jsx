@@ -4,8 +4,7 @@ import { Alert, Box, Divider, TextField } from '@mui/material';
 import PageContainer from '../components/PageContainer';
 import { apiCall } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
-import { ColumnBox } from '../components/FlexBox'
-import Cookies from 'js-cookie';
+import { ColumnBox } from '../components/FlexBox';
 
 export default function SignupScreen () {
   const [email, setEmail] = React.useState('');
