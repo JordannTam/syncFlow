@@ -16,6 +16,7 @@ export default function LogoutButton(props) {
       // const res = await apiCall('/logout', {}, 'POST', undefined);
       // dispatch(logout())
       Cookies.remove('loginToken');
+      console.log("LOGGING OUT")
       navigate('/login')
     } catch (err) {
       console.log(err);

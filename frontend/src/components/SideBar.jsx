@@ -137,18 +137,6 @@ export default function MiniDrawer() {
     setOpen(false);
   };
 
-  const handleLogout = async () => {
-    try {
-      // const res = await apiCall('/logout', {}, 'POST', undefined);
-      // dispatch(logout())
-      localStorage.removeItem('access_token')
-      console.log("LOGGING OUT")
-      navigate('/login')
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
