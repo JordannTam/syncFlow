@@ -135,7 +135,7 @@ export default function ColumnTypesGrid(props) {
 
   React.useEffect(() => {
     setLoading(true)
-    dispatch(setTasks(initialRows))
+    // dispatch(setTasks(initialRows))
     setLoading(false)
   },[])
 
