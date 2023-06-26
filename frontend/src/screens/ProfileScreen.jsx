@@ -33,7 +33,7 @@ const [profile, setProfile] = useState({
 
     try {
       // dispatch(setProfile(profile))
-      const profile_data = await apiCall('/profile', {}, 'GET', `${token}`);
+      const profile_data = await apiCall('/profile', {}, 'GET', `bearer ${token}`);
       console.log("User profile: ", profile_data);
       setProfile(profile_data)
     } catch (err) {
