@@ -168,6 +168,12 @@ def get_tasks(token: str = Depends(oauth2_scheme)):
     cur.execute(select_task_list, (user_id,))
     tasks = cur.fetchall()
     
+    # Get column names
+    column_names = [desc[0] for desc in cur.description]
+    
+    # Convert to list of dictionaries
+    tasks = [dict(zip(column_names, task)) for task in tasks]
+    
     cur.close()
     conn.close()
     
