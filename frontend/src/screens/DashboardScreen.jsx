@@ -18,7 +18,7 @@ const DashboardScreen = () => {
       // const tasks = await apiCall('/task', object, 'GET', undefined); //Uncomment
       // dispatch(setTasks(tasks)) //Uncomment
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }
 
