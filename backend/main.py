@@ -76,6 +76,10 @@ async def create_task(task: Task, token: str = Depends(oauth2_scheme)):
     """
     cur.execute(insert_assignees_sql, (task_id, creator_id))
 
+    if assignee_ids is not None:
+        for assignee_id in assignee_ids:
+            cur.execute(insert_assignees_sql, (task_id, assignee_id))
+            
     conn.commit()
     
     cur.close()
