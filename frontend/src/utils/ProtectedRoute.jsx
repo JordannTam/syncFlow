@@ -13,7 +13,8 @@ const ProtectedRoute = () => {
     setIsLoggedIn(!!token);
   }, []);
 
-  return !isLoggedIn ? <Navigate to="/login" replace /> : <><SideBar/><Outlet /></>;
+  // return !isLoggedIn ? <Navigate to="/login" replace /> : <><SideBar/><Outlet /></>;
+  return <SideBar/>
 };
 
 export default ProtectedRoute;
