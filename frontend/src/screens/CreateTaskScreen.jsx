@@ -79,9 +79,6 @@ const CreateTaskScreen = () => {
                 <Button variant='contained' onClick={() => handleSubmit()}>Create Task</Button>
                 <Button variant='contained' onClick={() => dispatch(setTasks([{id: 5, string: 'abc'}, {id: 4, string: 'def'}]))}>Set Task</Button>
             </RowBox>
-            <Box>
-              {tasks.map((ob, index) => <div key={index}>id = {ob.id}, string = {ob.string}</div>)}
-            </Box>
         </ColumnBox>
       </PageContainer>
     </>
