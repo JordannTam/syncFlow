@@ -23,13 +23,6 @@ const themeAB = createTheme({
   },
 });
 
-const LogoImage = styled('img')({
-  margin: 0,
-  maxWidth: '20%',
-  maxHeight: '100%',
-});
-
-
 function Navbar () {
   const navigate = useNavigate();
   return (
@@ -39,7 +32,7 @@ function Navbar () {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1, pt: 1.5 }}>
               <Box component='img' sx={{
                 height: '40px',
-                width: '150px',
+                width: '143px',
               }}
               src={require(`../assets/images/Syncflow.png`)} />
             </Typography>

@@ -4,8 +4,7 @@ import { Alert, Box, Divider, TextField } from '@mui/material';
 import PageContainer from '../components/PageContainer';
 import { apiCall } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
-import { ColumnBox } from '../components/FlexBox'
-import Cookies from 'js-cookie';
+import { ColumnBox } from '../components/FlexBox';
 
 export default function SignupScreen () {
   const [email, setEmail] = React.useState('');
@@ -20,18 +19,11 @@ export default function SignupScreen () {
 
   const signupAPI = async () => {
     const object = {
-<<<<<<< HEAD
-    email,
-    password,
-    first_name,
-    last_name,
-=======
       email,
       password,
       first_name,
       last_name,
       dob,
->>>>>>> 813f05e1dce83f6f31de6b2a7257dff1420f4c6e
     }
     try {
       await apiCall('/register', object, 'POST', undefined);
