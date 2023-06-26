@@ -21,7 +21,7 @@ const task = (state, action) => {
                 title: action.title,
                 description: action.description,
                 deadline: action.deadline,
-                assignee: action.assignee,
+                assignees: action.assignees,
                 progress: "Not Started",
             };
         case "CHANGE_TASK_STATE":
@@ -40,7 +40,7 @@ const task = (state, action) => {
                 title: action.title,
                 description: action.description,
                 deadline: action.deadline,
-                assignee: action.assignee,
+                assignees: action.assignees,
                 progress: action.progress,
             };
         default:

@@ -15,19 +15,6 @@ import { changeTaskState, setTasks } from '../actions';
 import { useNavigate } from 'react-router-dom';
 
 
-const initialRows = [
-  { task_id: 1, description: "ABC",  title: 'Snow', assignee: [2], deadline: '10/10/2016', progress: 'Completed' },
-  { task_id: 2, description: "ABC",  title: 'Lannister', assignee: [5], deadline: '10/10/2012', progress: 'In Progress' },
-  { task_id: 3, description: "ABC",  title: 'Lannister', assignee: [4], deadline: '10/10/2016', progress: 'In Progress' },
-  { task_id: 4, description: "ABC",  title: 'Stark', assignee: [3], deadline: '10/10/2016', progress: 'In Progress' },
-  { task_id: 5, description: "ABC",  title: 'Targaryen', assignee: [1], deadline: '10/10/2016', progress: 'Not Started' },
-  { task_id: 6, description: "ABC",  title: 'Melisandre', assignee: null, deadline: '10/10/2016', progress: 'Not Started' },
-  { task_id: 7, description: "ABC",  title: 'Clifford', assignee: [7, 8], deadline: '10/10/2016', progress: 'Not Started' },
-  { task_id: 8, description: "ABC",  title: 'Frances', assignee: [4], deadline: null , progress: 'Blocked' },
-  { task_id: 9, description: "ABC",  title: 'Roxie', assignee: [2], deadline: null, progress: 'Blocked' },
-  { task_id: 10, description: "ABC",  title: 'Roxie', assignee: [1], deadline: null, progress: 'Blocked' },
-];
-
 export default function TaskList(props) {
   const [rows, setRows] = React.useState(initialRows);
   const [loading, setLoading] = React.useState(false)

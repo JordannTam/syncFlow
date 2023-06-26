@@ -15,7 +15,7 @@ const TaskScreen = () => {
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
     const [deadline, setDeadline] = useState("")
-    const [assignee, setAssignee] = useState([])
+    const [assignees, setAssignees] = useState([])
     const dispatch = useDispatch()
     const tasks = useSelector(state => state.taskReducer)
     const params = useParams()
@@ -51,7 +51,7 @@ const TaskScreen = () => {
             <Typography variant="h5" component="h5" marginBottom="15px">
                 Assignees: {}
             </Typography>
-            {targetTask.assignee.map((name, index) => (
+            {targetTask.assignees.map((name, index) => (
             <Typography key={index} variant="h5" component="h5" marginBottom="15px">
                 {name}
             </Typography>))}
