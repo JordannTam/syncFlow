@@ -19,7 +19,7 @@ const TaskScreen = () => {
     const dispatch = useDispatch()
     const tasks = useSelector(state => state.taskReducer)
     const params = useParams()
-    let targetTask = tasks.find((a) => a.id === parseInt(params.id))
+    let targetTask = tasks.find((a) => a.task_id === parseInt(params.id))
 
     const navigate = useNavigate()
 
