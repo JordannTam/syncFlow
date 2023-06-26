@@ -224,12 +224,13 @@ export default function TaskList(props) {
       columns={columns} 
       rows={tasks} 
       getRowId={(row)=> row.task_id}
+      pageSizeOptions={[5, 10]}
       initialState={{
           pagination: {
             paginationModel: { page: 0, pageSize: props.rowNums },
           },
         }}
-      onRowClick={(params) => handleRowClick(params.id)}
+        onRowClick={(params) => handleRowClick(params.id)}
         />
       
     </div>
