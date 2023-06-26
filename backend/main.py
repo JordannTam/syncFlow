@@ -153,8 +153,8 @@ async def edit_task(
     return {"detail": "Task updated successfully"}
 
 @app.get("/tasks")
-def get_tasks(profile_id: str):
-    
+def get_tasks(token: str = Depends(oauth2_scheme)):
+    user_id = verify_token(token)
     conn = get_db_conn()
     cur = conn.cursor()
     
@@ -166,7 +166,7 @@ def get_tasks(profile_id: str):
     WHERE profiles.id = %s
     ORDER BY tasks.deadline;
     """
-    cur.execute(select_task_list, (profile_id,))
+    cur.execute(select_task_list, (user_id,))
     tasks = cur.fetchall()
     
     cur.close()
