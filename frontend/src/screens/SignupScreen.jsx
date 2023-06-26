@@ -11,24 +11,24 @@ export default function SignupScreen () {
   // const { setters } = useContext(Context);
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const [name, setName] = React.useState('');
+  const [first_name, setFirstName] = React.useState('');
+  const [last_name, setLastName] = React.useState('');
   const [hasError, setHasError] = React.useState(false);
   const [error, setError] = React.useState('');
 
   const navigate = useNavigate();
 
   const signupAPI = async () => {
-    const [firstName, lastName] = name.split(' ');  // split the name into first and last name
     const object = {
     email,
     password,
-    first_name: firstName,
-    last_name: lastName,
+    first_name: first_name,
+    last_name: last_name,
     }
     try {
       const data = await apiCall('/register', object, 'POST', undefined);
       // dispatch(login())
-      navigate('/home')
+      navigate('/login')
     } catch (err) {
       console.log(err);
     }
@@ -40,7 +40,8 @@ export default function SignupScreen () {
         <Box margin={'-10px auto 0'}>
           <h2>Register</h2>
         </Box>
-        <TextField helperText="Must be between 1 and 50 characters long" label="Name" variant="outlined" value={name} onChange={(e) => setName(e.target.value)} />
+        <TextField helperText="Must be between 1 and 50 characters long" label="First Name" variant="outlined" value={first_name} onChange={(e) => setFirstName(e.target.value)} />
+        <TextField helperText="Must be between 1 and 50 characters long" label="Last Name" variant="outlined" value={last_name} onChange={(e) => setLastName(e.target.value)} />
         <TextField error={ hasError } helperText="Please enter a valid email" label="Email" variant="outlined" value={email} onChange={(e) => setEmail(e.target.value)} />
         <TextField helperText='Must be between 8 and 32 characters long' label="Password" type='password' variant="outlined" value={password} onChange={(e) => setPassword(e.target.value)} />
         { hasError && <Alert severity="error" onClose={() => { setHasError(false) }}>{error}</Alert> }

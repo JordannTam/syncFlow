@@ -13,15 +13,16 @@ const LoginScreen = () => {
   const [hasError, setHasError] = React.useState(false);
   const [error, setError] = React.useState('');
   const navigate = useNavigate();
-  const dispatch = useDispatch()
-
+  // const dispatch = useDispatch()
+// 
   const login = async () => {
     const object = {
       email,
-      password,
+      password
     }
     try {
-      const res = await apiCall('/login', object, 'POST', undefined);
+      const res = await apiCall('/token', object, 'POST', undefined);
+      localStorage.setItem('access_token', res.access_token)
       // dispatch(login())
       navigate('/home')
     } catch (err) {

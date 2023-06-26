@@ -26,6 +26,7 @@ import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { ColumnBox, RowBox } from './FlexBox';
 import { createTheme } from '@mui/material/styles';
 import { apiCall } from '../utils/api';
+import { useNavigate } from 'react-router-dom';
 
 const themeAB = createTheme({
   status: {
@@ -110,15 +111,6 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-const handleLogout = async () => {
-  try {
-    // const res = await apiCall('/logout', {}, 'POST', undefined);
-    // dispatch(logout())
-    navigate('/login')
-  } catch (err) {
-    console.log(err);
-  }
-};
 
 const menuItems = [
   { text: 'Home', link: '/', icon: <HomeIcon /> },
@@ -128,8 +120,10 @@ const menuItems = [
 ];
 
 export default function MiniDrawer() {
+  const navigate = useNavigate();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -137,6 +131,18 @@ export default function MiniDrawer() {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const handleLogout = async () => {
+    try {
+      // const res = await apiCall('/logout', {}, 'POST', undefined);
+      // dispatch(logout())
+      localStorage.removeItem('access_token')
+      console.log("LOGGING OUT")
+      navigate('/login')
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
