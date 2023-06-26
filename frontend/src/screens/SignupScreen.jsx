@@ -5,6 +5,7 @@ import PageContainer from '../components/PageContainer';
 import { apiCall } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 import { ColumnBox } from '../components/FlexBox'
+import Cookies from 'js-cookie';
 // import { Context, useContext } from '../../../context';
 
 export default function SignupScreen () {
@@ -26,9 +27,16 @@ export default function SignupScreen () {
     last_name: lastName,
     }
     try {
-      const data = await apiCall('/register', object, 'POST', undefined);
+      const res = await apiCall('/register', object, 'POST', undefined);
+      const token = res.data.token;
+      // Calculate the expiry date 2 minutes from the current time
+      const expiryDate = new Date();
+      expiryDate.setTime(expiryDate.getTime() + 2 * 60 * 1000);
+      Cookies.set('loginToken', token, { expires: expiryDate });
       // dispatch(login())
       navigate('/home')
+
+      // navigate('/login')
     } catch (err) {
       console.log(err);
     }

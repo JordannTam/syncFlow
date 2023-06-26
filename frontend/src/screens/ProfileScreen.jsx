@@ -4,15 +4,17 @@ import PageContainer from '../components/PageContainer'
 import TaskList from '../components/TaskList';
 import { Box, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
+import Cookies from 'js-cookie';
 
 const ProfileScreen = () => {
   const dispatch = useDispatch()
   const tasks = useSelector(state => state.taskReducer)
   const profile = useSelector(state => state.taskReducer)
+  const token = Cookies.get('loginToken');
 
   const handleFetchTasks = async () => {
     try {
-      // const tasks = await apiCall('/task', object, 'GET', undefined);
+      // const tasks = await apiCall('/task', object, 'GET', token);
       // dispatch(setTasks(tasks))
     } catch (err) {
       console.log(err);
@@ -20,7 +22,7 @@ const ProfileScreen = () => {
   }
   const handleFetchProfile = async () => {
     try {
-      // const profile = await apiCall('/profile', object, 'GET', undefined);
+      // const profile = await apiCall('/profile', object, 'GET', token);
       // dispatch(setProfile(profile))
     } catch (err) {
       console.log(err);
@@ -54,10 +56,10 @@ const ProfileScreen = () => {
           Username: {profile.name}
         </Typography>
         <Typography variant="h6" component="h2">
-          Email: email@gmail.com
+          Email: {profile.email}
         </Typography>
         <Typography variant="h6" component="h2" marginBottom="20px">
-          Date of Birth: 06/06/2001
+          Date of Birth: {profile.dob}
         </Typography>
         <TaskList tasks={tasks} rowNums={5} height='400'/>
       </PageContainer>

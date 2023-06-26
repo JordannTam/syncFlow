@@ -20,12 +20,12 @@ import HomeIcon from '@mui/icons-material/Home';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import GroupsIcon from '@mui/icons-material/Groups';
 import EventNoteIcon from '@mui/icons-material/EventNote';
-import LogoutIcon from '@mui/icons-material/Logout';
 import { Outlet } from 'react-router-dom';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import { ColumnBox, RowBox } from './FlexBox';
 import { createTheme } from '@mui/material/styles';
 import { apiCall } from '../utils/api';
+import LogoutButton from './LogoutButton';
 
 const themeAB = createTheme({
   status: {
@@ -110,15 +110,11 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-const handleLogout = async () => {
-  try {
-    // const res = await apiCall('/logout', {}, 'POST', undefined);
-    // dispatch(logout())
-    navigate('/login')
-  } catch (err) {
-    console.log(err);
-  }
-};
+const LogoImage = styled('img')({
+  margin: 0,
+  maxWidth: '80%',
+  maxHeight: '100%',
+});
 
 const menuItems = [
   { text: 'Home', link: '/', icon: <HomeIcon /> },
@@ -129,6 +125,7 @@ const menuItems = [
 
 export default function MiniDrawer() {
   const theme = useTheme();
+  const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
 
   const handleDrawerOpen = () => {
@@ -163,65 +160,42 @@ export default function MiniDrawer() {
       </AppBar>
       <Drawer variant="permanent" open={open} >
         <DrawerHeader>
+          <LogoImage src={require(`../assets/images/Syncflow.png`)} alt="SyncFlow logo" sx={{ opacity: open ? 1 : 0 }} />
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </IconButton>
         </DrawerHeader>
         <Divider />
         <Box height='100%' display='flex' flexDirection='column' justifyContent='space-between'>
-        <List>
-          {menuItems.map((item, index) => (
-            <ListItem key={index} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-                component={RouterLink}
-                to={item.link}
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
+          <List>
+            {menuItems.map((item, index) => (
+              <ListItem key={index} disablePadding sx={{ display: 'block' }}>
+                <ListItemButton
+                  component={RouterLink}
+                  to={item.link}
                   sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
+                    minHeight: 48,
+                    justifyContent: open ? 'initial' : 'center',
+                    px: 2.5,
                   }}
                 >
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : 'auto',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
         <Box>
-
         <Divider />
-        <List>
-          <ListItem key='logout' disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-                component={RouterLink}
-                onClick={handleLogout}
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <LogoutIcon />
-                </ListItemIcon>
-                <ListItemText primary='Log out' sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-        </List>
+          <LogoutButton open={open}/>
         </Box>
 
         </Box>

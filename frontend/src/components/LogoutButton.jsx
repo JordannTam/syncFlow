@@ -3,44 +3,46 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
-const RowBox = styled(FlexBox)(
-  {
-    flexDirection: 'row'
-  }
-)
+export default function LogoutButton(props) {
+  const { open } = props;
+  const navigate = useNavigate();
 
-export const ColumnBox = styled(FlexBox)(
-  {
-    flexDirection: 'column'
-  }
-)
-
-export default function LogoutButton() {
+  const handleLogout = async () => {
+    try {
+      // const res = await apiCall('/logout', {}, 'POST', undefined);
+      // dispatch(logout())
+      Cookies.remove('loginToken');
+      navigate('/login')
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  
   return (
-    <List>
-        <ListItem key='logout' disablePadding sx={{ display: 'block' }}>
-            <ListItemButton
-            component={RouterLink}
-            oncl
-            sx={{
-                minHeight: 48,
-                justifyContent: open ? 'initial' : 'center',
-                px: 2.5,
-            }}
-            >
-            <ListItemIcon
-                sx={{
-                minWidth: 0,
-                mr: open ? 3 : 'auto',
-                justifyContent: 'center',
-                }}
-            >
-                <LogoutIcon />
-            </ListItemIcon>
-            <ListItemText primary='Log out' sx={{ opacity: open ? 1 : 0 }} />
-            </ListItemButton>
-        </ListItem>
-    </List>
+    <ListItem key='logout' disablePadding sx={{ display: 'block' }}>
+      <ListItemButton
+        onClick={handleLogout}
+        sx={{
+          minHeight: 48,
+          justifyContent: open ? 'initial' : 'center',
+          px: 2.5,
+        }}
+      >
+        <ListItemIcon
+          sx={{
+            minWidth: 0,
+            mr: open ? 3 : 'auto',
+            justifyContent: 'center',
+          }}
+        >
+          <LogoutIcon />
+        </ListItemIcon>
+        <ListItemText primary='Log out' sx={{ opacity: open ? 1 : 0 }} />
+      </ListItemButton>
+    </ListItem>
   )
 }

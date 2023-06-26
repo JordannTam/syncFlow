@@ -6,6 +6,7 @@ import PageContainer from '../components/PageContainer';
 import { useNavigate } from 'react-router-dom';
 import { apiCall } from '../utils/api';
 import { useDispatch } from 'react-redux';
+import Cookies from 'js-cookie';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('')
@@ -22,13 +23,17 @@ const LoginScreen = () => {
     }
     try {
       const res = await apiCall('/login', object, 'POST', undefined);
+      const token = res.data.token;
+      // Calculate the expiry date 2 minutes from the current time
+      const expiryDate = new Date();
+      expiryDate.setTime(expiryDate.getTime() + 2 * 60 * 1000);
+      Cookies.set('loginToken', token, { expires: expiryDate });
       // dispatch(login())
       navigate('/home')
     } catch (err) {
       console.log(err);
     }
   }
-
 
   return (
       <PageContainer marginTop='160px' maxWidth='xs' >
