@@ -108,16 +108,18 @@ async def assign_task(
             "task_id": task_id}
 
 @app.get("/tasks")
-def get_tasks(profile_id: Annotated[str, Form(...)]):
+def get_tasks(profile_id: str):
     
     conn = get_db_conn()
     cur = conn.cursor()
     
     select_task_list = """
-    SELECT tasks.id, tasks.title FROM tasks
+    SELECT tasks.id as task_id, tasks.title, tasks.deadline
+    FROM tasks               
         JOIN task_assignees ON tasks.id = task_assignees.task_id
         JOIN profiles ON task_assignees.profile_id = profiles.id
-    WHERE profiles.id = %s;
+    WHERE profiles.id = %s
+    ORDER BY tasks.deadline;
     """
     cur.execute(select_task_list, (profile_id,))
     tasks = cur.fetchall()
