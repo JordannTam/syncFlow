@@ -27,12 +27,7 @@ export default function SignupScreen () {
     last_name: last_name,
     }
     try {
-      const res = await apiCall('/register', object, 'POST', undefined);
-      const token = res.data.token;
-      // Calculate the expiry date 2 minutes from the current time
-      const expiryDate = new Date();
-      expiryDate.setTime(expiryDate.getTime() + 2 * 60 * 1000);
-      Cookies.set('loginToken', token, { expires: expiryDate });
+      await apiCall('/register', object, 'POST', undefined);
       navigate('/login')
     } catch (err) {
       console.log(err);
