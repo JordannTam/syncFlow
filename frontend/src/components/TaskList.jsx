@@ -16,7 +16,6 @@ import { useNavigate } from 'react-router-dom';
 
 
 export default function TaskList(props) {
-  const [rows, setRows] = React.useState(initialRows);
   const [loading, setLoading] = React.useState(false)
   const tasks = useSelector(state=>state.taskReducer)
   const dispatch = useDispatch()
@@ -53,7 +52,6 @@ export default function TaskList(props) {
   );
   const handleInProgress = React.useCallback(
     (id) => () => {
-      console.log(id);
       dispatch(changeTaskState(id, 'In Progress'))
     },
     [],
@@ -75,16 +73,6 @@ export default function TaskList(props) {
     console.log("TEST");
     navigate('/task/' + id )
   }
-
-  const duplicateUser = React.useCallback(
-    (id) => () => {
-      setRows((prevRows) => {
-        const rowToDuplicate = prevRows.find((row) => row.id === id);
-        return [...prevRows, { ...rowToDuplicate, id: Date.now() }];
-      });
-    },
-    [],
-  );
 
   const columns = React.useMemo(
     () => [
@@ -131,7 +119,7 @@ export default function TaskList(props) {
               return (
                 <AutorenewIcon 
                   color={
-                    task && task.progress === 'In progress' 
+                    task && task.progress === 'In Progress' 
                     ? 'primary' 
                     : 'disabled'
                   } 
