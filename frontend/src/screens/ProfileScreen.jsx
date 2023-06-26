@@ -11,14 +11,7 @@ const ProfileScreen = () => {
   const dispatch = useDispatch()
   const tasks = useSelector(state => state.taskReducer)
   const token = Cookies.get('loginToken');
-  // const profile = useSelector(state => state.taskReducer)
-
-const [profile, setProfile] = useState({
-        first_name: '',
-        last_name: '',
-        email: '',
-        date_of_birth: ''
-    });
+  const profile = useSelector(state => state.profileReducer)
 
   const handleFetchTasks = async () => {
     try {
@@ -28,22 +21,19 @@ const [profile, setProfile] = useState({
       console.error(err);
     }
   }
-  const handleFetchProfile = async () => {
-    // const token = localStorage.getItem('access_token');
-
-    try {
-      // dispatch(setProfile(profile))
-      const profile_data = await apiCall('/profile', {}, 'GET', `bearer ${token}`);
-      console.log("User profile: ", profile_data);
-      setProfile(profile_data)
-    } catch (err) {
-      console.error(err);
-    }
-  }
+  // const handleFetchProfile = async () => {
+  //   try {
+  //     // dispatch(setProfile(profile))
+  //     const profile_data = await apiCall('/profile', {}, 'GET', `bearer ${token}`);
+  //     console.log("User profile: ", profile_data);
+  //     setProfile(profile_data)
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // }
 
   useEffect(() => {
       handleFetchTasks()
-      handleFetchProfile()
   }, [])
 
   return (
