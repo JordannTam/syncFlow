@@ -39,7 +39,7 @@ const CreateTaskScreen = () => {
             object.id = 5 // DELETE after backend implemented
             dispatch(addTask(object))
           } catch (err) {
-            console.log(err);
+            console.error(err);
           }
     }
 
@@ -48,7 +48,7 @@ const CreateTaskScreen = () => {
         const tasks = await apiCall('/tasks', undefined, 'GET', token);
         dispatch(setTasks(tasks))
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
 
     }

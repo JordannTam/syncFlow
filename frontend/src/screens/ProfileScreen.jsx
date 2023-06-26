@@ -25,7 +25,7 @@ const [profile, setProfile] = useState({
       // const tasks = await apiCall('/task', object, 'GET', token);
       // dispatch(setTasks(tasks))
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }
   const handleFetchProfile = async () => {
@@ -37,7 +37,7 @@ const [profile, setProfile] = useState({
       console.log("User profile: ", profile_data);
       setProfile(profile_data)
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }
 

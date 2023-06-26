@@ -19,7 +19,7 @@ export default function LogoutButton(props) {
       console.log("LOGGING OUT")
       navigate('/login')
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
   
