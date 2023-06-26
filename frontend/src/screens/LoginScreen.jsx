@@ -14,16 +14,16 @@ const LoginScreen = () => {
   const [hasError, setHasError] = React.useState(false);
   const [error, setError] = React.useState('');
   const navigate = useNavigate();
-  const dispatch = useDispatch()
-
+  // const dispatch = useDispatch()
+// 
   const login = async () => {
     const object = {
       email,
-      password,
+      password
     }
     try {
-      const res = await apiCall('/login', object, 'POST', undefined);
-      const token = res.data.token;
+      const res = await apiCall('/token', object, 'POST', undefined);
+      const token = res.access_token;
       // Calculate the expiry date 2 minutes from the current time
       const expiryDate = new Date();
       expiryDate.setTime(expiryDate.getTime() + 2 * 60 * 1000);

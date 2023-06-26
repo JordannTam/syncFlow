@@ -124,9 +124,10 @@ const menuItems = [
 ];
 
 export default function MiniDrawer() {
-  const theme = useTheme();
   const navigate = useNavigate();
+  const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -134,6 +135,18 @@ export default function MiniDrawer() {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const handleLogout = async () => {
+    try {
+      // const res = await apiCall('/logout', {}, 'POST', undefined);
+      // dispatch(logout())
+      localStorage.removeItem('access_token')
+      console.log("LOGGING OUT")
+      navigate('/login')
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
