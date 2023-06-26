@@ -11,15 +11,15 @@ from utility import oauth2_scheme, verify_token
 
 class Task(BaseModel):
     title: str
-    assignee_ids: List[int]
+    assignees: List[int]
     description: Union[str, None] 
     deadline: Union[str, None]
 
 class Edit_Task(BaseModel):
     task_id: int
     progress: Union[str, None]
-    assignee_ids: Union[List[int], None]
-    unassignee_ids: Union[List[int], None]
+    assignees: Union[List[int], None]
+    unassignees: Union[List[int], None]
     title: Union[str, None]
     description: Union[str, None]
     
@@ -50,7 +50,7 @@ async def create_task(task: Task, token: str = Depends(oauth2_scheme)):
     creator_id = verify_token(token)
     
     title = task.title
-    assignee_ids = task.assignee_ids
+    assignees = task.assignees
     description = task.description
     deadline = task.deadline
     progress = "Not Started"
@@ -76,9 +76,9 @@ async def create_task(task: Task, token: str = Depends(oauth2_scheme)):
     """
     cur.execute(insert_assignees_sql, (task_id, creator_id))
 
-    if assignee_ids is not None:
-        for assignee_id in assignee_ids:
-            cur.execute(insert_assignees_sql, (task_id, assignee_id))
+    if assignees is not None:
+        for assignee in assignees:
+            cur.execute(insert_assignees_sql, (task_id, assignee))
             
     conn.commit()
     
@@ -95,8 +95,8 @@ async def edit_task(
     verify_token(token)
     request = []
     task_id = edit.task_id
-    assignee_ids = edit.assignee_ids
-    unassignee_ids = edit.unassignee_ids
+    assignees = edit.assignees
+    unassignees = edit.unassignees
     
     args = []
     
@@ -140,13 +140,13 @@ async def edit_task(
         DELETE FROM task_assignees
         WHERE task_id = %s AND profile_id = %s
     '''
-    if assignee_ids is not None:
-        for assignee_id in assignee_ids:
-            cur.execute(insert_assignees_sql, (task_id, assignee_id))
+    if assignees is not None:
+        for assignee in assignees:
+            cur.execute(insert_assignees_sql, (task_id, assignee))
     
-    if unassignee_ids is not None:
-        for unassignee_id in unassignee_ids:
-            cur.execute(remove_assignees_sql, (task_id, unassignee_id))
+    if unassignees is not None:
+        for unassignee in unassignees:
+            cur.execute(remove_assignees_sql, (task_id, unassignee))
     
 
     conn.commit()
