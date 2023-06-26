@@ -3,7 +3,7 @@ import SideBar from '../components/SideBar';
 import PageContainer from '../components/PageContainer'
 import AssigneeTransferList from '../components/AssigneeTransferList'
 import TaskList from '../components/TaskList';
-import { Box, TextField, Typography } from '@mui/material';
+import { Box, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField, Typography } from '@mui/material';
 import { ColumnBox, RowBox } from '../components/FlexBox';
 import Button from '../components/Button';
 import { useNavigate } from 'react-router-dom';
@@ -15,18 +15,23 @@ import Cookies from 'js-cookie';
 const CreateTaskScreen = () => {
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
-    const [deadline, setDeadline] = useState("")
+    const [deadlineDate, setDeadlineDate] = useState("")
+    const [deadlineType, setDeadlineType] = useState("noDeadline");
+    const [assignType, setAssignType] = useState("assignToMe")
     const [assignees, setAssignees] = useState([])
     const dispatch = useDispatch()
     const tasks = useSelector(state => state.taskReducer)
     const token = Cookies.get('loginToken');
+    const profile = useSelector(state => state.profileReducer)
 
     const navigate = useNavigate()
 
     const handleSubmit = async () => {
+        const deadline = deadlineType === "noDeadline" ? null : deadlineDate
+        const ass = assignType === "assginToMe" ? profile.profile_id : assignees
         const object = {
             title,
-            assignees,
+            assignees : ass,
             description,
             deadline,
           }
@@ -35,7 +40,6 @@ const CreateTaskScreen = () => {
             const data = await apiCall('/task', object, 'POST', `bearer ${token}`, );
             navigate('/home')
             object.task_id = data.task_id
-            // object.id = 5 // DELETE after backend implemented
             dispatch(addTask(object))
           } catch (err) {
             console.error(err);
@@ -54,7 +58,11 @@ const CreateTaskScreen = () => {
 
     useEffect(() => {
         // handleFetchTasks()
-    }, [])
+        console.log('deadline', deadlineType);
+        console.log('deadlineDate', deadlineDate);
+        console.log('assignType', assignType);
+        console.log('assignees', assignees);
+      }, [deadlineType, deadlineDate, assignType, assignees])
   return (
     <>
       {/* <SideBar/> */}
@@ -66,14 +74,31 @@ const CreateTaskScreen = () => {
 
             <TextField id="outlined-basic" value={title} onChange={(e) => setTitle(e.target.value)} label="Title" variant="standard" />
             <TextField id="outlined-basic" value={description} onChange={(e) => setDescription(e.target.value)} label="Description" variant="standard" />
-            
-            <ColumnBox>
-                <Typography variant="h6" component="h6" marginBottom="15px">
-                  Deadline
-                </Typography>
-                <TextField value={deadline} onChange={(e) => setDeadline(e.target.value)} id="outlined-basic" type='Date' variant="outlined" />
-            </ColumnBox>
-            <AssigneeTransferList right={assignees} setRight={setAssignees} />
+          <FormControl>
+            <FormLabel id="demo-radio-buttons-group-label">Deadline</FormLabel>
+            <RadioGroup
+              aria-labelledby="demo-radio-buttons-group-label"
+              defaultValue="noDeadline"
+              name="radio-buttons-group"
+              onChange={(e) => setDeadlineType(e.target.value)}
+            >
+              <FormControlLabel value="noDeadline" control={<Radio />} label="No Deadline" />
+              <FormControlLabel value="deadline" control={<Radio />} label={<TextField value={deadlineDate} type='date' onChange={(e) => setDeadlineDate(e.target.value)}/>} />
+            </RadioGroup>
+          </FormControl>
+          <FormControl>
+            <FormLabel id="demo-radio-buttons-group-label">Assign</FormLabel>
+            <RadioGroup
+              aria-labelledby="demo-radio-buttons-group-label"
+              defaultValue="assignToMe"
+              name="radio-buttons-group"
+              onChange={(e) => setAssignType(e.target.value)}
+            >
+              <FormControlLabel value="assignToMe" control={<Radio />} label="Myself" />
+              <FormControlLabel value="assignToOther" control={<Radio />} label={<AssigneeTransferList right={assignees} setRight={setAssignees}/>} />
+            </RadioGroup>
+          </FormControl>
+
             <RowBox columnGap='20px'>
                 <Button variant='contained' onClick={() => navigate('/home')} >Back</Button>
                 <Button variant='contained' onClick={() => handleSubmit()}>Create Task</Button>
