@@ -101,16 +101,16 @@ import { useNavigate } from 'react-router-dom';
 
 
 const initialRows = [
-  { task_id: 1, description: "ABC",  title: 'Snow', assignee: [2], deadline: '10/10/2016', state: 'Completed' },
-  { task_id: 2, description: "ABC",  title: 'Lannister', assignee: [5], deadline: '10/10/2012', state: 'In Progress' },
-  { task_id: 3, description: "ABC",  title: 'Lannister', assignee: [4], deadline: '10/10/2016', state: 'In Progress' },
-  { task_id: 4, description: "ABC",  title: 'Stark', assignee: [3], deadline: '10/10/2016', state: 'In Progress' },
-  { task_id: 5, description: "ABC",  title: 'Targaryen', assignee: [1], deadline: '10/10/2016', state: 'Not Started' },
-  { task_id: 6, description: "ABC",  title: 'Melisandre', assignee: null, deadline: '10/10/2016', state: 'Not Started' },
-  { task_id: 7, description: "ABC",  title: 'Clifford', assignee: [7, 8], deadline: '10/10/2016', state: 'Not Started' },
-  { task_id: 8, description: "ABC",  title: 'Frances', assignee: [4], deadline: null , state: 'Blocked' },
-  { task_id: 9, description: "ABC",  title: 'Roxie', assignee: [2], deadline: null, state: 'Blocked' },
-  { task_id: 10, description: "ABC",  title: 'Roxie', assignee: [1], deadline: null, state: 'Blocked' },
+  { task_id: 1, description: "ABC",  title: 'Snow', assignee: [2], deadline: '10/10/2016', progress: 'Completed' },
+  { task_id: 2, description: "ABC",  title: 'Lannister', assignee: [5], deadline: '10/10/2012', progress: 'In Progress' },
+  { task_id: 3, description: "ABC",  title: 'Lannister', assignee: [4], deadline: '10/10/2016', progress: 'In Progress' },
+  { task_id: 4, description: "ABC",  title: 'Stark', assignee: [3], deadline: '10/10/2016', progress: 'In Progress' },
+  { task_id: 5, description: "ABC",  title: 'Targaryen', assignee: [1], deadline: '10/10/2016', progress: 'Not Started' },
+  { task_id: 6, description: "ABC",  title: 'Melisandre', assignee: null, deadline: '10/10/2016', progress: 'Not Started' },
+  { task_id: 7, description: "ABC",  title: 'Clifford', assignee: [7, 8], deadline: '10/10/2016', progress: 'Not Started' },
+  { task_id: 8, description: "ABC",  title: 'Frances', assignee: [4], deadline: null , progress: 'Blocked' },
+  { task_id: 9, description: "ABC",  title: 'Roxie', assignee: [2], deadline: null, progress: 'Blocked' },
+  { task_id: 10, description: "ABC",  title: 'Roxie', assignee: [1], deadline: null, progress: 'Blocked' },
 ];
 
 export default function ColumnTypesGrid(props) {
@@ -199,14 +199,14 @@ export default function ColumnTypesGrid(props) {
           type: 'actions',
           getActions: (params) => [
           <GridActionsCellItem
-          icon={<CheckCircleIcon color={tasks.find((a) => a.id === params.id).progress === 'Completed' ? 'success' : 'disabled'} fontSize='large'/>}// Uncomment
+          icon={<CheckCircleIcon color={tasks.find((a) => a.task_id === params.id).progress === 'Completed' ? 'success' : 'disabled'} fontSize='large'/>}// Uncomment
             // icon={<CheckCircleIcon color={initialRows.find((a) => a.id === params.id).state === 'Completed' ? 'success' : 'disabled'} fontSize='large'/>}
             label="Completed"
             onClick={handleCompleted(params.id)}
             // showInMenu
           />,
           <GridActionsCellItem
-          icon={<AutorenewIcon color={tasks.find((a) => a.id === params.id).progress === 'In Progress' ? 'primary' : 'disabled'} fontSize='large'/>}// Uncomment
+          icon={<AutorenewIcon color={tasks.find((a) => a.task_id === params.id).progress === 'In Progress' ? 'primary' : 'disabled'} fontSize='large'/>}// Uncomment
 
             // icon={<AutorenewIcon color={initialRows.find((a) => a.id === params.id).state === 'In Progress' ? 'primary' : 'disabled'} fontSize='large'/>}
             label="In progress"
@@ -214,7 +214,7 @@ export default function ColumnTypesGrid(props) {
             // showInMenu
           />,
           <GridActionsCellItem
-          icon={<HourglassTopTwoToneIcon color={tasks.find((a) => a.id === params.id).progress === 'Not Started' ? 'warning' : 'disabled'} fontSize='large'/>} //Uncomment
+          icon={<HourglassTopTwoToneIcon color={tasks.find((a) => a.task_id === params.id).progress === 'Not Started' ? 'warning' : 'disabled'} fontSize='large'/>} //Uncomment
 
             // icon={<HourglassTopTwoToneIcon color={initialRows.find((a) => a.id === params.id).progress === 'Not Started' ? 'warning' : 'disabled'} fontSize='large'/>}
             label="Not Started"
@@ -222,7 +222,7 @@ export default function ColumnTypesGrid(props) {
             // showInMenu
           />,
           <GridActionsCellItem
-          icon={<RemoveCircleIcon color={tasks.find((a) => a.id === params.id).progress === 'Blocked' ? 'error' : 'disabled'} fontSize='large'/>} // Uncomment
+          icon={<RemoveCircleIcon color={tasks.find((a) => a.task_id === params.id).progress === 'Blocked' ? 'error' : 'disabled'} fontSize='large'/>} // Uncomment
           // icon={<RemoveCircleIcon color={initialRows.find((a) => a.id === params.id).progress === 'Blocked' ? 'error' : 'disabled'} fontSize='large'/>}
           label="Duplicate User"
           onClick={handleBlocked(params.id)}
