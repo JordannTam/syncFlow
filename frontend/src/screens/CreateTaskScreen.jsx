@@ -24,12 +24,13 @@ const CreateTaskScreen = () => {
     const handleSubmit = async () => {
         const object = {
             title,
-            assignee,
+            assignee_ids : assignee,
             description,
             deadline,
           }
           try {
-            // const data = await apiCall('/task', object, 'POST', undefined);
+            console.log(object)
+            const data = await apiCall('/task', object, 'POST', undefined);
             // navigate('/home')
             // object.id = data.id
             object.id = 5 // DELETE after backend implemented
