@@ -25,7 +25,7 @@ class Edit_Task(BaseModel):
     
 class Get_Tasks(BaseModel):
     is_profile: bool
-    id: Union[int, None]
+    profile_id: Union[int, None]
 
 origins = [
     "http://localhost:3000",
@@ -161,7 +161,7 @@ async def edit_task(
 @app.get("/tasks")
 def get_tasks(get_task: Get_Tasks, token: str = Depends(oauth2_scheme)):
     is_profile = get_task.is_profile
-    id = get_task.id
+    profile_id = get_task.id
     user_id = verify_token(token)
     conn = get_db_conn()
     cur = conn.cursor()
@@ -173,8 +173,8 @@ def get_tasks(get_task: Get_Tasks, token: str = Depends(oauth2_scheme)):
         JOIN profiles ON task_assignees.profile_id = profiles.id
     WHERE profiles.id = %s
     """
-    if is_profile and id is not None:
-        user_id = id
+    if is_profile and profile_id is not None:
+        user_id = profile_id
     # elif is_profile and id is None:
     elif not is_profile:
         select_task_list += " OR tasks.creator_id = %s"
