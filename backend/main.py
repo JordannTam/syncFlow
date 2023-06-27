@@ -172,13 +172,13 @@ def get_tasks_dashboard(token: str = Depends(oauth2_scheme)):
     ORDER BY tasks.deadline;
     """
 
-    cur.execute(select_task_list, (user_id,))
+    cur.execute(select_task_list, (user_id, user_id))
     tasks = cur.fetchall()
     # Get column names
     column_names = [desc[0] for desc in cur.description]
     
     # Convert to list of dictionaries
-    tasks = [dict(zip(column_names, task)) for task in tasks]
+    tasks_dict = {task[0]: dict(zip(column_names, task)) for task in tasks}
     
     select_assignees_sql = '''
     SELECT profile_id FROM task_assignees
@@ -186,10 +186,13 @@ def get_tasks_dashboard(token: str = Depends(oauth2_scheme)):
     '''
 
     # Fetch assignees for each task
-    for task in tasks:
-        cur.execute(select_assignees_sql, (task["task_id"],))
+    for task_id, task in tasks_dict.items():
+        cur.execute(select_assignees_sql, (task_id,))
         assignees = [item[0] for item in cur.fetchall()]
         task["assignees"] = assignees
+
+    # Convert back to a list
+    tasks = list(tasks_dict.values())
 
     cur.close()
     conn.close()
@@ -219,7 +222,7 @@ def get_tasks_dashboard(profile_id: Union[int, None], token: str = Depends(oauth
     column_names = [desc[0] for desc in cur.description]
     
     # Convert to list of dictionaries
-    tasks = [dict(zip(column_names, task)) for task in tasks]
+    tasks_dict = {task[0]: dict(zip(column_names, task)) for task in tasks}
     
     select_assignees_sql = '''
     SELECT profile_id FROM task_assignees
@@ -227,11 +230,13 @@ def get_tasks_dashboard(profile_id: Union[int, None], token: str = Depends(oauth
     '''
 
     # Fetch assignees for each task
-    for task in tasks:
-        cur.execute(select_assignees_sql, (task["task_id"],))
+    for task_id, task in tasks_dict.items():
+        cur.execute(select_assignees_sql, (task_id,))
         assignees = [item[0] for item in cur.fetchall()]
         task["assignees"] = assignees
 
+    # Convert back to a list
+    tasks = list(tasks_dict.values())
     cur.close()
     conn.close()
     
