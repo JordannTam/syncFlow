@@ -19,11 +19,7 @@ const DashboardScreen = () => {
 
   const handleFetchTasks = async () => {
     try {
-      const object = {
-        is_profile: false,
-        profile_id: null,
-      }
-      const tasks = await apiCall('/tasks', object, 'GET', `bearer ${token}`); //Uncomment
+      const tasks = await apiCall('/tasks', {}, 'GET', `bearer ${token}`); //Uncomment
       dispatch(setTasks(tasks))
       console.log("tasks: ", tasks)
 
