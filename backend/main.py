@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Form, Depends
 from typing import Annotated
-from typing import List, Union
+from typing import List, Union, Optional
 from pydantic import BaseModel
 from utility import get_db_conn, oauth2_scheme
 import routers.taskmasters
@@ -174,7 +174,6 @@ def get_tasks_dashboard(token: str = Depends(oauth2_scheme)):
 
     cur.execute(select_task_list, (user_id, user_id))
     tasks = cur.fetchall()
-    print(tasks)
 
     # Get column names
     column_names = [desc[0] for desc in cur.description]
@@ -200,8 +199,8 @@ def get_tasks_dashboard(token: str = Depends(oauth2_scheme)):
     conn.close()
     return tasks
 
-@app.get("/tasks")
-def get_tasks_profile(profile_id: Union[int, None], token: str = Depends(oauth2_scheme)):
+@app.get("/profile_tasks")
+def get_tasks_profile(profile_id: Optional[int] = None, token: str = Depends(oauth2_scheme)):
     user_id = verify_token(token)
     conn = get_db_conn()
     cur = conn.cursor()
@@ -240,6 +239,6 @@ def get_tasks_profile(profile_id: Union[int, None], token: str = Depends(oauth2_
     tasks = list(tasks_dict.values())
     cur.close()
     conn.close()
-    
+    print(tasks)
     return tasks
 
