@@ -176,7 +176,7 @@ def get_tasks(get_task: Get_Tasks, token: str = Depends(oauth2_scheme)):
     if is_profile and id is not None:
         user_id = id
     # elif is_profile and id is None:
-    else:
+    elif not is_profile:
         select_task_list += " OR tasks.creator_id = %s"
     select_task_list += "\nORDER BY tasks.deadline;"
     
