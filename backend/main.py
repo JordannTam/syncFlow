@@ -74,7 +74,7 @@ async def create_task(task: Task, token: str = Depends(oauth2_scheme)):
         INSERT INTO task_assignees (task_id, profile_id)
         VALUES (%s, %s)
     """
-    cur.execute(insert_assignees_sql, (task_id, creator_id))
+    # cur.execute(insert_assignees_sql, (task_id, creator_id))
 
     if assignees is not None:
         for assignee in assignees:
@@ -156,7 +156,7 @@ async def edit_task(
     return {"detail": "Task updated successfully"}
 
 @app.get("/tasks")
-def get_tasks(token: str = Depends(oauth2_scheme)):
+def get_tasks(is_profile: bool, token: str = Depends(oauth2_scheme)):
     user_id = verify_token(token)
     conn = get_db_conn()
     cur = conn.cursor()
@@ -167,8 +167,11 @@ def get_tasks(token: str = Depends(oauth2_scheme)):
         JOIN task_assignees ON tasks.id = task_assignees.task_id
         JOIN profiles ON task_assignees.profile_id = profiles.id
     WHERE profiles.id = %s
-    ORDER BY tasks.deadline;
     """
+    if is_profile:
+        select_task_list += " OR tasks.creator_id = %s"
+    select_task_list += "\nORDER BY tasks.deadline;"
+    
     cur.execute(select_task_list, (user_id,))
     tasks = cur.fetchall()
     # Get column names
