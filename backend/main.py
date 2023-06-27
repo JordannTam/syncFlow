@@ -23,9 +23,8 @@ class Edit_Task(BaseModel):
     title: Union[str, None]
     description: Union[str, None]
     
-class Get_Tasks(BaseModel):
-    is_profile: bool
-    profile_id: Union[int, None]
+# class Get_Tasks(BaseModel):
+    
 
 origins = [
     "http://localhost:3000",
@@ -159,9 +158,46 @@ async def edit_task(
     return {"detail": "Task updated successfully"}
 
 @app.get("/tasks")
-def get_tasks(get_task: Get_Tasks, token: str = Depends(oauth2_scheme)):
-    is_profile = get_task.is_profile
-    profile_id = get_task.profile_id
+def get_tasks_dashboard(token: str = Depends(oauth2_scheme)):
+    user_id = verify_token(token)
+    conn = get_db_conn()
+    cur = conn.cursor()
+    
+    select_task_list = """
+    SELECT tasks.id as task_id, tasks.title, tasks.description, tasks.deadline, tasks.progress
+    FROM tasks               
+        JOIN task_assignees ON tasks.id = task_assignees.task_id
+        JOIN profiles ON task_assignees.profile_id = profiles.id
+    WHERE profiles.id = %s OR tasks.creator_id = %s
+    ORDER BY tasks.deadline;
+    """
+
+    cur.execute(select_task_list, (user_id,))
+    tasks = cur.fetchall()
+    # Get column names
+    column_names = [desc[0] for desc in cur.description]
+    
+    # Convert to list of dictionaries
+    tasks = [dict(zip(column_names, task)) for task in tasks]
+    
+    select_assignees_sql = '''
+    SELECT profile_id FROM task_assignees
+    WHERE task_id = %s
+    '''
+
+    # Fetch assignees for each task
+    for task in tasks:
+        cur.execute(select_assignees_sql, (task["task_id"],))
+        assignees = [item[0] for item in cur.fetchall()]
+        task["assignees"] = assignees
+
+    cur.close()
+    conn.close()
+    
+    return tasks
+
+@app.get("/tasks")
+def get_tasks_dashboard(profile_id: Union[int, None], token: str = Depends(oauth2_scheme)):
     user_id = verify_token(token)
     conn = get_db_conn()
     cur = conn.cursor()
@@ -172,14 +208,11 @@ def get_tasks(get_task: Get_Tasks, token: str = Depends(oauth2_scheme)):
         JOIN task_assignees ON tasks.id = task_assignees.task_id
         JOIN profiles ON task_assignees.profile_id = profiles.id
     WHERE profiles.id = %s
+    ORDER BY tasks.deadline;
     """
-    if is_profile and profile_id is not None:
+    if profile_id is not None:
         user_id = profile_id
-    # elif is_profile and id is None:
-    elif not is_profile:
-        select_task_list += " OR tasks.creator_id = %s"
-    select_task_list += "\nORDER BY tasks.deadline;"
-    
+        
     cur.execute(select_task_list, (user_id,))
     tasks = cur.fetchall()
     # Get column names
@@ -187,7 +220,6 @@ def get_tasks(get_task: Get_Tasks, token: str = Depends(oauth2_scheme)):
     
     # Convert to list of dictionaries
     tasks = [dict(zip(column_names, task)) for task in tasks]
-    
     
     select_assignees_sql = '''
     SELECT profile_id FROM task_assignees
