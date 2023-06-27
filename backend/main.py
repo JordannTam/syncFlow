@@ -200,7 +200,7 @@ def get_tasks_dashboard(token: str = Depends(oauth2_scheme)):
     return tasks
 
 @app.get("/tasks")
-def get_tasks_dashboard(profile_id: Union[int, None], token: str = Depends(oauth2_scheme)):
+def get_tasks_profile(profile_id: Union[int, None], token: str = Depends(oauth2_scheme)):
     user_id = verify_token(token)
     conn = get_db_conn()
     cur = conn.cursor()
