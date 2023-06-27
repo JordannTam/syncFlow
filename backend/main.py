@@ -156,7 +156,7 @@ async def edit_task(
     return {"detail": "Task updated successfully"}
 
 @app.get("/tasks")
-def get_tasks(is_profile: bool, token: str = Depends(oauth2_scheme)):
+def get_tasks(is_profile: bool, id: int, token: str = Depends(oauth2_scheme)):
     user_id = verify_token(token)
     conn = get_db_conn()
     cur = conn.cursor()
@@ -168,7 +168,10 @@ def get_tasks(is_profile: bool, token: str = Depends(oauth2_scheme)):
         JOIN profiles ON task_assignees.profile_id = profiles.id
     WHERE profiles.id = %s
     """
-    if is_profile:
+    if is_profile and id is not None:
+        user_id = id
+    # elif is_profile and id is None:
+    else:
         select_task_list += " OR tasks.creator_id = %s"
     select_task_list += "\nORDER BY tasks.deadline;"
     
