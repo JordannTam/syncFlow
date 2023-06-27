@@ -166,14 +166,16 @@ def get_tasks_dashboard(token: str = Depends(oauth2_scheme)):
     select_task_list = """
     SELECT tasks.id as task_id, tasks.title, tasks.description, tasks.deadline, tasks.progress
     FROM tasks               
-        JOIN task_assignees ON tasks.id = task_assignees.task_id
-        JOIN profiles ON task_assignees.profile_id = profiles.id
+        LEFT OUTER JOIN task_assignees ON tasks.id = task_assignees.task_id
+        LEFT OUTER JOIN profiles ON task_assignees.profile_id = profiles.id
     WHERE profiles.id = %s OR tasks.creator_id = %s
     ORDER BY tasks.deadline;
     """
 
     cur.execute(select_task_list, (user_id, user_id))
     tasks = cur.fetchall()
+    print(tasks)
+
     # Get column names
     column_names = [desc[0] for desc in cur.description]
     
@@ -196,7 +198,6 @@ def get_tasks_dashboard(token: str = Depends(oauth2_scheme)):
 
     cur.close()
     conn.close()
-    
     return tasks
 
 @app.get("/tasks")
