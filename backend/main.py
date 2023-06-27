@@ -23,6 +23,9 @@ class Edit_Task(BaseModel):
     title: Union[str, None]
     description: Union[str, None]
     
+class Get_Tasks(BaseModel):
+    is_profile: bool
+    id: Union[int, None]
 
 origins = [
     "http://localhost:3000",
@@ -156,7 +159,9 @@ async def edit_task(
     return {"detail": "Task updated successfully"}
 
 @app.get("/tasks")
-def get_tasks(is_profile: bool, id: int, token: str = Depends(oauth2_scheme)):
+def get_tasks(get_task: Get_Tasks, token: str = Depends(oauth2_scheme)):
+    is_profile = get_task.is_profile
+    id = get_task.id
     user_id = verify_token(token)
     conn = get_db_conn()
     cur = conn.cursor()
