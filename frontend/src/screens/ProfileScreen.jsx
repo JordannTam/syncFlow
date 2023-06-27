@@ -9,14 +9,16 @@ import { apiCall } from '../utils/api';
 
 const ProfileScreen = () => {
   const dispatch = useDispatch()
-  const tasks = useSelector(state => state.taskReducer)
   const token = Cookies.get('loginToken');
+  const [tasks, setTasks] = useState([])
   const profile = useSelector(state => state.profileReducer)
 
   const handleFetchTasks = async () => {
     try {
-      // const tasks = await apiCall('/task', object, 'GET', token);
-      // dispatch(setTasks(tasks))
+      const tasks = await apiCall('/tasks?profile_id=null', {}, 'GET', `bearer ${token}`);
+      console.log("profile tasks:", tasks);
+      setTasks(tasks)
+
     } catch (err) {
       console.error(err);
     }
@@ -35,6 +37,10 @@ const ProfileScreen = () => {
   useEffect(() => {
       handleFetchTasks()
   }, [])
+
+  if (!tasks) {
+    return <>Loading...</>
+  }
 
   return (
     <>
