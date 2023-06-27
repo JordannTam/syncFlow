@@ -161,7 +161,7 @@ async def edit_task(
 @app.get("/tasks")
 def get_tasks(get_task: Get_Tasks, token: str = Depends(oauth2_scheme)):
     is_profile = get_task.is_profile
-    profile_id = get_task.id
+    profile_id = get_task.profile_id
     user_id = verify_token(token)
     conn = get_db_conn()
     cur = conn.cursor()
