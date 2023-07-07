@@ -86,7 +86,7 @@ def send_email(to: str, id: int):
     subject = "Connection Request"
     body = f"Hi! \nYou have a connection request From: {id}"
     message = MIMEMultipart()
-    message["From"] = "your_email@gmail.com"
+    message["From"] = "msgsend1@gmail.com"
     message["To"] = to
     message["Subject"] = subject
 

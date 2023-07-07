@@ -20,13 +20,9 @@ class Edit_Task(BaseModel):
     task_id: int
     progress: Union[str, None]
     assignees: Union[List[int], None]
-    unassignees: Union[List[int], None]
     title: Union[str, None]
     description: Union[str, None]
     
-# class Get_Tasks(BaseModel):
-    
-
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
@@ -100,7 +96,7 @@ async def edit_task(
     request = []
     task_id = edit.task_id
     assignees = edit.assignees
-    unassignees = edit.unassignees
+    # unassignees = edit.unassignees
     
     args = []
     
@@ -142,15 +138,14 @@ async def edit_task(
     
     remove_assignees_sql = '''
         DELETE FROM task_assignees
-        WHERE task_id = %s AND profile_id = %s
+        WHERE task_id = %s
     '''
+    
+    # Remove old assign records and create new ones
     if assignees is not None:
+        cur.execute(remove_assignees_sql, (task_id,))
         for assignee in assignees:
             cur.execute(insert_assignees_sql, (task_id, assignee))
-    
-    if unassignees is not None:
-        for unassignee in unassignees:
-            cur.execute(remove_assignees_sql, (task_id, unassignee))
     
 
     conn.commit()
@@ -160,7 +155,7 @@ async def edit_task(
     return {"detail": "Task updated successfully"}
 
 @app.get("/tasks")
-def get_tasks_dashboard(page: str, profile_id: Union[int, None], token: str = Depends(oauth2_scheme)):
+def get_tasks(page: str, profile_id: Union[int, None], token: str = Depends(oauth2_scheme)):
     user_id = verify_token(token)
     conn = get_db_conn()
     cur = conn.cursor()
@@ -179,7 +174,6 @@ def get_tasks_dashboard(page: str, profile_id: Union[int, None], token: str = De
         WHERE profiles.id = %s
         ORDER BY tasks.deadline;
         """
-        pass
     elif page == 'dashboard':
         select_task_list = """
         SELECT tasks.id as task_id, tasks.title, tasks.description, tasks.deadline, tasks.progress
@@ -217,46 +211,46 @@ def get_tasks_dashboard(page: str, profile_id: Union[int, None], token: str = De
     conn.close()
     return tasks
 
-@app.get("/profile_tasks")
-def get_tasks_profile(profile_id: Optional[int] = None, token: str = Depends(oauth2_scheme)):
-    user_id = verify_token(token)
-    conn = get_db_conn()
-    cur = conn.cursor()
+# @app.get("/profile_tasks")
+# def get_tasks_profile(profile_id: Optional[int] = None, token: str = Depends(oauth2_scheme)):
+#     user_id = verify_token(token)
+#     conn = get_db_conn()
+#     cur = conn.cursor()
     
-    select_task_list = """
-    SELECT tasks.id as task_id, tasks.title, tasks.description, tasks.deadline, tasks.progress
-    FROM tasks               
-        JOIN task_assignees ON tasks.id = task_assignees.task_id
-        JOIN profiles ON task_assignees.profile_id = profiles.id
-    WHERE profiles.id = %s
-    ORDER BY tasks.deadline;
-    """
-    if profile_id is not None:
-        user_id = profile_id
+#     select_task_list = """
+#     SELECT tasks.id as task_id, tasks.title, tasks.description, tasks.deadline, tasks.progress
+#     FROM tasks               
+#         JOIN task_assignees ON tasks.id = task_assignees.task_id
+#         JOIN profiles ON task_assignees.profile_id = profiles.id
+#     WHERE profiles.id = %s
+#     ORDER BY tasks.deadline;
+#     """
+#     if profile_id is not None:
+#         user_id = profile_id
         
-    cur.execute(select_task_list, (user_id,))
-    tasks = cur.fetchall()
-    # Get column names
-    column_names = [desc[0] for desc in cur.description]
+#     cur.execute(select_task_list, (user_id,))
+#     tasks = cur.fetchall()
+#     # Get column names
+#     column_names = [desc[0] for desc in cur.description]
     
-    # Convert to list of dictionaries
-    tasks_dict = {task[0]: dict(zip(column_names, task)) for task in tasks}
+#     # Convert to list of dictionaries
+#     tasks_dict = {task[0]: dict(zip(column_names, task)) for task in tasks}
     
-    select_assignees_sql = '''
-    SELECT profile_id FROM task_assignees
-    WHERE task_id = %s
-    '''
+#     select_assignees_sql = '''
+#     SELECT profile_id FROM task_assignees
+#     WHERE task_id = %s
+#     '''
 
-    # Fetch assignees for each task
-    for task_id, task in tasks_dict.items():
-        cur.execute(select_assignees_sql, (task_id,))
-        assignees = [item[0] for item in cur.fetchall()]
-        task["assignees"] = assignees
+#     # Fetch assignees for each task
+#     for task_id, task in tasks_dict.items():
+#         cur.execute(select_assignees_sql, (task_id,))
+#         assignees = [item[0] for item in cur.fetchall()]
+#         task["assignees"] = assignees
 
-    # Convert back to a list
-    tasks = list(tasks_dict.values())
-    cur.close()
-    conn.close()
-    print(tasks)
-    return tasks
+#     # Convert back to a list
+#     tasks = list(tasks_dict.values())
+#     cur.close()
+#     conn.close()
+#     print(tasks)
+#     return tasks
 
