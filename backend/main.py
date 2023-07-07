@@ -8,6 +8,7 @@ from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
 from datetime import datetime
 from utility import oauth2_scheme, verify_token
+from fastapi.security import OAuth2PasswordBearer
 
 class Task(BaseModel):
     title: str
@@ -46,6 +47,7 @@ middleware = [
 
 app = FastAPI(middleware=middleware)
 app.include_router(routers.taskmasters.router)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 
 @app.post("/task")
 async def create_task(task: Task, token: str = Depends(oauth2_scheme)):
@@ -158,19 +160,35 @@ async def edit_task(
     return {"detail": "Task updated successfully"}
 
 @app.get("/tasks")
-def get_tasks_dashboard(token: str = Depends(oauth2_scheme)):
+def get_tasks_dashboard(page: str, profile_id: Union[int, None], token: str = Depends(oauth2_scheme)):
     user_id = verify_token(token)
     conn = get_db_conn()
     cur = conn.cursor()
     
-    select_task_list = """
-    SELECT tasks.id as task_id, tasks.title, tasks.description, tasks.deadline, tasks.progress
-    FROM tasks               
-        LEFT OUTER JOIN task_assignees ON tasks.id = task_assignees.task_id
-        LEFT OUTER JOIN profiles ON task_assignees.profile_id = profiles.id
-    WHERE profiles.id = %s OR tasks.creator_id = %s
-    ORDER BY tasks.deadline;
-    """
+    if profile_id is not None:
+        user_id = profile_id
+    
+    select_task_list = None
+    
+    if page == 'profile':
+        select_task_list = """
+        SELECT tasks.id as task_id, tasks.title, tasks.description, tasks.deadline, tasks.progress
+        FROM tasks               
+            JOIN task_assignees ON tasks.id = task_assignees.task_id
+            JOIN profiles ON task_assignees.profile_id = profiles.id
+        WHERE profiles.id = %s
+        ORDER BY tasks.deadline;
+        """
+        pass
+    elif page == 'dashboard':
+        select_task_list = """
+        SELECT tasks.id as task_id, tasks.title, tasks.description, tasks.deadline, tasks.progress
+        FROM tasks               
+            LEFT OUTER JOIN task_assignees ON tasks.id = task_assignees.task_id
+            LEFT OUTER JOIN profiles ON task_assignees.profile_id = profiles.id
+        WHERE profiles.id = %s OR tasks.creator_id = %s
+        ORDER BY tasks.deadline;
+        """
 
     cur.execute(select_task_list, (user_id, user_id))
     tasks = cur.fetchall()

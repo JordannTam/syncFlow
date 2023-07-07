@@ -35,11 +35,11 @@ CREATE TABLE connections (
 );
 
 CREATE TABLE connection_requests (
-    id1 INTEGER NOT NULL,
-    id2 INTEGER NOT NULL,
-    PRIMARY KEY (id1, id2),
-    FOREIGN KEY (id1) REFERENCES profiles(id) ON DELETE CASCADE,
-    FOREIGN KEY (id2) REFERENCES profiles(id) ON DELETE CASCADE
+    sender_id INTEGER NOT NULL,
+    receiver_id INTEGER NOT NULL,
+    PRIMARY KEY (sender_id, receiver_id),
+    FOREIGN KEY (sender_id) REFERENCES profiles(id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES profiles(id) ON DELETE CASCADE
 );
 
 ALTER table profiles owner to teamendgame;
