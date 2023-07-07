@@ -37,9 +37,9 @@ const LoginScreen = () => {
       const res = await apiCall('/token', object, 'POST', undefined);
       const token = res.access_token;
       // Calculate the expiry date 2 minutes from the current time
-      const expiryDate = new Date();
-      expiryDate.setTime(expiryDate.getTime() + 10 * 60 * 1000);
-      Cookies.set('loginToken', token, { expires: expiryDate });
+      // const expiryDate = new Date();
+      // expiryDate.setTime(expiryDate.getTime() + 10 * 60 * 1000);
+      Cookies.set('loginToken', token);
       // dispatch(login())
       handleFetchProfile(token)
       navigate('/home')
