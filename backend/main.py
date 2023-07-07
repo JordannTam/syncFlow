@@ -88,7 +88,7 @@ async def create_task(task: Task, token: str = Depends(oauth2_scheme)):
 
     return {"task_id": task_id}
 
-@app.post("/edit_task")
+@app.put("/edit_task")
 async def edit_task(
     edit: Edit_Task, token: str = Depends(oauth2_scheme)
 ):  
