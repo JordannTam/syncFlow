@@ -32,9 +32,9 @@ function Navbar () {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1, pt: 1.5 }}>
               <Box component='img' sx={{
                 height: '40px',
-                width: '143px',
+                width: '187px',
               }}
-              src={require(`../assets/images/Syncflow.png`)} />
+              src={require(`../assets/images/Syncflow_white.png`)} />
             </Typography>
             
             <Box display='flex' columnGap='30px' >
