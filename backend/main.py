@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Form, Depends
+from fastapi import FastAPI, HTTPException, Depends, status
 from typing import Annotated
 from typing import List, Union, Optional
 from pydantic import BaseModel
@@ -211,46 +211,36 @@ def get_tasks(page: str, profile_id: Union[int, None], token: str = Depends(oaut
     conn.close()
     return tasks
 
-# @app.get("/profile_tasks")
-# def get_tasks_profile(profile_id: Optional[int] = None, token: str = Depends(oauth2_scheme)):
-#     user_id = verify_token(token)
-#     conn = get_db_conn()
-#     cur = conn.cursor()
+@app.delete("/delete_task")
+def delete_task(task_id: int, token: str = Depends(oauth2_scheme)):
+    # TODO: Only the task creator can delete teh task
+    user_id = verify_token(token)
+    conn = get_db_conn()
+    cur = conn.cursor()
     
-#     select_task_list = """
-#     SELECT tasks.id as task_id, tasks.title, tasks.description, tasks.deadline, tasks.progress
-#     FROM tasks               
-#         JOIN task_assignees ON tasks.id = task_assignees.task_id
-#         JOIN profiles ON task_assignees.profile_id = profiles.id
-#     WHERE profiles.id = %s
-#     ORDER BY tasks.deadline;
-#     """
-#     if profile_id is not None:
-#         user_id = profile_id
-        
-#     cur.execute(select_task_list, (user_id,))
-#     tasks = cur.fetchall()
-#     # Get column names
-#     column_names = [desc[0] for desc in cur.description]
+    # Check if the user is the creator of the task
+    checkCreatorSQL = """
+        SELECT * FROM TASKS
+        WHERE id = %s AND CREATOR_ID = %s
+    """
+    cur.execute(checkCreatorSQL, (task_id, user_id))
+    result = cur.fetchone()
+    if result is None:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not authorized to delete this task")
+
+    deleteTaskAssigneesSQL = """
+        DELETE FROM TASK_ASSIGNEES 
+        WHERE taks_id = %s
+    """
+    cur.execute(deleteTaskAssigneesSQL, (task_id,))
     
-#     # Convert to list of dictionaries
-#     tasks_dict = {task[0]: dict(zip(column_names, task)) for task in tasks}
+    deleteTaskSQL = """
+        DELETE FROM TASKS
+        WHERE taks_id = %s
+    """
+    cur.execute(deleteTaskSQL, (task_id,))
     
-#     select_assignees_sql = '''
-#     SELECT profile_id FROM task_assignees
-#     WHERE task_id = %s
-#     '''
-
-#     # Fetch assignees for each task
-#     for task_id, task in tasks_dict.items():
-#         cur.execute(select_assignees_sql, (task_id,))
-#         assignees = [item[0] for item in cur.fetchall()]
-#         task["assignees"] = assignees
-
-#     # Convert back to a list
-#     tasks = list(tasks_dict.values())
-#     cur.close()
-#     conn.close()
-#     print(tasks)
-#     return tasks
-
+    conn.commit()
+    
+    cur.close()
+    conn.close()

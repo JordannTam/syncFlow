@@ -48,24 +48,46 @@ def send_connection_request(email: str, token: str = Depends(oauth2_scheme)):
     cur.execute("SELECT id FROM profiles WHERE email_address=%s", (email,))
     
     id2 = cur.fetchone()
-
+    
     if id2 is None:
         raise HTTPException(status_code=400, detail="Email does not Exist")
     
+    # Check if the user is already connected
+    connectionCheckSQL = """
+        SELECT * FROM CONNECTIONS
+        WHERE id1 = %s AND id2 = %s
+        
+        UNION
+        
+        SELECT * FROM CONNECTIONS
+        WHERE id2 = %s AND id1 = %s
+    """
+    cur.execute(connectionCheckSQL, (id1, id2, id1, id2))
+    result = cur.fetchone()
+    
+    if result is None:
+        raise HTTPException(status_code=409, detail="Connected Already")
+    
+    # Send the connection request
     add_connection_request = """
         INSERT INTO connection_requests (id1, id2)
         VALUES (%s, %s)
     """
+    cur.execute(add_connection_request, (id1, id2))
+    
+    conn.commit()
+    
+    # send email notification to notify the connection request   
     cur.execute("SELECT \
                 first_name || ' ' || last_name as name FROM PROFILES WHERE id = '%s'", 
                 id1)
+    
+
     sender_name = cur.fetchone()
     msg_body = f"Hi! \nYour have a connection request from {sender_name} with id: {id1}."
     send_email(email, msg_body)
     
-    cur.execute(add_connection_request, (id1, id2))
     
-    conn.commit()
     
     cur.close()
     conn.close()
@@ -76,7 +98,6 @@ def send_connection_request(email: str, token: str = Depends(oauth2_scheme)):
 @router.post("/connection_request_management")
 def manage_connection_request(management: Connection_request_Management, token: str = Depends(oauth2_scheme)):
     
-    # receiver_id
     receiver_id = verify_token(token)
     sender_id = management.sender_id
     decision = management.decision
@@ -94,6 +115,7 @@ def manage_connection_request(management: Connection_request_Management, token: 
                 receiver_id)
     _, receiver_name = cur.fetchone()
     
+    # either establish or reject connection the request should be removed
     RemoveRequestRecordSQL = """
         DELETE FROM CONNECTION_REQUESTS 
         WHERE sender_id = %s AND receiver_id = %s
@@ -194,3 +216,25 @@ def get_connection_requests(token: str = Depends(oauth2_scheme)):
     conn.close()
 
     return {'request_list': connectionRequests_list}
+
+@router.delete("/delete_connection")
+def delete_connection(profile_id: int, token: str = Depends(oauth2_scheme)):
+    
+    user_id = verify_token(token)
+    
+    deleteConnectionSQL = """
+        DELETE FROM CONNECTIONS 
+        WHERE (id1 = %s AND id2 = %s) OR (id1 = %s AND id2 = %s);
+    """
+    
+    conn = get_db_conn()
+    cur = conn.cursor()
+    
+    cur.execute(deleteConnectionSQL, (user_id, profile_id, profile_id, user_id))
+    
+    conn.commit()
+
+    cur.close()
+    conn.close()
+    
+    return {}
