@@ -1,14 +1,15 @@
-from fastapi import FastAPI, HTTPException, Depends, status
-from typing import Annotated
-from typing import List, Union, Optional
-from pydantic import BaseModel
-from utility import get_db_conn, oauth2_scheme
-import routers.taskmasters
+from fastapi import FastAPI, HTTPException, Depends, status, Request
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
+from fastapi.security import OAuth2PasswordBearer
 from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import List, Union, Optional, Annotated
 from datetime import datetime
-from utility import oauth2_scheme, verify_token
-from fastapi.security import OAuth2PasswordBearer
+import logging
+import routers.taskmasters
+from utility import oauth2_scheme, verify_token, get_db_conn, oauth2_scheme
 
 class Task(BaseModel):
     title: str
@@ -44,6 +45,13 @@ middleware = [
 app = FastAPI(middleware=middleware)
 app.include_router(routers.taskmasters.router)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    exc_str = f'{exc}'.replace('\n', ' ').replace('   ', ' ')
+    logging.error(f"{request}: {exc_str}")
+    content = {'status_code': 10422, 'message': exc_str, 'data': None}
+    return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 @app.post("/task")
 async def create_task(task: Task, token: str = Depends(oauth2_scheme)):
@@ -155,7 +163,7 @@ async def edit_task(
     return {"detail": "Task updated successfully"}
 
 @app.get("/tasks")
-def get_tasks(page: str, profile_id: Union[int, None], token: str = Depends(oauth2_scheme)):
+def get_tasks(page: str , profile_id: Union[int, None] = None, token: str = Depends(oauth2_scheme)):
     user_id = verify_token(token)
     conn = get_db_conn()
     cur = conn.cursor()
@@ -164,7 +172,7 @@ def get_tasks(page: str, profile_id: Union[int, None], token: str = Depends(oaut
         user_id = profile_id
     
     select_task_list = None
-    
+
     if page == 'profile':
         select_task_list = """
         SELECT tasks.id as task_id, tasks.title, tasks.description, tasks.deadline, tasks.progress
@@ -174,6 +182,7 @@ def get_tasks(page: str, profile_id: Union[int, None], token: str = Depends(oaut
         WHERE profiles.id = %s
         ORDER BY tasks.deadline;
         """
+        cur.execute(select_task_list, (user_id))
     elif page == 'dashboard':
         select_task_list = """
         SELECT tasks.id as task_id, tasks.title, tasks.description, tasks.deadline, tasks.progress
@@ -183,8 +192,9 @@ def get_tasks(page: str, profile_id: Union[int, None], token: str = Depends(oaut
         WHERE profiles.id = %s OR tasks.creator_id = %s
         ORDER BY tasks.deadline;
         """
-
-    cur.execute(select_task_list, (user_id, user_id))
+        cur.execute(select_task_list, (user_id, user_id))
+    else:
+        raise HTTPException
     tasks = cur.fetchall()
 
     # Get column names

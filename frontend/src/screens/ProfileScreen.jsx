@@ -16,7 +16,7 @@ const ProfileScreen = () => {
 
   const handleFetchTasks = async () => {
     try {
-      const tasks = await apiCall('/profile_tasks', {profile_id: null}, 'GET', `bearer ${token}`);
+      const tasks = await apiCall('/tasks?page=profile', {profile_id: null}, 'GET', `bearer ${token}`);
       console.log("profile tasks:", tasks);
       setTasks(tasks)
 
