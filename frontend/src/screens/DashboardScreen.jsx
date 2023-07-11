@@ -21,7 +21,7 @@ const DashboardScreen = () => {
 
   const handleFetchTasks = async () => {
     try {
-      const tasks = await apiCall('/tasks', {}, 'GET', `bearer ${token}`);
+      const tasks = await apiCall('/tasks?page=dashboard', {}, 'GET', `bearer ${token}`);
       dispatch(setTasks(tasks))
       console.log("tasks: ", tasks)
 

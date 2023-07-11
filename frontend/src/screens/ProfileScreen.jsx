@@ -37,6 +37,7 @@ const ProfileScreen = () => {
 
   useEffect(() => {
       handleFetchTasks()
+      console.log(profile)
   }, [])
 
   if (!tasks) {

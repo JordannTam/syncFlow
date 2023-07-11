@@ -49,7 +49,7 @@ const SearchBar = (props) => {
       }));
   };
   
-  // test with real data, tick for specific deadline (at this point always on)
+  // test with real data, tick for specific deadline (at this point always on), problem with fetching, problem with looping route
   // date range picker https://mui.com/x/react-date-pickers/date-range-picker/
   return (
   <div>
@@ -63,7 +63,7 @@ const SearchBar = (props) => {
       }}/>
       <CustomTextField label="Name" variant="outlined" value={nameValue} onChange={(event) => {setNameValue(event.target.value)}}/>
       <CustomTextField label="Description" variant="outlined" value={descValue} onChange={(event) => {setDescValue(event.target.value)}}/>
-      <DatePicker label="Deadline" style={{ border: 'none', outline: 'none' }} value={dateValue} onChange={(newValue) => {setDateValue(newValue)}}/>
+      <DatePicker label="Deadline" slotProps={{ textField: { error: false, }, }} value={dateValue} onChange={(newValue) => {setDateValue(newValue)}}/>
       <CustomButton variant='contained' onClick={() => searchSubmit()}>Search</CustomButton>
     </LocalizationProvider>
   </div>)
