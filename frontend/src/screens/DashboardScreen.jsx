@@ -4,6 +4,7 @@ import { Box, Typography } from '@mui/material';
 import TaskList from '../components/TaskList'
 import Button from '../components/Button';
 import { RowBox } from '../components/FlexBox';
+import SearchBar from '../components/SearchBar';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setTasks } from '../actions';
@@ -15,11 +16,12 @@ const DashboardScreen = () => {
   const dispatch = useDispatch()
   const tasks = useSelector(state => state.taskReducer)
   const token = Cookies.get('loginToken');
+  const [displayTask, setDisplayTask] = useState(tasks)
   const [loading, setLoading] = useState(false)
 
   const handleFetchTasks = async () => {
     try {
-      const tasks = await apiCall('/tasks', {}, 'GET', `bearer ${token}`); //Uncomment
+      const tasks = await apiCall('/tasks', {}, 'GET', `bearer ${token}`);
       dispatch(setTasks(tasks))
       console.log("tasks: ", tasks)
 
@@ -27,8 +29,6 @@ const DashboardScreen = () => {
       console.error(err);
     }
   }
-
-  
 
   useEffect(() => {
       // setLoading(true)
@@ -48,7 +48,8 @@ const DashboardScreen = () => {
         </Typography>
         <Button variant='contained' onClick={() => navigate('/task/new')}>Create Task</Button>
       </RowBox>
-        <TaskList tasks={tasks} rowNums={10} height='800'/>
+      <SearchBar displayTask={displayTask} setDisplayTask={setDisplayTask} tasks={tasks}/>
+      <TaskList tasks={tasks} rowNums={10} height='800'/>
     </PageContainer>
   );
 };

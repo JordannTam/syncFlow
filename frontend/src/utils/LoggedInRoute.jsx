@@ -10,10 +10,10 @@ const LoggedInRoute = () => {
   useEffect(() => {
     // const token = localStorage.getItem('access_token');
     const token = Cookies.get('loginToken');
-    setIsLoggedIn(!!token);
+    setIsLoggedIn(token);
   }, []);
 
-  return isLoggedIn ? <Navigate to="/home" replace /> : <><Navbar/><Outlet /></>;
+  return isLoggedIn ? <Navigate to="/home" replace /> : <><Navbar/></>;
 };
 
 export default LoggedInRoute;
