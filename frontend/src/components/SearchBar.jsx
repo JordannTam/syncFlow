@@ -3,7 +3,8 @@ import { TextField, Button } from '@mui/material';
 import styled from '@emotion/styled';
 import { LocalizationProvider, DatePicker  } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs from 'dayjs';
+import { useDispatch, useSelector } from 'react-redux';
+import { setTasks } from '../actions';
 
 
 const CustomTextField = styled(TextField)({
@@ -15,41 +16,42 @@ const CustomButton = styled(Button)({
 })
 
 const SearchBar = (props) => {
-  const{displayTask, setDisplayTask} = props
+  const {taskStorage} = props
   const [idValue, setIdValue] = useState('')
   const [nameValue, setNameValue] = useState('')
   const [descValue, setDescValue] = useState('')
-  const [dateValue, setDateValue] = useState('')
+  const [deadlineValue, setDeadlineValue] = useState('')
+
+  const dispatch = useDispatch()
 
   const searchSubmit = async() => {
-      alert(dateValue)
-      setDisplayTask(displayTask.filter((task) => {
-        const taskDate = new Date(task.date);
-        if (idValue && dateValue) {
-          return (
-            taskDate < dateValue &&
-            task.id === Number(idValue) &&
-            task.name.includes(nameValue.toLowerCase()) && 
-            task.desc.includes(descValue.toLowerCase())
-          );
-        }
-        else if (idValue) {
-          return task.id === Number(idValue)  && task.name.includes(nameValue.toLowerCase()) && task.desc.includes(descValue.toLowerCase())
-        }
-        else if (dateValue) {
-          return (
-            taskDate < dateValue &&
-            task.name.includes(nameValue.toLowerCase()) && 
-            task.desc.includes(descValue.toLowerCase())
-          );
-        }
-        else {
-          return task.name.includes(nameValue.toLowerCase()) && task.desc.includes(descValue.toLowerCase())
-        }
-      }));
+    dispatch(setTasks(taskStorage.filter((task) => {
+      const taskDeadline = task.deadline ? new Date(task.deadline) : deadlineValue
+      if (idValue && deadlineValue) {
+        return (
+          taskDeadline < deadlineValue &&
+          task.task_id === Number(idValue) &&
+          task.title.includes(nameValue.toLowerCase()) && 
+          task.description.includes(descValue.toLowerCase())
+        );
+      }
+      else if (idValue) {
+        return task.task_id === Number(idValue) && task.title.includes(nameValue.toLowerCase()) && task.description.includes(descValue.toLowerCase())
+      }
+      else if (deadlineValue) {
+        return (
+          taskDeadline < deadlineValue &&
+          task.title.includes(nameValue.toLowerCase()) && 
+          task.description.includes(descValue.toLowerCase())
+        );
+      }
+      else {
+        return task.title.includes(nameValue.toLowerCase()) && task.description.includes(descValue.toLowerCase())
+      }
+    })));
   };
   
-  // test with real data, tick for specific deadline (at this point always on), problem with fetching, problem with looping route
+  // tick for specific deadline (at this point always on), problem with looping route, make it work on profile page
   // date range picker https://mui.com/x/react-date-pickers/date-range-picker/
   return (
   <div>
@@ -63,8 +65,9 @@ const SearchBar = (props) => {
       }}/>
       <CustomTextField label="Name" variant="outlined" value={nameValue} onChange={(event) => {setNameValue(event.target.value)}}/>
       <CustomTextField label="Description" variant="outlined" value={descValue} onChange={(event) => {setDescValue(event.target.value)}}/>
-      <DatePicker label="Deadline" slotProps={{ textField: { error: false, }, }} value={dateValue} onChange={(newValue) => {setDateValue(newValue)}}/>
+      <DatePicker label="Deadline" slotProps={{ textField: { error: false, }, }} value={deadlineValue} onChange={(newValue) => {setDeadlineValue(newValue)}}/>
       <CustomButton variant='contained' onClick={() => searchSubmit()}>Search</CustomButton>
+      <CustomButton variant='outlined' onClick={() => { dispatch(setTasks(taskStorage)) }}>Clear</CustomButton>
     </LocalizationProvider>
   </div>)
 }
