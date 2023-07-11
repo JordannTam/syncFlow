@@ -172,7 +172,7 @@ def get_tasks(page: str , profile_id: Union[int, None] = None, token: str = Depe
         user_id = profile_id
     
     select_task_list = None
-    
+
     if page == 'profile':
         select_task_list = """
         SELECT tasks.id as task_id, tasks.title, tasks.description, tasks.deadline, tasks.progress
@@ -182,6 +182,7 @@ def get_tasks(page: str , profile_id: Union[int, None] = None, token: str = Depe
         WHERE profiles.id = %s
         ORDER BY tasks.deadline;
         """
+        cur.execute(select_task_list, (user_id))
     elif page == 'dashboard':
         select_task_list = """
         SELECT tasks.id as task_id, tasks.title, tasks.description, tasks.deadline, tasks.progress
@@ -191,8 +192,9 @@ def get_tasks(page: str , profile_id: Union[int, None] = None, token: str = Depe
         WHERE profiles.id = %s OR tasks.creator_id = %s
         ORDER BY tasks.deadline;
         """
-
-    cur.execute(select_task_list, (user_id, user_id))
+        cur.execute(select_task_list, (user_id, user_id))
+    else:
+        raise HTTPException
     tasks = cur.fetchall()
 
     # Get column names
