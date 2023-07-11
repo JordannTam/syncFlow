@@ -6,6 +6,7 @@ import { Box, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import Cookies from 'js-cookie';
 import { apiCall } from '../utils/api';
+import SearchBar from '../components/SearchBar';
 
 const ProfileScreen = () => {
   const dispatch = useDispatch()
@@ -69,6 +70,7 @@ const ProfileScreen = () => {
         <Typography variant="h6" component="h2" marginBottom="20px">
           Date of Birth: {profile.date_of_birth} 
         </Typography>
+        <SearchBar displayTask={tasks} setDisplayTask={setTasks}/>
         <TaskList tasks={tasks} rowNums={5} height='400'/>
       </PageContainer>
     </>

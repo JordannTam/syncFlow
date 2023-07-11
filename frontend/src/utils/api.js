@@ -10,7 +10,6 @@ export const apiCall = (path, data, type, token) => {
             },
             body: type !== "GET" ? JSON.stringify(data) : undefined,
         }).then(async (response) => {
-            console.log(response)
             if (response.status === 200) {
                 return response.json().then(resolve);
             } else if (response.status === 400) {

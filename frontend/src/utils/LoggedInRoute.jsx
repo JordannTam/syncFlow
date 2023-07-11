@@ -13,7 +13,7 @@ const LoggedInRoute = () => {
     setIsLoggedIn(token);
   }, []);
 
-  return isLoggedIn ? <Navigate to="/home" replace /> : <><Navbar/></>;
+  return isLoggedIn ? <Navigate to="/home" replace /> : <><Navbar/><Outlet/></>;
 };
 
 export default LoggedInRoute;

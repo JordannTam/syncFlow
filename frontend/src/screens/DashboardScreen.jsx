@@ -39,7 +39,6 @@ const DashboardScreen = () => {
     return <div>Loading...</div>;
   }
 
-
   return (
     <PageContainer maxWidth="lg" marginTop="0px" >
       <RowBox justifyContent='space-between' marginBottom='50px'>
@@ -48,8 +47,8 @@ const DashboardScreen = () => {
         </Typography>
         <Button variant='contained' onClick={() => navigate('/task/new')}>Create Task</Button>
       </RowBox>
-      <SearchBar displayTask={displayTask} setDisplayTask={setDisplayTask} tasks={tasks}/>
-      <TaskList tasks={tasks} rowNums={10} height='800'/>
+      <SearchBar displayTask={displayTask} setDisplayTask={setDisplayTask}/>
+      <TaskList tasks={displayTask} rowNums={10} height='800'/>
     </PageContainer>
   );
 };
