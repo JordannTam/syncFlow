@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from typing import List, Union, Optional, Annotated
 from datetime import datetime
 import logging
-import routers.taskmasters
+import routers.taskmasters, routers.connections
 from utility import oauth2_scheme, verify_token, get_db_conn, oauth2_scheme
 
 class Task(BaseModel):
@@ -44,6 +44,7 @@ middleware = [
 
 app = FastAPI(middleware=middleware)
 app.include_router(routers.taskmasters.router)
+app.include_router(routers.connections.router)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 
 @app.exception_handler(RequestValidationError)
@@ -169,7 +170,7 @@ def get_tasks(page: str , profile_id: Union[int, None] = None, token: str = Depe
     cur = conn.cursor()
     
     if profile_id is not None:
-        user_id = profile_id
+        user_id = int(profile_id)
     
     select_task_list = None
 
@@ -222,7 +223,7 @@ def get_tasks(page: str , profile_id: Union[int, None] = None, token: str = Depe
     conn.close()
     return tasks
 
-@app.delete("/delete_task")
+@app.delete("/task")
 def delete_task(task_id: int, token: str = Depends(oauth2_scheme)):
     # TODO: Only the task creator can delete teh task
     user_id = verify_token(token)
