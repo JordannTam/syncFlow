@@ -26,6 +26,7 @@ import { ColumnBox, RowBox } from './FlexBox';
 import { createTheme } from '@mui/material/styles';
 import { apiCall } from '../utils/api';
 import LogoutButton from './LogoutButton';
+import { useSelector } from 'react-redux';
 
 const themeAB = createTheme({
   status: {
@@ -116,18 +117,19 @@ const LogoImage = styled('img')({
   maxHeight: '100%',
 });
 
-const menuItems = [
-  { text: 'Home', link: '/', icon: <HomeIcon /> },
-  { text: 'Profile', link: '/profile', icon: <AccountBoxIcon /> },
-  { text: 'Connections', link: '/', icon: <GroupsIcon /> },
-  { text: 'Schedule', link: '/', icon: <EventNoteIcon /> },
-];
 
 export default function MiniDrawer() {
   const navigate = useNavigate();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-
+  const profile = useSelector(state => state.profileReducer)
+  
+  const menuItems = [
+    { text: 'Home', link: '/', icon: <HomeIcon /> },
+    { text: 'Profile', link: `/profile/${profile.profile_id}`, icon: <AccountBoxIcon /> },
+    { text: 'Connections', link: '/connections', icon: <GroupsIcon /> },
+    { text: 'Schedule', link: '/', icon: <EventNoteIcon /> },
+  ];
 
   const handleDrawerOpen = () => {
     setOpen(true);

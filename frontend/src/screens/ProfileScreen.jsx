@@ -7,18 +7,22 @@ import { useDispatch, useSelector } from 'react-redux';
 import Cookies from 'js-cookie';
 import { apiCall } from '../utils/api';
 import SearchBar from '../components/SearchBar';
+import { useParams } from 'react-router-dom';
 
 const ProfileScreen = () => {
   const dispatch = useDispatch()
   const token = Cookies.get('loginToken');
   const [tasks, setTasks] = useState([])
   const profile = useSelector(state => state.profileReducer)
+  const params = useParams()
+
 
   const handleFetchTasks = async () => {
     try {
-      const tasks = await apiCall('/tasks?page=profile', {profile_id: null}, 'GET', `bearer ${token}`);
-      console.log("profile tasks:", tasks);
-      setTasks(tasks)
+      console.log("params.id", params.id);
+      const res = await apiCall(`/tasks?page=profile&profile_id=${params.id}`, {}, 'GET', `bearer ${token}`);
+      console.log("profile tasks:", res);
+      setTasks(res)
 
     } catch (err) {
       console.error(err);

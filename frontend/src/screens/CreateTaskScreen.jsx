@@ -28,7 +28,8 @@ const CreateTaskScreen = () => {
 
     const handleSubmit = async () => {
         const deadline = deadlineType === "noDeadline" ? null : deadlineDate
-        const ass = assignType === "assginToMe" ? profile.profile_id : assignees
+        const ass = assignType === "assignToMe" ? [profile.profile_id] : assignees
+        console.log(profile.profile_id);
         const object = {
             title,
             assignees : ass,
@@ -102,7 +103,6 @@ const CreateTaskScreen = () => {
             <RowBox columnGap='20px'>
                 <Button variant='contained' onClick={() => navigate('/home')} >Back</Button>
                 <Button variant='contained' onClick={() => handleSubmit()}>Create Task</Button>
-                <Button variant='contained' onClick={() => dispatch(setTasks([{id: 5, string: 'abc'}, {id: 4, string: 'def'}]))}>Set Task</Button>
             </RowBox>
         </ColumnBox>
       </PageContainer>

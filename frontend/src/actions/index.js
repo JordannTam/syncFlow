@@ -66,3 +66,14 @@ export const logout = () => {
         type: "LOGOUT",
     };
 };
+
+// ********************
+// Connection Functions
+// ********************
+
+export const setConnections = (connections) => {
+    return {
+        type: "SET_CONNECTIONS",
+        connections,
+    };
+};
