@@ -13,15 +13,13 @@ router = APIRouter()
 
 class Connection_request_Management(BaseModel):
     sender_id: int
-    # receiver_id: int
     decision: bool
 
 # use to notify the user via email
 def send_email(to: str, body):
     subject = "Connection Request"
-    # body = f"Hi! \nYou have a connection request From: {id}"
     message = MIMEMultipart()
-    message["From"] = "msgsend1@gmail.com"
+    message["From"] = "Connection Request Notification"
     message["To"] = to
     message["Subject"] = subject
 
@@ -36,7 +34,7 @@ def send_email(to: str, body):
         server.login("msgsend1@gmail.com", "oniniqkytxhpxwhv")
         server.sendmail("msgsend1@gmail.com", to, text)
         
-@router.post("/send_connection_request")
+@router.post("/connection_request")
 def send_connection_request(email: str, token: str = Depends(oauth2_scheme)):
     
     id1 = verify_token(token)
@@ -88,7 +86,6 @@ def send_connection_request(email: str, token: str = Depends(oauth2_scheme)):
     send_email(email, msg_body)
     
     
-    
     cur.close()
     conn.close()
     
@@ -124,7 +121,6 @@ def manage_connection_request(management: Connection_request_Management, token: 
     cur.execute(RemoveRequestRecordSQL, (sender_id, receiver_id))
         
     if decision is False:
-        #TODO: Notify sender connection requst fails
         msg_body = f"Hi! \nYour connection request to {receiver_name} with id: {receiver_id} is failed."
        
     elif decision is True:
@@ -147,7 +143,7 @@ def manage_connection_request(management: Connection_request_Management, token: 
     return {'sender_id': sender_id,
             'receiver_id': receiver_id}
 
-@router.get("/get_connections")
+@router.get("/connections")
 def get_connections(token: str = Depends(oauth2_scheme)):
     user_id = verify_token(token)
     
@@ -186,7 +182,7 @@ def get_connections(token: str = Depends(oauth2_scheme)):
 
     return {'connection_list': connection_list}
     
-@router.get("/get_connection_requests")
+@router.get("/connection_requests")
 def get_connection_requests(token: str = Depends(oauth2_scheme)):
     user_id = verify_token(token)
     

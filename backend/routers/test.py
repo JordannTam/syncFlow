@@ -4,10 +4,10 @@ from email.mime.text import MIMEText
 
 
 def send_email(to: str, id: int):
-    subject = "Connection Request"
-    body = f"Hi! \nYou have a connection request From: {id}"
+    subject = "New Connection Request"
+    body = f"Hi! \nYou have a connection request From: {id}\n Please check."
     message = MIMEMultipart()
-    message["From"] = "your_email@gmail.com"
+    message["From"] = "Connection Request"
     message["To"] = to
     message["Subject"] = subject
 
