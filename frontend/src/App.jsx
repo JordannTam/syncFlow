@@ -10,7 +10,7 @@ import SignupPage from './screens/SignupScreen';
 import Navbar from './components/Navbar'
 import CreateTaskScreen from './screens/CreateTaskScreen'
 import TaskScreen from './screens/TaskScreen'
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import ConnectionsScreen from './screens/ConnectionScreen';
 
 function App() {
@@ -32,9 +32,9 @@ function App() {
             <Route path="/connections" element={<ConnectionsScreen />} />
           </Route>
           <Route path="*" element={
-            <div>
+            <Typography variant="h1" component="h1">
               <h1> COMP390011WBEndGame: 404 Page not found</h1>
-            </div>
+            </Typography>
           } />
         </Routes>
     </BrowserRouter>
