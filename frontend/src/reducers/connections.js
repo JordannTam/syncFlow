@@ -4,6 +4,10 @@ const connectionsReducer = (state = [], action) => {
             return [...state, connection(undefined, action)];
         case "SET_CONNECTIONS":
             return action.connections;
+        case "DELETE_CONNECTION":
+            const ns = state;
+            const ls = ns.filter((x) => x.u_id !== action.id);
+            return ls;
         default:
             return state;
     }

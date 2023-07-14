@@ -6,24 +6,52 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
-import { Box, ListItemButton, ListItemIcon } from '@mui/material';
+import { Box, IconButton, ListItemButton, ListItemIcon } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { apiCall } from '../utils/api';
+import { useDispatch } from 'react-redux';
+import Cookies from 'js-cookie';
+import { deleteConnection } from '../actions';
 
 export default function ConnectionList(props) {
-  const navigate = useNavigate()
+    const navigate = useNavigate()
     const { connections } = props
     const n = connections.length - 1
+    const token = Cookies.get('loginToken')
+    const dispatch = useDispatch()
+
 
     const handleProfile = (id) => {
       navigate(`/profile/${id}`)
     }
+
+    const handleDeleteConnection = async (id) => {
+      try {
+        const object = {
+          id: id
+        }
+        await apiCall('/connection', object, 'DELETE', `bearer ${token}`);
+        dispatch(deleteConnection(id))
+      } catch (err) {
+        console.error(err);
+      }
+
+      }
   
   return (
-      <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', margin: 'auto' }}>
+      <List sx={{ width: '100%', maxWidth: 700, bgcolor: 'background.paper', margin: 'auto' }}>
     {
         connections.map((con, index) => (
         <Box key={con.u_id}>
-          <ListItem disablePadding>
+          <ListItem             
+            secondaryAction = {
+              <IconButton edge="end" aria-label="comments"onClick={() => handleDeleteConnection(con.u_id)}>
+                <DeleteIcon />
+              </IconButton>
+            }
+            disablePadding
+            >
             <ListItemButton onClick={() => handleProfile(con.u_id)}>
               <ListItemIcon>
                 <Avatar></Avatar>
