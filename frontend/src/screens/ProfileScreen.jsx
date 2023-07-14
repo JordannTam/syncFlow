@@ -19,9 +19,7 @@ const ProfileScreen = () => {
 
   const handleFetchTasks = async () => {
     try {
-      console.log("params.id", params.id);
       const res = await apiCall(`/tasks?page=profile&profile_id=${params.id}`, {}, 'GET', `bearer ${token}`);
-      console.log("profile tasks:", res);
       setPTasks(res)
     } catch (err) {
       console.error(err);
@@ -43,7 +41,6 @@ const ProfileScreen = () => {
   }, [])
 
   if (!ptasks) {
-    console.log("ptasks: ",ptasks);
     return <>Loading...</>
   }
 
@@ -75,7 +72,7 @@ const ProfileScreen = () => {
           Date of Birth: {profile.date_of_birth} 
         </Typography>
         <SearchBar displayTask={ptasks} setDisplayTask={setPTasks}/>
-        <TaskList tasks={ptasks} rowNums={5} height='400'/>
+        <TaskList tasks={ptasks} id={params.id} rowNums={5} height='400'/>
       </PageContainer>
     </>
   );

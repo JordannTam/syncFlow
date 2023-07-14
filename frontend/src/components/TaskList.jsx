@@ -13,6 +13,8 @@ import HourglassTopTwoToneIcon from '@mui/icons-material/HourglassTopTwoTone';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeTaskState, setTasks } from '../actions';
 import { useNavigate } from 'react-router-dom';
+import { apiCall } from '../utils/api';
+import Cookies from 'js-cookie';
 
 
 export default function TaskList(props) {
@@ -20,6 +22,8 @@ export default function TaskList(props) {
   const { tasks } = props
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const profile = useSelector(state => state.profileReducer)
+  const token = Cookies.get('loginToken')
 
 
   const deleteUser = React.useCallback(
@@ -27,15 +31,21 @@ export default function TaskList(props) {
       console.log(props.tasks.find((a) => a.task_id === id))
       console.log("id", id);
       console.log("props.tasks", props.tasks);
-      // setTimeout(() => {
-      //   setRows((prevRows) => prevRows.filter((row) => row.id !== id));
-      // });
     },
     [],
   );
 
-  const handleFetchEditState = () => {
-    // TODO
+  const handleFetchEditState = async (id, state) => {
+    try {
+      const object = {
+        task_id: id,
+        progress: state,
+      }
+      const res = await apiCall('/edit_task', object, 'PUT', `bearer ${token}`);
+      console.log(res);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   React.useEffect(() => {
@@ -47,26 +57,32 @@ export default function TaskList(props) {
   const handleCompleted = React.useCallback(
     (id) => () => {
       dispatch(changeTaskState(id, 'Completed'))
+      handleFetchEditState(id, 'Completed')
     },
-    [],
+    [dispatch],
   );
   const handleInProgress = React.useCallback(
     (id) => () => {
       dispatch(changeTaskState(id, 'In Progress'))
+      handleFetchEditState(id, 'In Progress')
+
     },
-    [],
+    [dispatch],
   );
   const handleNotStarted = React.useCallback(
     (id) => () => {
       dispatch(changeTaskState(id, 'Not Started'))
+      handleFetchEditState(id, 'Not Started')
     },
-    [],
+    [dispatch],
   );
   const handleBlocked = React.useCallback(
     (id) => () => {
       dispatch(changeTaskState(id, 'Blocked'))
+      handleFetchEditState(id, 'Blocked')
+
     },
-    [],
+    [dispatch],
   );
 
   const handleRowClick = (id) => {
@@ -74,139 +90,146 @@ export default function TaskList(props) {
     navigate('/task/' + id )
   }
 
-  const columns = React.useMemo(
-    () => [
-        { field: 'task_id', headerName: 'ID', width: 200, sortable: false},
-        { field: 'assignee', headerName: 'Assignee', width: 200, renderCell:params=>params.row.assignees.map((a) => <Avatar key={a} src={null} />), sortable: false}, // TODO: set the src of Avatar
-        { field: 'title', headerName: 'Task Name', width: 200, sortable: false},
-        {
-          field: 'deadline',
-          headerName: 'Deadline',
-          type: 'Date',
-          width: 200,
-        },
-        {
-          field: 'progress',
-          headerName: 'Task State',
-          sortable: false,
-          width: 200,
-          type: 'actions',
-          getActions: (params) => [
-          <GridActionsCellItem
-          icon={
-            (() => {
-              const task = props.tasks && props.tasks.find((a) => a.task_id === params.id);
-              return (
-                <CheckCircleIcon 
-                  color={
-                    task && task.progress === 'Completed' 
-                    ? 'success' 
-                    : 'disabled'
-                  } 
-                  fontSize='large'
-                />
-              );
-            })()
-          }
-                    label="Completed"
-            onClick={handleCompleted(params.id)}
-            // showInMenu
-          />,
-          <GridActionsCellItem
-          icon={
-            (() => {
-              const task = tasks && tasks.find((a) => a.task_id === params.id);
-              return (
-                <AutorenewIcon 
-                  color={
-                    task && task.progress === 'In Progress' 
-                    ? 'primary' 
-                    : 'disabled'
-                  } 
-                  fontSize='large'
-                />
-              );
-            })()
-          }
-        
-            // icon={<AutorenewIcon color={initialRows.find((a) => a.id === params.id).state === 'In Progress' ? 'primary' : 'disabled'} fontSize='large'/>}
-            label="In progress"
-            onClick={handleInProgress(params.id)}
-            // showInMenu
-          />,
-          <GridActionsCellItem
-          icon={
-            (() => {
-              const task = tasks && tasks.find((a) => a.task_id === params.id);
-              return (
-                <HourglassTopTwoToneIcon 
-                  color={
-                    task && task.progress === 'Not Started'
-                    ? 'warning' 
-                    : 'disabled'
-                  } 
-                  fontSize='large'
-                />
-              );
-            })()
-          }
 
-            // icon={<HourglassTopTwoToneIcon color={initialRows.find((a) => a.id === params.id).progress === 'Not Started' ? 'warning' : 'disabled'} fontSize='large'/>}
-            label="Not Started"
-            onClick={handleNotStarted(params.id)}
-            // showInMenu
-          />,
-          <GridActionsCellItem
-          icon={
-            (() => {
-              const task = tasks && tasks.find((a) => a.task_id === params.id);
-              return (
-                <RemoveCircleIcon 
-                  color={
-                    task && task.progress === 'Blocked'
-                    ? 'error' 
-                    : 'disabled'
-                  } 
-                  fontSize='large'
-                />
-              );
-            })()
-          }
-          // icon={<RemoveCircleIcon color={initialRows.find((a) => a.id === params.id).progress === 'Blocked' ? 'error' : 'disabled'} fontSize='large'/>}
-          label="Duplicate User"
-          onClick={handleBlocked(params.id)}
-          // showInMenu
-        />,
+  const columnsDetail = [
+    { field: 'task_id', headerName: 'ID', width: 200, sortable: false},
+    { field: 'assignee', headerName: 'Assignee', width: 200, renderCell:params=>params.row.assignees.map((a) => <Avatar key={a} src={null} />), sortable: false}, // TODO: set the src of Avatar
+    { field: 'title', headerName: 'Task Name', width: 200, sortable: false},
+    {
+      field: 'deadline',
+      headerName: 'Deadline',
+      type: 'Date',
+      width: 200,
+    },
+    {
+      field: 'progress',
+      headerName: 'Task State',
+      sortable: false,
+      width: 200,
+      type: 'actions',
+      getActions: (params) => [
+      <GridActionsCellItem
+      icon={
+        (() => {
+          const task = props.tasks && props.tasks.find((a) => a.task_id === params.id);
+          return (
+            <CheckCircleIcon 
+              color={
+                task && task.progress === 'Completed' 
+                ? 'success' 
+                : 'disabled'
+              } 
+              fontSize='large'
+            />
+          );
+        })()
+      }
+                label="Completed"
+        onClick={handleCompleted(params.id)}
+        // showInMenu
+      />,
+      <GridActionsCellItem
+      icon={
+        (() => {
+          const task = tasks && tasks.find((a) => a.task_id === params.id);
+          return (
+            <AutorenewIcon 
+              color={
+                task && task.progress === 'In Progress' 
+                ? 'primary' 
+                : 'disabled'
+              } 
+              fontSize='large'
+            />
+          );
+        })()
+      }
+    
+        // icon={<AutorenewIcon color={initialRows.find((a) => a.id === params.id).state === 'In Progress' ? 'primary' : 'disabled'} fontSize='large'/>}
+        label="In progress"
+        onClick={handleInProgress(params.id)}
+        // showInMenu
+      />,
+      <GridActionsCellItem
+      icon={
+        (() => {
+          const task = tasks && tasks.find((a) => a.task_id === params.id);
+          return (
+            <HourglassTopTwoToneIcon 
+              color={
+                task && task.progress === 'Not Started'
+                ? 'warning' 
+                : 'disabled'
+              } 
+              fontSize='large'
+            />
+          );
+        })()
+      }
+
+        // icon={<HourglassTopTwoToneIcon color={initialRows.find((a) => a.id === params.id).progress === 'Not Started' ? 'warning' : 'disabled'} fontSize='large'/>}
+        label="Not Started"
+        onClick={handleNotStarted(params.id)}
+        // showInMenu
+      />,
+      <GridActionsCellItem
+      icon={
+        (() => {
+          const task = tasks && tasks.find((a) => a.task_id === params.id);
+          return (
+            <RemoveCircleIcon 
+              color={
+                task && task.progress === 'Blocked'
+                ? 'error' 
+                : 'disabled'
+              } 
+              fontSize='large'
+            />
+          );
+        })()
+      }
+      // icon={<RemoveCircleIcon color={initialRows.find((a) => a.id === params.id).progress === 'Blocked' ? 'error' : 'disabled'} fontSize='large'/>}
+      label="Duplicate User"
+      onClick={handleBlocked(params.id)}
+      // showInMenu
+    />,
 
 
-          ],
-        },
-        {
-        field: 'actions',
-        type: 'actions',
-        width: 80,
-        getActions: (params) => [
-          <GridActionsCellItem
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={deleteUser(params.id)}
-          />,
-          // <GridActionsCellItem
-          //   icon={<SecurityIcon />}
-          //   label="Toggle Admin"
-          //   onClick={toggleAdmin(params.id)}
-          //   showInMenu
-          // />,
-          // <GridActionsCellItem
-          //   icon={<FileCopyIcon />}
-          //   label="Duplicate User"
-          //   onClick={duplicateUser(params.id)}
-          //   showInMenu
-          // />,
-        ],
-      },
+      ],
+    },
+    {
+    field: 'actions',
+    type: 'actions',
+    width: 80,
+    getActions: (params) => [
+      <GridActionsCellItem
+        icon={<DeleteIcon />}
+        label="Delete"
+        onClick={deleteUser(params.id)}
+      />,
+      // <GridActionsCellItem
+      //   icon={<SecurityIcon />}
+      //   label="Toggle Admin"
+      //   onClick={toggleAdmin(params.id)}
+      //   showInMenu
+      // />,
+      // <GridActionsCellItem
+      //   icon={<FileCopyIcon />}
+      //   label="Duplicate User"
+      //   onClick={duplicateUser(params.id)}
+      //   showInMenu
+      // />,
     ],
-    [tasks, handleBlocked, handleCompleted, handleInProgress, handleNotStarted, deleteUser],
+  },
+]
+  if (profile.profile_id !== props.id) {
+    columnsDetail.splice(3,1)
+  }
+
+
+  const columns = React.useMemo(
+    () => columnsDetail,
+    [handleCompleted, handleInProgress, handleNotStarted, handleBlocked, props.tasks, tasks, deleteUser],
   );
   if (!tasks) {
     return <>Loading</>

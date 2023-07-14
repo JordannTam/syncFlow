@@ -13,7 +13,7 @@ const connection = (state, action) => {
     switch (action.type) {
         case "ADD_CONNECTION":
             return {
-                id: action.id,
+                id: action.u_id,
                 first_name: action.first_name,
                 last_name: action.last_name,
             };

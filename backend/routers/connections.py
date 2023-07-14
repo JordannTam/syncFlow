@@ -199,7 +199,7 @@ def get_connection_requests(token: str = Depends(oauth2_scheme)):
     conn = get_db_conn()
     cur = conn.cursor()
     
-    cur.execute(get_connectionsSql, (user_id, user_id))
+    cur.execute(get_connectionsSql, (user_id,))
     records = cur.fetchall()
     
     col_names = [desc[0] for desc in cur.description]

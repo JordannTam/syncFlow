@@ -15,16 +15,17 @@ const DashboardScreen = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const tasks = useSelector(state => state.taskReducer)
+  const profile = useSelector(state => state.profileReducer)
   const token = Cookies.get('loginToken')
   const [taskStorage, setTaskStorage] = useState([])
   const [loading, setLoading] = useState(false)
 
   const handleFetchTasks = async () => {
     try {
-      const tasksRes = await apiCall('/tasks?page=dashboard', {}, 'GET', `bearer ${token}`);
-      dispatch(setTasks(tasksRes))
-      setTaskStorage(tasksRes)
-      console.log("tasks: ", tasksRes)
+      const res = await apiCall('/tasks?page=dashboard', {}, 'GET', `bearer ${token}`);
+      dispatch(setTasks(res))
+      setTaskStorage(res)
+      console.log("tasks: ", res)
     } catch (err) {
       console.error(err);
     }
@@ -48,7 +49,7 @@ const DashboardScreen = () => {
         <Button variant='contained' onClick={() => navigate('/task/new')}>Create Task</Button>
       </RowBox>
       <SearchBar taskStorage={taskStorage}/>
-      <TaskList tasks={tasks} rowNums={10} height='800'/>
+      <TaskList tasks={tasks} id={profile.profile_id} rowNums={10} height='800'/>
     </PageContainer>
   );
 };
