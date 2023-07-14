@@ -28,10 +28,7 @@ export default function ConnectionList(props) {
 
     const handleDeleteConnection = async (id) => {
       try {
-        const object = {
-          id: id
-        }
-        await apiCall('/connection', object, 'DELETE', `bearer ${token}`);
+        await apiCall(`/delete_connection?profile_id=${id}`, {}, 'DELETE', `bearer ${token}`);
         dispatch(deleteConnection(id))
       } catch (err) {
         console.error(err);
