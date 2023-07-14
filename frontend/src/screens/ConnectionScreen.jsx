@@ -116,7 +116,7 @@ const ConnectionsScreen = () => {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
           >
-          <ColumnBox sx={style} rowGap='50px'>
+          <Box sx={style} rowGap='50px' display='flex' flexDirection="column">
             <Typography id="modal-modal-title" variant="h6" component="h2">
               Add Connections
             </Typography>
@@ -125,7 +125,7 @@ const ConnectionsScreen = () => {
               <Button variant='contained' onClick={handleAddConnection}>Send Invitation</Button>
               <Button variant='outlined' onClick={handleCloseAdd}>Back</Button>
             </Box>
-          </ColumnBox>
+          </Box>
         </Modal>
 
 
