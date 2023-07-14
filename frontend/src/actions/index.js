@@ -77,3 +77,12 @@ export const setConnections = (connections) => {
         connections,
     };
 };
+
+export const addConnections = (user) => {
+    return {
+        type: "ADD_CONNECTION",
+        id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+    };
+};
