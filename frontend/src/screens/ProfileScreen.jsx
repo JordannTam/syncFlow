@@ -12,7 +12,7 @@ import { useParams } from 'react-router-dom';
 const ProfileScreen = () => {
   const dispatch = useDispatch()
   const token = Cookies.get('loginToken');
-  const [tasks, setTasks] = useState([])
+  const [ptasks, setPTasks] = useState([])
   const profile = useSelector(state => state.profileReducer)
   const params = useParams()
 
@@ -22,8 +22,7 @@ const ProfileScreen = () => {
       console.log("params.id", params.id);
       const res = await apiCall(`/tasks?page=profile&profile_id=${params.id}`, {}, 'GET', `bearer ${token}`);
       console.log("profile tasks:", res);
-      setTasks(res)
-
+      setPTasks(res)
     } catch (err) {
       console.error(err);
     }
@@ -41,10 +40,10 @@ const ProfileScreen = () => {
 
   useEffect(() => {
       handleFetchTasks()
-      console.log(profile)
   }, [])
 
-  if (!tasks) {
+  if (!ptasks) {
+    console.log("ptasks: ",ptasks);
     return <>Loading...</>
   }
 
@@ -75,8 +74,8 @@ const ProfileScreen = () => {
         <Typography variant="h6" component="h2" marginBottom="20px">
           Date of Birth: {profile.date_of_birth} 
         </Typography>
-        <SearchBar displayTask={tasks} setDisplayTask={setTasks}/>
-        <TaskList tasks={tasks} rowNums={5} height='400'/>
+        <SearchBar displayTask={ptasks} setDisplayTask={setPTasks}/>
+        <TaskList tasks={ptasks} rowNums={5} height='400'/>
       </PageContainer>
     </>
   );

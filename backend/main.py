@@ -183,7 +183,6 @@ def get_tasks(page: str , profile_id: Union[int, None] = None, token: str = Depe
         WHERE profiles.id = %s
         ORDER BY tasks.deadline;
         """
-        print("//   Note: ", type(user_id))
         cur.execute(select_task_list, (user_id,))
     elif page == 'dashboard':
         select_task_list = """
@@ -220,7 +219,6 @@ def get_tasks(page: str , profile_id: Union[int, None] = None, token: str = Depe
 
     cur.close()
     conn.close()
-    print('///  ', tasks)
 
     return tasks
 
