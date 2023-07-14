@@ -10,7 +10,8 @@ import SignupPage from './screens/SignupScreen';
 import Navbar from './components/Navbar'
 import CreateTaskScreen from './screens/CreateTaskScreen'
 import TaskScreen from './screens/TaskScreen'
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import ConnectionsScreen from './screens/ConnectionScreen';
 
 function App() {
   return (
@@ -25,14 +26,15 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/home" element={<DashboardScreen />} />
             <Route path="/" element={<Navigate to="/home" replace />} />
-            <Route path="/profile" element={<ProfileScreen />} />
+            <Route path="/profile/:id" element={<ProfileScreen />} />
             <Route path="/task/new" element={<CreateTaskScreen />} />
             <Route path="/task/:id" element={<TaskScreen />} />
+            <Route path="/connections" element={<ConnectionsScreen />} />
           </Route>
           <Route path="*" element={
-            <div>
+            <Typography variant="h1" component="h1">
               <h1> COMP390011WBEndGame: 404 Page not found</h1>
-            </div>
+            </Typography>
           } />
         </Routes>
     </BrowserRouter>
