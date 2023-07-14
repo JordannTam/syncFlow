@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function TaskList(props) {
   const [loading, setLoading] = React.useState(false)
-  const tasks = useSelector(state=>state.taskReducer)
+  const { tasks } = props
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
