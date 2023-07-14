@@ -86,3 +86,10 @@ export const addConnections = (user) => {
         last_name: user.last_name,
     };
 };
+
+export const deleteConnection = (id) => {
+    return {
+        type: "DELETE_CONNECTION",
+        id,
+    };
+};
