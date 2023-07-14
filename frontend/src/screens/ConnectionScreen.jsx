@@ -26,7 +26,6 @@ const ConnectionsScreen = () => {
   }
 
   useEffect(() => {
-      // setLoading(true)
       handleFetchConnections()
   }, [])
 

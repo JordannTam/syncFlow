@@ -219,7 +219,6 @@ def get_tasks(page: str , profile_id: Union[int, None] = None, token: str = Depe
 
     cur.close()
     conn.close()
-    print('///  ', tasks)
 
     return tasks
 
