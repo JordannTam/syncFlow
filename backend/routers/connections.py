@@ -63,12 +63,12 @@ def send_connection_request(email: str, token: str = Depends(oauth2_scheme)):
     cur.execute(connectionCheckSQL, (id1, id2, id1, id2))
     result = cur.fetchone()
     
-    if result is None:
+    if result is not None:
         raise HTTPException(status_code=409, detail="Connected Already")
     
     # Send the connection request
     add_connection_request = """
-        INSERT INTO connection_requests (id1, id2)
+        INSERT INTO connection_requests (sender_id, receiver_id)
         VALUES (%s, %s)
     """
     cur.execute(add_connection_request, (id1, id2))
