@@ -15,6 +15,9 @@ class Connection_request_Management(BaseModel):
     sender_id: int
     decision: bool
 
+class Send_Request(BaseModel):
+    email: str
+    
 # use to notify the user via email
 def send_email(to: str, body):
     subject = "Connection Request"
@@ -35,7 +38,8 @@ def send_email(to: str, body):
         server.sendmail("msgsend1@gmail.com", to, text)
         
 @router.post("/connection_request")
-def send_connection_request(email: str, token: str = Depends(oauth2_scheme)):
+def send_connection_request(Send: Send_Request, token: str = Depends(oauth2_scheme)):
+    email = Send.email
     
     id1 = verify_token(token)
     
