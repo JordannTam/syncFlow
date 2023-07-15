@@ -62,7 +62,7 @@ const ConnectionsScreen = () => {
       const object = {
         email,
       }
-      await apiCall('/connection_requests', object, 'POST', `bearer ${token}`);
+      await apiCall('/connection_request', object, 'POST', `bearer ${token}`);
     } catch (err) {
       console.error(err);
     }
