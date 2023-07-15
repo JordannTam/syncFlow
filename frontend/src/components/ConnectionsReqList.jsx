@@ -21,6 +21,7 @@ export default function ConnectionReqList(props) {
     const n = connections.length - 1
     const token = Cookies.get('loginToken')
     const dispatch = useDispatch()
+    const [isManaged, setIsManaged] = React.useState(false)
 
     const handleProfile = (id) => {
         navigate(`/profile/${id}`)
@@ -28,12 +29,16 @@ export default function ConnectionReqList(props) {
 
     const handleAccept = async (user) => {
         try {
+            setIsManaged(true)
             const object = {
                 sender_id: user.u_id,
                 decision: true
             }
             await apiCall('/connection_request_management', object, 'POST', `bearer ${token}`);
             dispatch(addConnections(user))
+            const rs = connections
+            const ls = rs.filter((x) => user.u_id !== x.u_id)
+            props.setConnectionsReqs(ls)
         } catch (err) {
         console.error(err);
         }
@@ -42,6 +47,7 @@ export default function ConnectionReqList(props) {
 
     const handleDecline = async (user) => {
         try {
+            setIsManaged(true)
             const object = {
                 sender_id: user.u_id, 
                 decision: false
@@ -61,12 +67,12 @@ export default function ConnectionReqList(props) {
       <List sx={{ width: '100%', maxWidth: 600, bgcolor: 'background.paper', margin: 'auto' }}>
     {
         connections.map((con, index) => (
-        <Box key={con.u_id}>
+        <Box key={index}>
           <ListItem             
             secondaryAction = {
                 <RowBox columnGap="10px">
-                    <Button variant="contained" onClick={() => handleAccept(con)} >Accpet</Button>
-                    <Button variant="outlined" color="error" onClick={() => handleDecline(con)}>Decline</Button>
+                    <Button disabled={isManaged} variant="contained" onClick={() => handleAccept(con)} >Accpet</Button>
+                    <Button disabled={isManaged} variant="outlined" color="error" onClick={() => handleDecline(con)}>Decline</Button>
                 </RowBox>
             }
             disablePadding
