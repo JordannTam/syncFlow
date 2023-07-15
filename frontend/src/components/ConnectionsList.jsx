@@ -40,7 +40,7 @@ export default function ConnectionList(props) {
       <List sx={{ width: '100%', maxWidth: 700, bgcolor: 'background.paper', margin: 'auto' }}>
     {
         connections.map((con, index) => (
-        <Box key={con.u_id}>
+        <Box key={index}>
           <ListItem             
             secondaryAction = {
               <IconButton edge="end" aria-label="comments"onClick={() => handleDeleteConnection(con.u_id)}>

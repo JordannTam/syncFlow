@@ -8,6 +8,10 @@ const taskReducer = (state = [], action) => {
             return state.map((t) => task(t, action));
         case "SET_TASK":
             return action.tasks;
+        case "DELETE_TASK":
+            const ns = state;
+            const ls = ns.filter((x) => x.task_id !== action.id);
+            return ls;
         default:
             return state;
     }

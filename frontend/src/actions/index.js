@@ -40,6 +40,13 @@ export const setTasks = (tasks) => {
     };
 };
 
+export const deleteTasks = (id) => {
+    return {
+        type: "DELETE_TASK",
+        id,
+    };
+};
+
 // **************
 // Login Function
 // **************
