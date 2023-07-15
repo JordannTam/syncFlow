@@ -77,8 +77,8 @@ def send_connection_request(email: str, token: str = Depends(oauth2_scheme)):
     
     # send email notification to notify the connection request   
     cur.execute("SELECT \
-                first_name || ' ' || last_name as name FROM PROFILES WHERE id = '%s'", 
-                id1)
+                first_name || ' ' || last_name as name FROM PROFILES WHERE id = %s", 
+                (id1,))
     
 
     sender_name = cur.fetchone()
@@ -103,12 +103,12 @@ def manage_connection_request(management: Connection_request_Management, token: 
     cur = conn.cursor()
     
     cur.execute("SELECT \
-                email_address, first_name || ' ' || last_name as name FROM PROFILES WHERE id = '%s'", 
+                email_address, first_name || ' ' || last_name as name FROM PROFILES WHERE id = %s", 
                 (sender_id,))
     sender_email, _ = cur.fetchone()
     
     cur.execute("SELECT \
-                email_address, first_name || ' ' || last_name as name FROM PROFILES WHERE id = '%s'", 
+                email_address, first_name || ' ' || last_name as name FROM PROFILES WHERE id = %s", 
                 (receiver_id,))
     _, receiver_name = cur.fetchone()
     
