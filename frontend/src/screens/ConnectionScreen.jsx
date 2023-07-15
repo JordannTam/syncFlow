@@ -64,6 +64,7 @@ const ConnectionsScreen = () => {
       }
       await apiCall(`/connection_request`, object, 'POST', `bearer ${token}`);
       setOpenSend(false)
+      setEmail("")
     } catch (err) {
       console.error(err);
     }
