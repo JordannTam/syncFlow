@@ -104,12 +104,12 @@ def manage_connection_request(management: Connection_request_Management, token: 
     
     cur.execute("SELECT \
                 email_address, first_name || ' ' || last_name as name FROM PROFILES WHERE id = '%s'", 
-                sender_id)
+                (sender_id,))
     sender_email, _ = cur.fetchone()
     
     cur.execute("SELECT \
                 email_address, first_name || ' ' || last_name as name FROM PROFILES WHERE id = '%s'", 
-                receiver_id)
+                (receiver_id,))
     _, receiver_name = cur.fetchone()
     
     # either establish or reject connection the request should be removed
