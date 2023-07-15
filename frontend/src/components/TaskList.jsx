@@ -11,7 +11,7 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircleTwoTone';
 import StopCircleIcon from '@mui/icons-material/StopCircleTwoTone';
 import HourglassTopTwoToneIcon from '@mui/icons-material/HourglassTopTwoTone';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeTaskState, setTasks } from '../actions';
+import { changeTaskState, deleteTasks, setTasks } from '../actions';
 import { useNavigate } from 'react-router-dom';
 import { apiCall } from '../utils/api';
 import Cookies from 'js-cookie';
@@ -26,14 +26,25 @@ export default function TaskList(props) {
   const token = Cookies.get('loginToken')
 
 
-  const deleteUser = React.useCallback(
+  const handleDeleteTask = React.useCallback(
     (id) => () => {
-      console.log(props.tasks.find((a) => a.task_id === id))
-      console.log("id", id);
-      console.log("props.tasks", props.tasks);
+      // console.log(props.tasks.find((a) => a.task_id === id))
+      // console.log("id", id);
+      // console.log("props.tasks", props.tasks);
+      dispatch(deleteTasks(id))
+      handleDeleteTaskAPI(id)
     },
-    [],
+    [dispatch],
   );
+
+  const handleDeleteTaskAPI = async (id) => {
+    try {
+      const res = await apiCall(`/task?task_id=${id}`, {}, 'DELETE', `bearer ${token}`);
+      console.log(res);
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   const handleFetchEditState = async (id, state) => {
     try {
@@ -205,7 +216,7 @@ export default function TaskList(props) {
       <GridActionsCellItem
         icon={<DeleteIcon />}
         label="Delete"
-        onClick={deleteUser(params.id)}
+        onClick={handleDeleteTask(params.id)}
       />,
       // <GridActionsCellItem
       //   icon={<SecurityIcon />}
@@ -229,7 +240,7 @@ export default function TaskList(props) {
 
   const columns = React.useMemo(
     () => columnsDetail,
-    [handleCompleted, handleInProgress, handleNotStarted, handleBlocked, props.tasks, tasks, deleteUser],
+    [handleCompleted, handleInProgress, handleNotStarted, handleBlocked, props.tasks, tasks, handleDeleteTask],
   );
   if (!tasks) {
     return <>Loading</>

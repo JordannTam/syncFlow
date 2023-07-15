@@ -241,13 +241,13 @@ def delete_task(task_id: int, token: str = Depends(oauth2_scheme)):
 
     deleteTaskAssigneesSQL = """
         DELETE FROM TASK_ASSIGNEES 
-        WHERE taks_id = %s
+        WHERE task_id = %s
     """
     cur.execute(deleteTaskAssigneesSQL, (task_id,))
     
     deleteTaskSQL = """
         DELETE FROM TASKS
-        WHERE taks_id = %s
+        WHERE task_id = %s
     """
     cur.execute(deleteTaskSQL, (task_id,))
     
