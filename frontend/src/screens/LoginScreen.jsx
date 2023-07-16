@@ -18,12 +18,12 @@ const LoginScreen = () => {
   const dispatch = useDispatch()
 
 
-  const handleFetchProfile = async (token) => {
+  const handleFetchProfileId = async (token) => {
     try {
       const profile_data = await apiCall('/profile', {}, 'GET', `bearer ${token}`);
       // const profile_data = await apiCall(`/profile?page=profile&profile_id=${params.id}`, {}, 'GET', `bearer ${token}`);
-      dispatch(setProfile(profile_data))
-      console.log("User profile: ", profile_data);
+      Cookies.set('userId', profile_data.profile_id);
+      console.log(Cookies.get('userId'))
     } catch (err) {
       console.error(err);
     }
@@ -42,7 +42,7 @@ const LoginScreen = () => {
       // expiryDate.setTime(expiryDate.getTime() + 10 * 60 * 1000);
       Cookies.set('loginToken', token);
       // dispatch(login())
-      handleFetchProfile(token)
+      handleFetchProfileId(token)
       navigate('/home')
     } catch (err) {
       console.error(err);

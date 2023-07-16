@@ -8,40 +8,45 @@ import Cookies from 'js-cookie';
 import { apiCall } from '../utils/api';
 import SearchBar from '../components/SearchBar';
 import { useParams } from 'react-router-dom';
+import { setTasks } from '../actions';
 import WorkloadBar from '../components/WorkloadBar';
 
 const ProfileScreen = () => {
   const dispatch = useDispatch()
   const token = Cookies.get('loginToken');
-  const [ptasks, setPTasks] = useState([])
-  const profile = useSelector(state => state.profileReducer)
+  const tasks = useSelector(state => state.taskReducer)
+  // const profile = useSelector(state => state.profileReducer)
+  const [taskStorage, setTaskStorage] = useState([])
+  const [profile, setProfile] = useState([])
   const params = useParams()
 
 
   const handleFetchTasks = async () => {
     try {
       const res = await apiCall(`/tasks?page=profile&profile_id=${params.id}`, {}, 'GET', `bearer ${token}`);
-      setPTasks(res)
+      dispatch(setTasks(res))
+      setTaskStorage(res)
     } catch (err) {
       console.error(err);
     }
   }
-  // const handleFetchProfile = async () => {
-  //   try {
-  //     // dispatch(setProfile(profile))
-  //     const profile_data = await apiCall('/profile', {}, 'GET', `bearer ${token}`);
-  //     console.log("User profile: ", profile_data);
-  //     setProfile(profile_data)
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // }
+  const handleFetchProfile = async () => {
+    try {
+      const profile_data = await apiCall('/profile', {}, 'GET', `bearer ${token}`);
+      // const profile_data = await apiCall(`/profile?page=profile&profile_id=${params.id}`, {}, 'GET', `bearer ${token}`);
+      setProfile(profile_data)
+      console.log("User profile: ", profile_data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   useEffect(() => {
-      handleFetchTasks()
+    handleFetchProfile()
+    handleFetchTasks()
   }, [])
 
-  if (!ptasks) {
+  if (!tasks) {
     return <>Loading...</>
   }
 
@@ -73,8 +78,8 @@ const ProfileScreen = () => {
         <Typography variant="h6" component="h2" marginBottom="20px">
           Date of Birth: {profile.date_of_birth} 
         </Typography>
-        <SearchBar displayTask={ptasks} setDisplayTask={setPTasks}/>
-        <TaskList tasks={ptasks} id={params.id} rowNums={5} height='400'/>
+        <SearchBar taskStorage={taskStorage}/>
+        <TaskList tasks={tasks} id={params.id} rowNums={5} height='400'/>
       </PageContainer>
     </>
   );

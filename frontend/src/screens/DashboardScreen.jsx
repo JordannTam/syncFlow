@@ -18,7 +18,7 @@ const DashboardScreen = () => {
   const profile = useSelector(state => state.profileReducer)
   const token = Cookies.get('loginToken')
   const [taskStorage, setTaskStorage] = useState([])
-  const [loading, setLoading] = useState(false)
+  // const [loading, setLoading] = useState(false)
 
   const handleFetchTasks = async () => {
     try {
@@ -36,7 +36,7 @@ const DashboardScreen = () => {
       handleFetchTasks()
   }, [])
 
-  if (!tasks && loading) {
+  if (!tasks) {
     return <div>Loading...</div>;
   }
 

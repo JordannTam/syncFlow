@@ -6,7 +6,7 @@ const WorkloadBar = (props) => {
   let {value} = props
   let pcolor = 'success';
   let tcolor = 'black'
-  let valueText = value+'%'
+  let valueText = `${value}%`
 
   if (value < 25) {
     pcolor = 'success';

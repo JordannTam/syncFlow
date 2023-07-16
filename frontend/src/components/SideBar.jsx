@@ -27,6 +27,7 @@ import { createTheme } from '@mui/material/styles';
 import { apiCall } from '../utils/api';
 import LogoutButton from './LogoutButton';
 import { useSelector } from 'react-redux';
+import Cookies from 'js-cookie';
 
 const themeAB = createTheme({
   status: {
@@ -120,13 +121,14 @@ const LogoImage = styled('img')({
 
 export default function MiniDrawer() {
   const navigate = useNavigate();
+  const userId = Cookies.get('userId')
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const profile = useSelector(state => state.profileReducer)
   
   const menuItems = [
     { text: 'Home', link: '/', icon: <HomeIcon /> },
-    { text: 'Profile', link: `/profile/${profile.profile_id}`, icon: <AccountBoxIcon /> },
+    { text: 'Profile', link: `/profile/${userId}`, icon: <AccountBoxIcon /> },
     { text: 'Connections', link: '/connections', icon: <GroupsIcon /> },
     { text: 'Schedule', link: '/', icon: <EventNoteIcon /> },
   ];
