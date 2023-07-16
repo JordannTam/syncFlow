@@ -21,6 +21,7 @@ import Cookies from 'js-cookie';
 // };
 
 const ProtectedRoute = () => {
+  console.log(Cookies.get('loginToken'))
   if (!Cookies.get('loginToken')) {
     return <Navigate to="/login" replace />;
   }

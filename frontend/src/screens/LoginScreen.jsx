@@ -21,6 +21,7 @@ const LoginScreen = () => {
   const handleFetchProfile = async (token) => {
     try {
       const profile_data = await apiCall('/profile', {}, 'GET', `bearer ${token}`);
+      // const profile_data = await apiCall(`/profile?page=profile&profile_id=${params.id}`, {}, 'GET', `bearer ${token}`);
       dispatch(setProfile(profile_data))
       console.log("User profile: ", profile_data);
     } catch (err) {

@@ -51,7 +51,7 @@ const SearchBar = (props) => {
     })));
   };
   
-  // tick for specific deadline (at this point always on), problem with looping route, make it work on profile page
+  // tick for specific deadline (at this point always on), make it work on profile page
   // date range picker https://mui.com/x/react-date-pickers/date-range-picker/
   return (
   <div>

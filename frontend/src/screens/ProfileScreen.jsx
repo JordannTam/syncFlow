@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import SideBar from '../components/SideBar';
 import PageContainer from '../components/PageContainer'
 import TaskList from '../components/TaskList';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, CircularProgress  } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import Cookies from 'js-cookie';
 import { apiCall } from '../utils/api';
 import SearchBar from '../components/SearchBar';
 import { useParams } from 'react-router-dom';
+import WorkloadBar from '../components/WorkloadBar';
 
 const ProfileScreen = () => {
   const dispatch = useDispatch()
@@ -62,6 +63,7 @@ const ProfileScreen = () => {
           alt="profile image"
           src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&w=350&dpr=2"
         />
+        <WorkloadBar value={110}/>
         <Typography variant="h6" component="h2" marginTop="10px">
           Name: {profile.first_name} {profile.last_name}
         </Typography>
