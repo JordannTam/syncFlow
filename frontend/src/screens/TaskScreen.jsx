@@ -3,7 +3,7 @@ import SideBar from '../components/SideBar';
 import PageContainer from '../components/PageContainer'
 import AssigneeTransferList from '../components/AssigneeTransferList'
 import TaskList from '../components/TaskList';
-import { Avatar, Box, TextField, Typography } from '@mui/material';
+import { Avatar, Box, Divider, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, TextField, Typography } from '@mui/material';
 import { ColumnBox, RowBox } from '../components/FlexBox';
 import Button from '../components/Button';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -26,6 +26,10 @@ const TaskScreen = () => {
     const handleEdit = async () => {
         navigate('/task/' + `${params.id}` + '/edit')
     }
+    const handleProfile = (id) => {
+        navigate(`/profile/${id}`)
+      }
+  
 
     useEffect(() => {
         // console.log(tasks, targetTask, params.id);
@@ -48,18 +52,36 @@ const TaskScreen = () => {
             <Typography variant="h5" component="h5" marginBottom="15px">
                 Deadline: {targetTask.deadline}
             </Typography>
-            <Typography variant="h5" component="h5" marginBottom="15px">
-                Assignees: 
-            </Typography>
-            <RowBox columnGap='10px'>
-                {targetTask.assignees.map((name, index) => (
-                <Avatar key={index} />))}
+            <RowBox columnGap="50px">
+                <Typography variant="h5" component="h5" marginBottom="15px">
+                    Assignees: 
+                </Typography>
+                <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}>
+                    {targetTask.assignees.map((id, index) => (
+                        <Box key={index}>
+                        <ListItem
+                            disablePadding
+                        >
+                            <ListItemButton onClick={() => handleProfile(id)}>
+                            <ListItemAvatar>
+                                <Avatar
+                                alt={`Avatar n°${index + 1}`}
+                                />
+                            </ListItemAvatar>
+                            <ListItemText id={index} primary={`User Id ${id}`} />
+                            </ListItemButton>
+                        </ListItem>
+                        <Divider/>
+                        </Box>
+                    ))}
+            </List>
             </RowBox>
 
-            <RowBox columnGap='20px'>
-                <Button variant='contained' onClick={() => navigate('/home')} >Back</Button>
+            <Box display="flex" flexDirection="row-reverse" columnGap='20px'>
                 <Button variant='contained' onClick={() => handleEdit()}>Edit Task</Button>
-            </RowBox>
+                <Button variant='contained' onClick={() => navigate('/home')} >Back</Button>
+            </Box>
+
         </ColumnBox>
       </PageContainer>
     </>

@@ -100,10 +100,12 @@ const CreateTaskScreen = () => {
             </RadioGroup>
           </FormControl>
 
-            <RowBox columnGap='20px'>
-                <Button variant='contained' onClick={() => navigate('/home')} >Back</Button>
+
+          <Box display="flex" flexDirection="row-reverse" columnGap='20px'>
                 <Button variant='contained' onClick={() => handleSubmit()}>Create Task</Button>
-            </RowBox>
+                <Button variant='contained' onClick={() => navigate('/home')} >Back</Button>
+          </Box>
+
         </ColumnBox>
       </PageContainer>
     </>
