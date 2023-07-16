@@ -7,7 +7,7 @@ import { RowBox } from '../components/FlexBox';
 import SearchBar from '../components/SearchBar';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { setTasks } from '../actions';
+import { setConnections, setTasks } from '../actions';
 import Cookies from 'js-cookie';
 import { apiCall } from '../utils/api';
 
@@ -19,6 +19,15 @@ const DashboardScreen = () => {
   const token = Cookies.get('loginToken')
   const [taskStorage, setTaskStorage] = useState([])
   // const [loading, setLoading] = useState(false)
+
+  const handleFetchConnections = async () => {
+    try {
+      const res = await apiCall('/connections', {}, 'GET', `bearer ${token}`);
+      dispatch(setConnections(res.connection_list))
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   const handleFetchTasks = async () => {
     try {
@@ -33,6 +42,7 @@ const DashboardScreen = () => {
 
   useEffect(() => {
       // setLoading(true)
+      handleFetchConnections()
       handleFetchTasks()
   }, [])
 
