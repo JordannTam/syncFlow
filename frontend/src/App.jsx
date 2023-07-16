@@ -12,6 +12,7 @@ import CreateTaskScreen from './screens/CreateTaskScreen'
 import TaskScreen from './screens/TaskScreen'
 import { Box, Typography } from '@mui/material';
 import ConnectionsScreen from './screens/ConnectionScreen';
+import EditTaskScreen from './screens/EditTaskScreen';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
             <Route path="/profile/:id" element={<ProfileScreen />} />
             <Route path="/task/new" element={<CreateTaskScreen />} />
             <Route path="/task/:id" element={<TaskScreen />} />
+            <Route path="/task/:id/edit" element={<EditTaskScreen />} />
             <Route path="/connections" element={<ConnectionsScreen />} />
           </Route>
           <Route path="*" element={

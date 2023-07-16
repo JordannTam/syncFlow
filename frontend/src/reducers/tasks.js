@@ -41,6 +41,7 @@ const task = (state, action) => {
                 return state;
             }
             return {
+                task_id: action.task_id,
                 title: action.title,
                 description: action.description,
                 deadline: action.deadline,

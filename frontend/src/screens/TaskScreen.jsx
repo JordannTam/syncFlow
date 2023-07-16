@@ -24,7 +24,7 @@ const TaskScreen = () => {
     const navigate = useNavigate()
 
     const handleEdit = async () => {
-        navigate('/task/' + `${params.id}` + '/edit')
+        navigate(`/task/${params.id}/edit`)
     }
     const handleProfile = (id) => {
         navigate(`/profile/${id}`)
@@ -52,6 +52,10 @@ const TaskScreen = () => {
             <Typography variant="h5" component="h5" marginBottom="15px">
                 Deadline: {targetTask.deadline}
             </Typography>
+            <Typography variant="h5" component="h5" marginBottom="15px">
+                State: {targetTask.progress}
+            </Typography>
+
             <RowBox columnGap="50px">
                 <Typography variant="h5" component="h5" marginBottom="15px">
                     Assignees: 

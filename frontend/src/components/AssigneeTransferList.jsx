@@ -7,6 +7,8 @@ import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
+import { useSelector } from 'react-redux';
+import { Avatar, Box, Typography } from '@mui/material';
 
 function not(a, b) {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -18,10 +20,11 @@ function intersection(a, b) {
 
 export default function TransferList(props) {
   const [checked, setChecked] = React.useState([]);
-  const [left, setLeft] = React.useState([1, 2, 3, 4]); // Delete after backend implemented
-//   const [left, setLeft] = React.useState([...props.connections])
+  const connections = useSelector(state => state.connectionsReducer)
   const right = props.right;
   const setRight = props.setRight;
+  const [left, setLeft] = React.useState(connections.filter((x) => !right.includes(x.u_id))); // Delete after backend implemented
+//   const [left, setLeft] = React.useState([...props.connections])
 
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
@@ -84,7 +87,11 @@ export default function TransferList(props) {
                   }}
                 />
               </ListItemIcon>
-              <ListItemText id={labelId} primary={`User ${value}`} />
+              <Box display="flex" columnGap="10px">
+              <Avatar src={value.icon}></Avatar>
+              <ListItemText id={labelId} primary={`${value.first_name}`} />
+
+              </Box>
             </ListItem>
           );
         })}
