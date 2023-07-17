@@ -104,7 +104,7 @@ export default function TaskList(props) {
 
   const columnsDetail = [
     { field: 'task_id', headerName: 'ID', width: 200, sortable: false},
-    { field: 'assignee', headerName: 'Assignee', width: 200, renderCell:params=>params.row.assignees.map((a) => <Avatar key={a} src={null} />), sortable: false}, // TODO: set the src of Avatar
+    { field: 'assignee', headerName: 'Assignee', width: 200, renderCell:params=>params.row.assignees.map((a,index) => <Avatar key={index} src={null} />), sortable: false}, // TODO: set the src of Avatar
     { field: 'title', headerName: 'Task Name', width: 200, sortable: false},
     {
       field: 'deadline',
@@ -234,7 +234,8 @@ export default function TaskList(props) {
   },
 ]
   if (profile.profile_id !== props.id) {
-    columnsDetail.splice(3,1)
+    columnsDetail.splice(4,1)
+    columnsDetail.splice(4,1)
   }
 
 
@@ -256,7 +257,7 @@ export default function TaskList(props) {
     
       }}
       columns={columns} 
-      rows={tasks} 
+      rows={tasks}
       getRowId={(row)=> row.task_id}
       pageSizeOptions={[5, 10]}
       initialState={{

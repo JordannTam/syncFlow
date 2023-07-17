@@ -20,9 +20,11 @@ const LoginScreen = () => {
 
   const handleFetchProfileId = async (token) => {
     try {
-      const id = await apiCall('/token/id', {}, 'GET', `bearer ${token}`);
-      // const profile_data = await apiCall(`/profile?page=profile&profile_id=${params.id}`, {}, 'GET', `bearer ${token}`);
-      Cookies.set('userId', id);
+      // const id = await apiCall('/token/id', {}, 'GET', `bearer ${token}`);
+      const profile_data = await apiCall(`/profile?page=profile&profile_id=${params.id}`, {}, 'GET', `bearer ${token}`);
+      // Cookies.set('userId', id);
+      Cookies.set('userId', profile_data.profile_id);
+      dispatch(setProfile(profile_data))
       console.log(Cookies.get('userId'))
     } catch (err) {
       console.error(err);
