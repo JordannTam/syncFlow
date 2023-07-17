@@ -72,7 +72,7 @@ export default function TransferList(props) {
 
           return (
             <ListItem
-              key={value}
+              key={value.u_id}
               role="listitem"
               button
               onClick={handleToggle(value)}
