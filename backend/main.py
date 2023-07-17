@@ -212,7 +212,7 @@ def get_tasks(page: str , profile_id: Union[int, None] = None, token: str = Depe
     tasks_dict = {task[0]: dict(zip(column_names, task)) for task in tasks}
     
     select_assignees_sql = '''
-    SELECT profile_id
+    SELECT p.id, p.email_address as email, p.first_name as first_name, p.last_name as last_name 
     FROM task_assignees t
         JOIN PROFILES p on p.id = t.profile_id
     WHERE t.task_id = %s
