@@ -234,7 +234,8 @@ export default function TaskList(props) {
   },
 ]
   if (profile.profile_id !== props.id) {
-    columnsDetail.splice(3,1)
+    columnsDetail.splice(4,1)
+    columnsDetail.splice(4,1)
   }
 
 
