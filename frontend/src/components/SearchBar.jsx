@@ -5,6 +5,7 @@ import { LocalizationProvider, DatePicker  } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useDispatch, useSelector } from 'react-redux';
 import { setTasks } from '../actions';
+import { RowBox } from './FlexBox';
 
 
 const CustomTextField = styled(TextField)({
@@ -50,24 +51,35 @@ const SearchBar = (props) => {
       }
     })));
   };
+
+  const handleClear = () => {
+    dispatch(setTasks(taskStorage))
+    setIdValue("")
+    setNameValue("")
+    setDescValue("")
+    setDeadlineValue("")
+  }
   
   // tick for specific deadline (at this point always on), make it work on profile page
   // date range picker https://mui.com/x/react-date-pickers/date-range-picker/
   return (
   <div>
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <CustomTextField label="ID" variant="outlined" value={idValue} onChange={(event) => {
+      <RowBox columnGap="5px" justifyContent="space-between">
+
+      <CustomTextField sx={{ flexGrow: 0, width: 70}} label="ID" variant="outlined" value={idValue} onChange={(event) => {
         const inputValue = event.target.value;
         const regex = /^[0-9]*$/;
         if (regex.test(inputValue)) {
           setIdValue(inputValue);
         }
       }}/>
-      <CustomTextField label="Name" variant="outlined" value={nameValue} onChange={(event) => {setNameValue(event.target.value)}}/>
-      <CustomTextField label="Description" variant="outlined" value={descValue} onChange={(event) => {setDescValue(event.target.value)}}/>
-      <DatePicker label="Deadline" slotProps={{ textField: { error: false, }, }} value={deadlineValue} onChange={(newValue) => {setDeadlineValue(newValue)}}/>
+      <CustomTextField sx={{ flexGrow: 0}} label="Name" variant="outlined" value={nameValue} onChange={(event) => {setNameValue(event.target.value)}}/>
+      <CustomTextField sx={{ flexGrow: 5}} label="Description" variant="outlined" value={descValue} onChange={(event) => {setDescValue(event.target.value)}}/>
+      <DatePicker sx={{ flexGrow: 0}} label="Deadline" slotProps={{ textField: { error: false, }, }} value={deadlineValue} onChange={(newValue) => {setDeadlineValue(newValue)}}/>
       <CustomButton variant='contained' onClick={() => searchSubmit()}>Search</CustomButton>
-      <CustomButton variant='outlined' onClick={() => { dispatch(setTasks(taskStorage)) }}>Clear</CustomButton>
+      <CustomButton variant='outlined' onClick={() => { handleClear() }}>Clear</CustomButton>
+      </RowBox>
     </LocalizationProvider>
   </div>)
 }
