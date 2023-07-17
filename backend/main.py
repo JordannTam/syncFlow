@@ -221,7 +221,8 @@ def get_tasks(page: str , profile_id: Union[int, None] = None, token: str = Depe
     # Fetch assignees for each task
     for task_id, task in tasks_dict.items():
         cur.execute(select_assignees_sql, (task_id,))
-        assignees = [item[0] for item in cur.fetchall()]
+        # assignees = [item[0] for item in cur.fetchall()]
+        assignees = [User_profile(u_id=item[0], email=item[1], first_name=item[2], last_name=item[3]) for item in cur.fetchall()]
         task["assignees"] = assignees
 
     # Convert back to a list
