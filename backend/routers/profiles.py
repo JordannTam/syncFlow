@@ -193,7 +193,7 @@ async def profile_score(profile_id : Union[str, None], token: str = Depends(oaut
                 COALESCE(tasks.mean, 45) * 
                     CASE 
                         WHEN tasks.progress = 'Not Started' THEN 1
-                        WHEN tasks.progress = 'Started' THEN 0.5
+                        WHEN tasks.progress = 'In Progress' THEN 0.5
                         WHEN tasks.progress = 'Completed' THEN 0
                     END *
                     (1/GREATEST(EXTRACT(DAY FROM AGE(tasks.deadline, CURRENT_DATE)), 1)::float) *
@@ -218,7 +218,7 @@ async def profile_score(profile_id : Union[str, None], token: str = Depends(oaut
             COALESCE(tasks.mean, 45) * 
                 CASE 
                     WHEN tasks.progress = 'Not Started' THEN 1
-                    WHEN tasks.progress = 'Started' THEN 0.5
+                    WHEN tasks.progress = 'In Progress' THEN 0.5
                     WHEN tasks.progress = 'Completed' THEN 0
                 END *
                 (1/GREATEST(EXTRACT(DAY FROM AGE(tasks.deadline, CURRENT_DATE)), 1)::float) *
@@ -236,7 +236,7 @@ async def profile_score(profile_id : Union[str, None], token: str = Depends(oaut
         max_weight.max_total_task_weight;"""
     ...
 
-    cur.execute(single_profile_score_select, (profile_id))
+    cur.execute(single_profile_score_select, (profile_id,))
     score = cur.fetchone()[0] * 100
     cur.close()
     conn.close()

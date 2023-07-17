@@ -1,4 +1,4 @@
-CREATE TYPE task_progress AS ENUM ('Not Started', 'Started', 'Completed');
+CREATE TYPE task_progress AS ENUM ('Not Started', 'Blocked', 'Completed', 'In Progress');
 
 CREATE table profiles (
     id SERIAL PRIMARY KEY,
