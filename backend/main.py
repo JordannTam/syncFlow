@@ -11,16 +11,21 @@ import logging
 import routers.taskmasters, routers.connections
 from utility import oauth2_scheme, verify_token, get_db_conn, oauth2_scheme
 
+class User_profile(BaseModel):
+    u_id: int
+    email: str
+    first_name: str
+    last_name: str
 class Task(BaseModel):
     title: str
-    assignees: List[int]
+    assignees: Union[List[User_profile], None]
     description: Union[str, None] 
     deadline: Union[str, None]
 
 class Edit_Task(BaseModel):
     task_id: int
     progress: Union[str, None]
-    assignees: Union[List[int], None]
+    assignees: Union[List[User_profile], None]
     title: Union[str, None]
     description: Union[str, None]
     
@@ -87,7 +92,8 @@ async def create_task(task: Task, token: str = Depends(oauth2_scheme)):
 
     if assignees is not None:
         for assignee in assignees:
-            cur.execute(insert_assignees_sql, (task_id, assignee))
+            u_id = assignee.u_id
+            cur.execute(insert_assignees_sql, (task_id, u_id))
             
     conn.commit()
     
@@ -152,14 +158,16 @@ async def edit_task(
     
     # Remove old assign records and create new ones
     if assignees is not None:
+        
         cur.execute(remove_assignees_sql, (task_id,))
         for assignee in assignees:
-            cur.execute(insert_assignees_sql, (task_id, assignee))
+            assignee_id = assignee.u_id
+            cur.execute(insert_assignees_sql, (task_id, assignee_id))
     
 
     conn.commit()
     
-    cur.close()
+    cur.close() 
     conn.close()
     return {"detail": "Task updated successfully"}
 
@@ -204,8 +212,10 @@ def get_tasks(page: str , profile_id: Union[int, None] = None, token: str = Depe
     tasks_dict = {task[0]: dict(zip(column_names, task)) for task in tasks}
     
     select_assignees_sql = '''
-    SELECT profile_id FROM task_assignees
-    WHERE task_id = %s
+    SELECT profile_id
+    FROM task_assignees t
+        JOIN PROFILES p on p.id = t.profile_id
+    WHERE t.task_id = %s
     '''
 
     # Fetch assignees for each task
