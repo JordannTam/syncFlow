@@ -61,18 +61,18 @@ const TaskScreen = () => {
                     Assignees: 
                 </Typography>
                 <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}>
-                    {targetTask.assignees.map((id, index) => (
+                    {targetTask.assignees.map((assignee, index) => (
                         <Box key={index}>
                         <ListItem
                             disablePadding
                         >
-                            <ListItemButton onClick={() => handleProfile(id)}>
+                            <ListItemButton onClick={() => handleProfile(assignee.u_id)}>
                             <ListItemAvatar>
                                 <Avatar
                                 alt={`Avatar n°${index + 1}`}
                                 />
                             </ListItemAvatar>
-                            <ListItemText id={index} primary={`User Id ${id}`} />
+                            <ListItemText id={index} primary={`${assignee.first_name} ${assignee.last_name}`} />
                             </ListItemButton>
                         </ListItem>
                         <Divider/>

@@ -104,7 +104,7 @@ export default function TaskList(props) {
 
   const columnsDetail = [
     { field: 'task_id', headerName: 'ID', width: 200, sortable: false},
-    { field: 'assignee', headerName: 'Assignee', width: 200, renderCell:params=>params.row.assignees.map((a) => <Avatar key={a} src={null} />), sortable: false}, // TODO: set the src of Avatar
+    { field: 'assignee', headerName: 'Assignee', width: 200, renderCell:params=>params.row.assignees.map((a,index) => <Avatar key={index} src={null} />), sortable: false}, // TODO: set the src of Avatar
     { field: 'title', headerName: 'Task Name', width: 200, sortable: false},
     {
       field: 'deadline',

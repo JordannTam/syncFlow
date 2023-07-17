@@ -22,8 +22,9 @@ export default function TransferList(props) {
   const [checked, setChecked] = React.useState([]);
   const connections = useSelector(state => state.connectionsReducer)
   const right = props.right;
+  const rightId = right.map((x) => x.u_id)
   const setRight = props.setRight;
-  const [left, setLeft] = React.useState(connections.filter((x) => !right.includes(x.u_id))); // Delete after backend implemented
+  const [left, setLeft] = React.useState(connections.filter((x) => !rightId.includes(x.u_id))); // Delete after backend implemented
 //   const [left, setLeft] = React.useState([...props.connections])
 
   const leftChecked = intersection(checked, left);
