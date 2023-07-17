@@ -257,7 +257,7 @@ export default function TaskList(props) {
     
       }}
       columns={columns} 
-      rows={tasks} 
+      rows={tasks}
       getRowId={(row)=> row.task_id}
       pageSizeOptions={[5, 10]}
       initialState={{
