@@ -17,6 +17,7 @@ const DashboardScreen = () => {
   const tasks = useSelector(state => state.taskReducer)
   const profile = useSelector(state => state.profileReducer)
   const token = Cookies.get('loginToken')
+  const userId = Cookies.get('userId')
   const [taskStorage, setTaskStorage] = useState([])
   // const [loading, setLoading] = useState(false)
 
@@ -59,7 +60,7 @@ const DashboardScreen = () => {
         <Button variant='contained' onClick={() => navigate('/task/new')}>Create Task</Button>
       </RowBox>
       <SearchBar taskStorage={taskStorage}/>
-      <TaskList tasks={tasks} id={profile.profile_id} rowNums={10} height='800'/>
+      <TaskList tasks={tasks} id={userId} rowNums={10} height='800'/>
     </PageContainer>
   );
 };

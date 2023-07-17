@@ -15,6 +15,7 @@ export default function LogoutButton(props) {
     try {
       // dispatch(logout())
       Cookies.remove('loginToken');
+      Cookies.remove('userId');
       console.log("LOGGING OUT")
       navigate('/login')
     } catch (err) {

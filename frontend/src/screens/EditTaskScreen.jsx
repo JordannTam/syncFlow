@@ -30,8 +30,14 @@ const EditTaskScreen = () => {
 
     const handleEdit = async () => {
         const deadline = deadlineType === "noDeadline" ? null : deadlineDate
-        const ass = assignType === "assignToMe" ? [profile.profile_id] : assignees
-        console.log(profile.profile_id);
+        const userDetails = {
+            u_id: profile.profile_id,
+            first_name: profile.first_name,
+            last_name: profile.last_name,
+            email: profile.email,
+        }
+        const ass = assignType === "assignToMe" ? [userDetails] : assignees
+        console.log(profile);
         const object = {
             task_id: parseInt(params.id),
             title,

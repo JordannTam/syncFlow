@@ -24,6 +24,7 @@ export default function TaskList(props) {
   const navigate = useNavigate()
   const profile = useSelector(state => state.profileReducer)
   const token = Cookies.get('loginToken')
+  const userId = Cookies.get('userId')
 
 
   const handleDeleteTask = React.useCallback(
@@ -233,7 +234,7 @@ export default function TaskList(props) {
     ],
   },
 ]
-  if (profile.profile_id !== props.id) {
+  if (userId !== props.id) {
     columnsDetail.splice(4,1)
     columnsDetail.splice(4,1)
   }
