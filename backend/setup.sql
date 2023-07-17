@@ -1,3 +1,5 @@
+CREATE TYPE task_progress AS ENUM ('Not Started', 'Started', 'Completed');
+
 CREATE table profiles (
     id SERIAL PRIMARY KEY,
     email_address VARCHAR(255) NOT NULL UNIQUE,
@@ -13,7 +15,10 @@ CREATE TABLE tasks (
     title TEXT NOT NULL,
     deadline DATE,
     initial_date DATE,
-    progress TEXT NOT NULL,
+    completion_date DATE,
+    progress task_progress NOT NULL,
+    mean INTEGER, -- minutes
+    stddev INTEGER, 
     description TEXT,
     FOREIGN Key (creator_id) REFERENCES profiles(id) ON DELETE CASCADE
 );

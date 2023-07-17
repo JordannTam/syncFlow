@@ -18,6 +18,7 @@ const ProfileScreen = () => {
   // const profile = useSelector(state => state.profileReducer)
   const [taskStorage, setTaskStorage] = useState([])
   const [profile, setProfile] = useState([])
+  const [score, setScore] = useState(0)
   const params = useParams()
 
 
@@ -32,8 +33,9 @@ const ProfileScreen = () => {
   }
   const handleFetchProfile = async () => {
     try {
-      const profile_data = await apiCall('/profile', {}, 'GET', `bearer ${token}`);
-      // const profile_data = await apiCall(`/profile?page=profile&profile_id=${params.id}`, {}, 'GET', `bearer ${token}`);
+      const profile_data = await apiCall(`/profile?profile_id=${params.id}`, {}, 'GET', `bearer ${token}`);
+      const score_data = await apiCall(`/profile/score?profile_id=${params.id}`, {}, 'GET', `bearer ${token}`);
+      setScore(score_data)
       setProfile(profile_data)
       console.log("User profile: ", profile_data);
     } catch (err) {
@@ -68,7 +70,7 @@ const ProfileScreen = () => {
           alt="profile image"
           src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&w=350&dpr=2"
         />
-        <WorkloadBar value={110}/>
+        <WorkloadBar value={score}/>
         <Typography variant="h6" component="h2" marginTop="10px">
           Name: {profile.first_name} {profile.last_name}
         </Typography>

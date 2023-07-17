@@ -113,6 +113,10 @@ def login_for_access_token(login_data: LoginData):
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
+@router.get("/token/id")
+async def read_profile(token: str = Depends(oauth2_scheme)):
+    return verify_token(token)
+
 
 # ---------- Logout
 
@@ -152,8 +156,8 @@ class UserProfile(BaseModel):
     date_of_birth: Union[date, None]
 
 @router.get("/profile", response_model=UserProfile)
-async def read_profile(token: str = Depends(oauth2_scheme)):
-    profile_id = verify_token(token)
+async def read_profile(profile_id: Union[str, None], token: str = Depends(oauth2_scheme)):
+    profile_id = profile_id if profile_id != None else verify_token(token)
     # conn = get_db_conn()
     # cur = conn.cursor()
     # cur.execute("SELECT email_address from profiles WHERE id=%s", (profile_id,))
@@ -163,3 +167,77 @@ async def read_profile(token: str = Depends(oauth2_scheme)):
 
     # TODO CHECK IF CONNECTED OR SELF
     return get_profile(profile_id)
+
+
+# PROFILE SCORING
+@router.get("/profile/score")
+async def profile_score(profile_id : Union[str, None], token: str = Depends(oauth2_scheme)):
+    conn = get_db_conn()
+    cur = conn.cursor()
+
+    profile_id = profile_id if profile_id != None else verify_token(token)
+
+    single_profile_score_select = """
+    WITH max_weight AS (
+    SELECT 
+        MAX(total_task_weight) AS max_total_task_weight
+    FROM (
+        SELECT 
+            profiles.id AS profile_id,
+            COALESCE(SUM(subquery.task_weight), 0) AS total_task_weight
+        FROM 
+            profiles
+        LEFT JOIN (
+            SELECT 
+                task_assignees.profile_id,
+                COALESCE(tasks.mean, 45) * 
+                    CASE 
+                        WHEN tasks.progress = 'Not Started' THEN 1
+                        WHEN tasks.progress = 'Started' THEN 0.5
+                        WHEN tasks.progress = 'Completed' THEN 0
+                    END *
+                    (1/GREATEST(EXTRACT(DAY FROM AGE(tasks.deadline, CURRENT_DATE)), 1)::float) *
+                    (1/GREATEST(COUNT(task_assignees.profile_id) OVER (PARTITION BY tasks.id), 1)::float) AS task_weight
+            FROM 
+                task_assignees
+            LEFT JOIN
+                tasks ON task_assignees.task_id = tasks.id
+        ) AS subquery ON profiles.id = subquery.profile_id
+        GROUP BY
+            profiles.id
+    ) AS subquery
+    )
+
+    SELECT 
+        COALESCE(SUM(subquery.task_weight), 0) / max_weight.max_total_task_weight AS total_task_weight_ratio
+    FROM 
+        profiles
+    LEFT JOIN (
+        SELECT 
+            task_assignees.profile_id,
+            COALESCE(tasks.mean, 45) * 
+                CASE 
+                    WHEN tasks.progress = 'Not Started' THEN 1
+                    WHEN tasks.progress = 'Started' THEN 0.5
+                    WHEN tasks.progress = 'Completed' THEN 0
+                END *
+                (1/GREATEST(EXTRACT(DAY FROM AGE(tasks.deadline, CURRENT_DATE)), 1)::float) *
+                (1/GREATEST(COUNT(task_assignees.profile_id) OVER (PARTITION BY tasks.id), 1)::float) AS task_weight
+        FROM 
+            task_assignees
+        LEFT JOIN
+            tasks ON task_assignees.task_id = tasks.id
+    ) AS subquery ON profiles.id = subquery.profile_id,
+    max_weight
+    WHERE 
+        profiles.id = %s
+    GROUP BY
+        profiles.id,
+        max_weight.max_total_task_weight;"""
+    ...
+
+    cur.execute(single_profile_score_select, (profile_id))
+    score = cur.fetchone()[0] * 100
+    cur.close()
+    conn.close()
+    return score

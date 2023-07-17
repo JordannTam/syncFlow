@@ -11,8 +11,13 @@ import { apiCall } from '../utils/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTask, setTasks } from '../actions';
 import Cookies from 'js-cookie';
+import ParameterSlider from '../components/ParameterSlider';
+import NormalDistribution from '../components/NormalDistribution';
 
 const CreateTaskScreen = () => {
+    const [mean, setMean] = useState(45);
+    const [stddev, setStddev] = useState(15);
+
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
     const [deadlineDate, setDeadlineDate] = useState("")
@@ -26,7 +31,37 @@ const CreateTaskScreen = () => {
 
     const navigate = useNavigate()
 
+
+    useEffect(() => {
+      const dateRegEx = /\b(\d{4})[-/](\d{2})[-/](\d{2})\b/;
+      const match = title.match(dateRegEx);
+
+      if (match) {
+        const formattedDate = match[0].replace(/[/]/g, '-');
+        setDeadlineDate(formattedDate);
+        setDeadlineType('deadline')  } 
+      // else {
+      //   setDeadlineType('noDeadline'); // Add this line to set 'noDeadline' when date is not detected
+      // }
+      
+    }, [title]);
+
+    const getEstimate = async () => {
+      try {
+      const estimate = await apiCall(`/task_estimation?title=${title}&desc=${description}`, undefined, 'GET', token);
+      setMean(estimate.data.mean)
+      setStddev(estimate.data.stddev)      
+      console.log(estimate)
+    } catch (err) {
+      console.error(err)
+    }
+
+
+      }
+
     const handleSubmit = async () => {
+
+
         const deadline = deadlineType === "noDeadline" ? null : deadlineDate
         const ass = assignType === "assignToMe" ? [profile.profile_id] : assignees
         console.log(profile.profile_id);
@@ -35,6 +70,8 @@ const CreateTaskScreen = () => {
             assignees : ass,
             description,
             deadline,
+            mean,
+            stddev
           }
           try {
             console.log(object)
@@ -72,14 +109,14 @@ const CreateTaskScreen = () => {
             Create Task
             </Typography>
         <ColumnBox rowGap='40px' padding='0px 100px'>
-
             <TextField id="outlined-basic" value={title} onChange={(e) => setTitle(e.target.value)} label="Title" variant="standard" />
             <TextField id="outlined-basic" value={description} onChange={(e) => setDescription(e.target.value)} label="Description" variant="standard" />
           <FormControl>
             <FormLabel id="demo-radio-buttons-group-label">Deadline</FormLabel>
             <RadioGroup
               aria-labelledby="demo-radio-buttons-group-label"
-              defaultValue="noDeadline"
+              // defaultValue="noDeadline"
+              value={deadlineType}
               name="radio-buttons-group"
               onChange={(e) => setDeadlineType(e.target.value)}
             >
@@ -100,6 +137,18 @@ const CreateTaskScreen = () => {
             </RadioGroup>
           </FormControl>
 
+            <NormalDistribution mean={mean} stddev={stddev} />
+            <Button onclick={() => getEstimate()}>Get Mean & Standard Deviation Estimate</Button>
+            <Box display="flex" columnGap='20px'>
+              <ColumnBox rowGap='5px' padding='0px 15px'>
+                    <Typography gutterBottom>       Mean task time (minutes) </Typography>
+                    <ParameterSlider name="Mean" min={1} max={120} value={mean} onChange={setMean} />
+              </ColumnBox>
+              <ColumnBox rowGap='5px' padding='0px 100px'>
+                    <Typography gutterBottom> Standard Deviation (minutes) </Typography>
+                    <ParameterSlider name="Standard Deviation" min={1} max={20} value={stddev} onChange={setStddev}/>
+              </ColumnBox>
+            </Box>
 
           <Box display="flex" flexDirection="row-reverse" columnGap='20px'>
                 <Button variant='contained' onClick={() => handleSubmit()}>Create Task</Button>

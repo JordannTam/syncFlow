@@ -8,14 +8,17 @@ from pydantic import BaseModel
 from typing import List, Union, Optional, Annotated
 from datetime import datetime
 import logging
-import routers.taskmasters, routers.connections
+import routers.profiles, routers.connections
 from utility import oauth2_scheme, verify_token, get_db_conn, oauth2_scheme
+import task_estimation
 
 class Task(BaseModel):
     title: str
     assignees: List[int]
     description: Union[str, None] 
     deadline: Union[str, None]
+    mean: Union[str, None]
+    stddev: Union[str, None]
 
 class Edit_Task(BaseModel):
     task_id: int
@@ -23,6 +26,8 @@ class Edit_Task(BaseModel):
     assignees: Union[List[int], None]
     title: Union[str, None]
     description: Union[str, None]
+    mean: Union[str, None]
+    stddev: Union[str, None]
     
 origins = [
     "http://localhost:3000",
@@ -43,7 +48,7 @@ middleware = [
 
 
 app = FastAPI(middleware=middleware)
-app.include_router(routers.taskmasters.router)
+app.include_router(routers.profiles.router)
 app.include_router(routers.connections.router)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 
@@ -63,6 +68,8 @@ async def create_task(task: Task, token: str = Depends(oauth2_scheme)):
     description = task.description
     deadline = task.deadline
     progress = "Not Started"
+    mean = task.mean
+    stddev = task.stddev
     initial_time = str(datetime.now().date())
     
     conn = get_db_conn()
@@ -70,11 +77,11 @@ async def create_task(task: Task, token: str = Depends(oauth2_scheme)):
     
     # Insert the new task.
     insert_task_sql = """
-        INSERT INTO tasks (title, creator_id, deadline, description, initial_date, progress)
-        VALUES (%s, %s, %s, %s, %s, %s)
+        INSERT INTO tasks (title, creator_id, deadline, description, initial_date, progress, mean, stddev)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         RETURNING id
     """
-    cur.execute(insert_task_sql, (title, creator_id, deadline, description, initial_time, progress))
+    cur.execute(insert_task_sql, (title, creator_id, deadline, description, initial_time, progress, mean, stddev))
     
     task_id = cur.fetchone()[0]
     
@@ -255,3 +262,8 @@ def delete_task(task_id: int, token: str = Depends(oauth2_scheme)):
     
     cur.close()
     conn.close()
+
+
+@app.get("/task_estimation")
+async def task_estimation(title: str, desc : Union[str, None], token: str = Depends(oauth2_scheme)):
+    return task_estimation.get_task_estimate(title, desc)
