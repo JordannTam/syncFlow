@@ -3,9 +3,8 @@ import urllib.request
 
 model_path = os.path.join(os.getcwd(), "models", "vicuna-7b-v1.3.ggmlv3.q2_K.bin")
 
-
 if not os.path.exists(model_path):
-    os.makedirs(os.path.join(os.getcwd(), "models"))
+    os.makedirs(os.path.join(os.getcwd(), "models"), exist_ok=True)
     download_url = "https://huggingface.co/localmodels/Vicuna-7B-v1.3-ggml/resolve/main/vicuna-7b-v1.3.ggmlv3.q2_K.bin"
     print(f"Downloading model from: {download_url}")
     urllib.request.urlretrieve(download_url, model_path)
