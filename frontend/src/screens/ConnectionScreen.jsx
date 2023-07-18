@@ -10,6 +10,7 @@ import Cookies from 'js-cookie';
 import { apiCall } from '../utils/api';
 import ConnectionList from '../components/ConnectionsList';
 import ConnectionReqList from '../components/ConnectionsReqList';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 const style = {
   position: 'absolute',
@@ -36,6 +37,7 @@ const ConnectionsScreen = () => {
   const handleCloseAdd = () => setOpenSend(false)
   const handleOpenReq = () => setOpenReq(true)
   const handleCloseReq = () => setOpenReq(false)
+  const [isManaged, setIsManaged] = React.useState(false)
 
   const handleFetchConnections = async () => {
     try {
@@ -59,10 +61,12 @@ const ConnectionsScreen = () => {
 
   const handleAddConnection = async () => {
     try {
+      setIsManaged(true)
       const object = {
         email,
       }
       await apiCall(`/connection_request`, object, 'POST', `bearer ${token}`);
+      setIsManaged(false)
       setOpenSend(false)
       setEmail("")
     } catch (err) {
@@ -124,7 +128,7 @@ const ConnectionsScreen = () => {
             </Typography>
             <TextField id="outlined-basic" value={email} onChange={(e) => setEmail(e.target.value)} label="email" variant="standard" />
             <Box display="flex" flexDirection="row-reverse" columnGap='20px'>
-              <Button variant='contained' onClick={handleAddConnection}>Send Invitation</Button>
+              <LoadingButton sx={{ backgroundColor:'#4A4E69', borderRadius: 20 }} loading={isManaged} variant='contained' onClick={handleAddConnection}>Send Invitation</LoadingButton>
               <Button variant='outlined' onClick={handleCloseAdd}>Back</Button>
             </Box>
           </Box>

@@ -14,6 +14,7 @@ import { apiCall } from '../utils/api';
 import Cookies from 'js-cookie';
 import { useDispatch } from 'react-redux';
 import { addConnections } from '../actions';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 export default function ConnectionReqList(props) {
     const navigate = useNavigate()
@@ -71,8 +72,8 @@ export default function ConnectionReqList(props) {
           <ListItem             
             secondaryAction = {
                 <RowBox columnGap="10px">
-                    <Button disabled={isManaged} variant="contained" onClick={() => handleAccept(con)} >Accpet</Button>
-                    <Button disabled={isManaged} variant="outlined" color="error" onClick={() => handleDecline(con)}>Decline</Button>
+                    <LoadingButton  sx={{ backgroundColor:'#4A4E69', borderRadius: 20 }}  loading={isManaged} variant="contained" onClick={() => handleAccept(con)} >Accpet</LoadingButton>
+                    <LoadingButton  sx={{ borderRadius: 20 }} loading={isManaged} variant="outlined" color="error" onClick={() => handleDecline(con)}>Decline</LoadingButton>
                 </RowBox>
             }
             disablePadding
