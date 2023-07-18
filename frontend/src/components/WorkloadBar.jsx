@@ -8,7 +8,7 @@ const WorkloadBar = (props) => {
   let tcolor = 'black'
   let valueText = `${value}%`
 
-  if (value < 25) {
+  if (value <= 25) {
     pcolor = 'success';
     tcolor = 'green';
   } else if (value <= 75) {

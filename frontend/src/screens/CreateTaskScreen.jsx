@@ -147,7 +147,7 @@ const CreateTaskScreen = () => {
           </FormControl>
 
             <NormalDistribution mean={mean} stddev={stddev} />
-            <Button onClick={() => getEstimate()}>Get Mean & Standard Deviation Estimate</Button>
+            <Button variant="contained" color="primary" onClick={() => getEstimate()}>Get Mean & Standard Deviation Estimate</Button>
             <Box display="flex" columnGap='20px'>
               <ColumnBox rowGap='5px' padding='0px 15px'>
                     <Typography gutterBottom>       Mean task time (minutes) </Typography>
