@@ -1,8 +1,12 @@
 import { Slider, Box, TextField } from '@mui/material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const ParameterSlider = ({ min, max, value, onChange }) => {
   const [inputValue, setInputValue] = useState(value);
+
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
 
   const handleSliderChange = (event, newValue) => {
     setInputValue(newValue);

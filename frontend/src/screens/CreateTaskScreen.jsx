@@ -47,11 +47,13 @@ const CreateTaskScreen = () => {
     }, [title]);
 
     const getEstimate = async () => {
+      console.log("getting estimate")
       try {
-      const estimate = await apiCall(`/task_estimation?title=${title}&desc=${description}`, undefined, 'GET', token);
-      setMean(estimate.data.mean)
-      setStddev(estimate.data.stddev)      
-      console.log(estimate)
+      const estimate = await apiCall(`/task_estimation?title=${title}&desc=${description}`, undefined, 'GET', `bearer ${token}`);
+      console.log(estimate.mean)
+      console.log(estimate.std_dev)
+      setMean(estimate.mean)
+      setStddev(estimate.std_dev)      
     } catch (err) {
       console.error(err)
     }
@@ -145,7 +147,7 @@ const CreateTaskScreen = () => {
           </FormControl>
 
             <NormalDistribution mean={mean} stddev={stddev} />
-            <Button onclick={() => getEstimate()}>Get Mean & Standard Deviation Estimate</Button>
+            <Button onClick={() => getEstimate()}>Get Mean & Standard Deviation Estimate</Button>
             <Box display="flex" columnGap='20px'>
               <ColumnBox rowGap='5px' padding='0px 15px'>
                     <Typography gutterBottom>       Mean task time (minutes) </Typography>

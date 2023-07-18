@@ -10,7 +10,7 @@ from datetime import datetime
 import logging
 import routers.profiles, routers.connections
 from utility import oauth2_scheme, verify_token, get_db_conn, oauth2_scheme
-import task_estimation
+from task_estimation import get_task_estimate
 
 class User_profile(BaseModel):
     u_id: int
@@ -277,4 +277,4 @@ def delete_task(task_id: int, token: str = Depends(oauth2_scheme)):
 
 @app.get("/task_estimation")
 async def task_estimation(title: str, desc : Union[str, None], token: str = Depends(oauth2_scheme)):
-    return task_estimation.get_task_estimate(title, desc)
+    return get_task_estimate(title, desc)

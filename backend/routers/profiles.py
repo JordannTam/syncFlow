@@ -195,6 +195,7 @@ async def profile_score(profile_id : Union[str, None], token: str = Depends(oaut
                         WHEN tasks.progress = 'Not Started' THEN 1
                         WHEN tasks.progress = 'In Progress' THEN 0.5
                         WHEN tasks.progress = 'Completed' THEN 0
+                        WHEN tasks.progress = 'Blocked' THEN 0
                     END *
                     (1/GREATEST(EXTRACT(DAY FROM AGE(tasks.deadline, CURRENT_DATE)), 1)::float) *
                     (1/GREATEST(COUNT(task_assignees.profile_id) OVER (PARTITION BY tasks.id), 1)::float) AS task_weight
@@ -208,33 +209,37 @@ async def profile_score(profile_id : Union[str, None], token: str = Depends(oaut
     ) AS subquery
     )
 
+SELECT 
+    CASE 
+        WHEN max_weight.max_total_task_weight = 0 THEN 0
+        ELSE COALESCE(SUM(subquery.task_weight), 0) / max_weight.max_total_task_weight
+    END AS total_task_weight_ratio
+FROM 
+    profiles
+LEFT JOIN (
     SELECT 
-        COALESCE(SUM(subquery.task_weight), 0) / max_weight.max_total_task_weight AS total_task_weight_ratio
+        task_assignees.profile_id,
+        COALESCE(tasks.mean, 45) * 
+            CASE 
+                WHEN tasks.progress = 'Not Started' THEN 1
+                WHEN tasks.progress = 'In Progress' THEN 0.5
+                WHEN tasks.progress = 'Completed' THEN 0
+                WHEN tasks.progress = 'Blocked' THEN 0
+            END *
+            (1/GREATEST(EXTRACT(DAY FROM AGE(tasks.deadline, CURRENT_DATE)), 1)::float) *
+            (1/GREATEST(COUNT(task_assignees.profile_id) OVER (PARTITION BY tasks.id), 1)::float) AS task_weight
     FROM 
-        profiles
-    LEFT JOIN (
-        SELECT 
-            task_assignees.profile_id,
-            COALESCE(tasks.mean, 45) * 
-                CASE 
-                    WHEN tasks.progress = 'Not Started' THEN 1
-                    WHEN tasks.progress = 'In Progress' THEN 0.5
-                    WHEN tasks.progress = 'Completed' THEN 0
-                END *
-                (1/GREATEST(EXTRACT(DAY FROM AGE(tasks.deadline, CURRENT_DATE)), 1)::float) *
-                (1/GREATEST(COUNT(task_assignees.profile_id) OVER (PARTITION BY tasks.id), 1)::float) AS task_weight
-        FROM 
-            task_assignees
-        LEFT JOIN
-            tasks ON task_assignees.task_id = tasks.id
-    ) AS subquery ON profiles.id = subquery.profile_id,
-    max_weight
-    WHERE 
-        profiles.id = %s
-    GROUP BY
-        profiles.id,
-        max_weight.max_total_task_weight;"""
-    ...
+        task_assignees
+    LEFT JOIN
+        tasks ON task_assignees.task_id = tasks.id
+) AS subquery ON profiles.id = subquery.profile_id,
+max_weight
+WHERE 
+    profiles.id = %s
+GROUP BY
+    profiles.id,
+    max_weight.max_total_task_weight;
+    """
 
     cur.execute(single_profile_score_select, (profile_id,))
     score = cur.fetchone()[0] * 100
