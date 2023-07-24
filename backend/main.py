@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from typing import List, Union, Optional, Annotated
 from datetime import datetime
 import logging
-import routers.profiles, routers.connections
+import routers.profiles, routers.connections, routers.chat
 from utility import oauth2_scheme, verify_token, get_db_conn, oauth2_scheme
 from task_estimation import get_task_estimate
 
@@ -55,6 +55,7 @@ middleware = [
 app = FastAPI(middleware=middleware)
 app.include_router(routers.profiles.router)
 app.include_router(routers.connections.router)
+app.include_router(routers.chat.router)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 
 @app.exception_handler(RequestValidationError)

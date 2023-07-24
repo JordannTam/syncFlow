@@ -11,11 +11,12 @@ if not os.path.exists(model_path):
 
 
 from llama_cpp import Llama
-llm = Llama(model_path=model_path,n_ctx=512, n_batch=126)
-# try:
-# except ImportError:
-#     print("FAILED TO LOAD LLM")
-#     llm = None
+
+try:
+    llm = Llama(model_path=model_path,n_ctx=512, n_batch=126)
+except ImportError:
+    print("FAILED TO LOAD LLM")
+    llm = None
 
 def get_llm_estimate(title, desc):
 
@@ -23,8 +24,8 @@ def get_llm_estimate(title, desc):
     if desc != None:
         input_string += f", which has a description '{desc}'" 
     input_string += ". I want an idea how long this will take to complete. In minutes, what is the estimated mean time to complete and the estimated standard deviation time to complete? A: "
-    output = llm(input_string, max_tokens=32, stop=["Q:", "\n"], echo=True)
     try:
+        output = llm(input_string, max_tokens=32, stop=["Q:", "\n"], echo=True)
         # output = llm(f"Q: {input_string}? A: ", max_tokens=256, stop=["Q:", "\n"], echo=True)
         # output = llm(input_string, max_tokens=256, temperature=0.1, top_p=0.5, stop=["#"], echo=False)
         output_text = output['choices'][0]['text'].strip()
