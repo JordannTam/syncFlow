@@ -72,7 +72,7 @@ export default function ConnectionReqList(props) {
           <ListItem             
             secondaryAction = {
                 <RowBox columnGap="10px">
-                    <LoadingButton  sx={{ backgroundColor:'#4A4E69', borderRadius: 20 }}  loading={isManaged} variant="contained" onClick={() => handleAccept(con)} >Accpet</LoadingButton>
+                    <LoadingButton  sx={{ backgroundColor:'#4A4E69', borderRadius: 20 }}  loading={isManaged} variant="contained" onClick={() => handleAccept(con)} >Accept</LoadingButton>
                     <LoadingButton  sx={{ borderRadius: 20 }} loading={isManaged} variant="outlined" color="error" onClick={() => handleDecline(con)}>Decline</LoadingButton>
                 </RowBox>
             }
