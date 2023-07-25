@@ -13,11 +13,12 @@ import { addTask, setTasks } from '../actions';
 import Cookies from 'js-cookie';
 import ParameterSlider from '../components/ParameterSlider';
 import NormalDistribution from '../components/NormalDistribution';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 const CreateTaskScreen = () => {
     const [mean, setMean] = useState(45);
     const [stddev, setStddev] = useState(15);
-
+    const [isLoading, setIsLoading] = useState(false)
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
     const [deadlineDate, setDeadlineDate] = useState("")
@@ -48,14 +49,17 @@ const CreateTaskScreen = () => {
 
     const getEstimate = async () => {
       console.log("getting estimate")
+      setIsLoading(true)
       try {
       const estimate = await apiCall(`/task_estimation?title=${title}&desc=${description}`, undefined, 'GET', `bearer ${token}`);
       console.log(estimate.mean)
       console.log(estimate.std_dev)
       setMean(estimate.mean)
-      setStddev(estimate.std_dev)      
+      setStddev(estimate.std_dev)
+      setIsLoading(false)
     } catch (err) {
       console.error(err)
+      setIsLoading(false)
     }
 
 
@@ -147,7 +151,7 @@ const CreateTaskScreen = () => {
           </FormControl>
 
             <NormalDistribution mean={mean} stddev={stddev} />
-            <Button onClick={() => getEstimate()}>Get Mean & Standard Deviation Estimate</Button>
+            <LoadingButton loading={isLoading} variant="contained" color="primary" onClick={() => getEstimate()}>Get Mean & Standard Deviation Estimate</LoadingButton>
             <Box display="flex" columnGap='20px'>
               <ColumnBox rowGap='5px' padding='0px 15px'>
                     <Typography gutterBottom>       Mean task time (minutes) </Typography>

@@ -20,6 +20,7 @@ const TaskScreen = () => {
     const tasks = useSelector(state => state.taskReducer)
     const params = useParams()
     let targetTask = tasks.find((a) => a.task_id === parseInt(params.id))
+    const n = tasks.length - 1
 
     const navigate = useNavigate()
 
@@ -75,7 +76,7 @@ const TaskScreen = () => {
                             <ListItemText id={index} primary={`${assignee.first_name} ${assignee.last_name}`} />
                             </ListItemButton>
                         </ListItem>
-                        <Divider/>
+                        {n === index && <Divider/>}
                         </Box>
                     ))}
             </List>

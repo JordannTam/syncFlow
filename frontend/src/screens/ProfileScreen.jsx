@@ -70,7 +70,7 @@ const ProfileScreen = () => {
           alt="profile image"
           src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&w=350&dpr=2"
         />
-        <WorkloadBar value={score}/>
+        <WorkloadBar value={parseInt(score)}/>
         <Typography variant="h6" component="h2" marginTop="10px">
           Name: {profile.first_name} {profile.last_name}
         </Typography>

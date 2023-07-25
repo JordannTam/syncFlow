@@ -10,8 +10,9 @@ if not os.path.exists(model_path):
     urllib.request.urlretrieve(download_url, model_path)
 
 
+from llama_cpp import Llama
+
 try:
-    from llama_cpp import Llama
     llm = Llama(model_path=model_path,n_ctx=512, n_batch=126)
 except ImportError:
     print("FAILED TO LOAD LLM")

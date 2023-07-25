@@ -246,3 +246,83 @@ GROUP BY
     cur.close()
     conn.close()
     return score
+
+
+multiprofilescore_select = """
+WITH max_weight AS (
+    SELECT 
+        MAX(total_task_weight) AS max_total_task_weight
+    FROM (
+        SELECT 
+            profiles.id AS profile_id,
+            COALESCE(SUM(subquery.task_weight), 0) AS total_task_weight
+        FROM 
+            profiles
+        LEFT JOIN (
+            SELECT 
+                task_assignees.profile_id,
+                COALESCE(tasks.mean, 45) * 
+                    CASE 
+                        WHEN tasks.progress = 'Not Started' THEN 1
+                        WHEN tasks.progress = 'In Progress' THEN 0.5
+                        WHEN tasks.progress = 'Completed' THEN 0
+                        WHEN tasks.progress = 'Blocked' THEN 0
+                    END *
+                    (1/GREATEST(EXTRACT(DAY FROM AGE(tasks.deadline, CURRENT_DATE)), 1)::float) *
+                    (1/GREATEST(COUNT(task_assignees.profile_id) OVER (PARTITION BY tasks.id), 1)::float) AS task_weight
+            FROM 
+                task_assignees
+            LEFT JOIN
+                tasks ON task_assignees.task_id = tasks.id
+        ) AS subquery ON profiles.id = subquery.profile_id
+        GROUP BY
+            profiles.id
+    ) AS subquery
+    )
+
+SELECT 
+    profiles.id,
+    CASE 
+        WHEN max_weight.max_total_task_weight = 0 THEN 0
+        ELSE COALESCE(SUM(subquery.task_weight), 0) / max_weight.max_total_task_weight
+    END AS total_task_weight_ratio
+FROM 
+    profiles
+LEFT JOIN (
+    SELECT 
+        task_assignees.profile_id,
+        COALESCE(tasks.mean, 45) * 
+            CASE 
+                WHEN tasks.progress = 'Not Started' THEN 1
+                WHEN tasks.progress = 'In Progress' THEN 0.5
+                WHEN tasks.progress = 'Completed' THEN 0
+                WHEN tasks.progress = 'Blocked' THEN 0
+            END *
+            (1/GREATEST(EXTRACT(DAY FROM AGE(tasks.deadline, CURRENT_DATE)), 1)::float) *
+            (1/GREATEST(COUNT(task_assignees.profile_id) OVER (PARTITION BY tasks.id), 1)::float) AS task_weight
+    FROM 
+        task_assignees
+    LEFT JOIN
+        tasks ON task_assignees.task_id = tasks.id
+) AS subquery ON profiles.id = subquery.profile_id,
+max_weight
+WHERE 
+    profiles.id IN (%s)
+GROUP BY
+    profiles.id,
+    max_weight.max_total_task_weight;
+"""
+
+@router.get("/profile/scores/")
+async def get_scores(ids: Union[list[int], None], token: str = Depends(oauth2_scheme)):
+    conn = get_db_conn()
+    cur = conn.cursor()
+
+    profile_id = profile_id if profile_id != None else verify_token(token)
+
+
+    cur.execute(multiprofilescore_select, ([profile_id,]))
+    score = cur.fetchone()[0] * 100
+    cur.close()
+    conn.close()
+    return score
