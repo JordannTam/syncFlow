@@ -149,10 +149,11 @@ def get_profile(profile_id: str):
     return profile_dict
 
 class UserProfile(BaseModel):
+    image: Union[str, None]
     profile_id: int
-    first_name: str
-    last_name: str
-    email: str
+    first_name: Union[str, None]
+    last_name: Union[str, None]
+    email: Union[str, None]
     date_of_birth: Union[date, None]
 
 @router.get("/profile", response_model=UserProfile)

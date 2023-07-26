@@ -1,9 +1,8 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from typing import Union
-from utility import get_db_conn, oauth2_scheme
+from utility import get_db_conn, oauth2_scheme, verify_token
 from pydantic import BaseModel
 from typing import List, Union, Optional
-from utility import verify_token
 from pydantic import BaseModel
 import smtplib
 from email.mime.multipart import MIMEMultipart

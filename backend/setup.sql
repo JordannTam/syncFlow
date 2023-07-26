@@ -47,8 +47,17 @@ CREATE TABLE connection_requests (
     FOREIGN KEY (receiver_id) REFERENCES profiles(id) ON DELETE CASCADE
 );
 
+CREATE TABLE messages (
+    message_id SERIAL PRIMARY KEY,
+    FOREIGN KEY (profile_id) REFERENCES profiles(id) ON DELETE CASCADE,
+    FOREIGN KEY (task_id) REFERENCES tasks (id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    time_send TIMESTAMP
+);
+
 ALTER table profiles owner to teamendgame;
 ALTER table tasks owner to teamendgame;
 ALTER table task_assignees owner to teamendgame;
 ALTER table connections owner to teamendgame;
 ALTER table connection_requests owner to teamendgame;
+ALTER table messages owner to teamendgame;
