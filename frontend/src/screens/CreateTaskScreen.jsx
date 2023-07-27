@@ -11,6 +11,7 @@ import { apiCall } from '../utils/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTask, setTasks } from '../actions';
 import Cookies from 'js-cookie';
+import formatDate from '../utils/formatDate';
 import ParameterSlider from '../components/ParameterSlider';
 import NormalDistribution from '../components/NormalDistribution';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -21,7 +22,7 @@ const CreateTaskScreen = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
-    const [deadlineDate, setDeadlineDate] = useState("")
+    const [deadlineDate, setDeadlineDate] = useState(formatDate(new Date()))
     const [deadlineType, setDeadlineType] = useState("noDeadline");
     const [assignType, setAssignType] = useState("assignToMe")
     const [assignees, setAssignees] = useState([])
