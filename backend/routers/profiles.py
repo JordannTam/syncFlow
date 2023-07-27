@@ -27,7 +27,7 @@ async def register(user: RegisterProfile):
         raise HTTPException(status_code=400, detail="Email already in use")
 
     password_hash = get_password_hash(user.password)
-
+    
     cur.execute("INSERT INTO profiles (email_address, first_name, last_name, date_of_birth, password_hash) \
                 VALUES (%s, %s, %s, %s, %s)", (user.email, user.first_name, user.last_name, user.dob, password_hash))
     conn.commit()
@@ -128,7 +128,7 @@ async def read_profile(token: str = Depends(oauth2_scheme)):
 def get_profile(profile_id: str):
     conn = get_db_conn()
     cur = conn.cursor()
-    cur.execute("SELECT first_name, last_name, email_address, date_of_birth FROM PROFILES WHERE id=%s", (profile_id,))
+    cur.execute("SELECT first_name, last_name, email_address, date_of_birth, img FROM PROFILES WHERE id=%s", (profile_id,))
     profile = cur.fetchone()
     cur.close()
     conn.close()
@@ -136,14 +136,19 @@ def get_profile(profile_id: str):
     if profile is None:
         raise HTTPException(status_code=405)
     
-    first_name, last_name, email_address, date_of_birth = profile
-
+    first_name, last_name, email_address, date_of_birth, img = profile
+    
+    if img is "":
+        with open("message.txt", "r") as f:
+            img = f.read
+    
     profile_dict = {
         'profile_id': profile_id,
         'first_name': first_name,
         'last_name': last_name,
         'email': email_address,
-        'date_of_birth': date_of_birth
+        'date_of_birth': date_of_birth,
+        'img': img
     }
 
     return profile_dict

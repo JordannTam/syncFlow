@@ -6,7 +6,8 @@ CREATE table profiles (
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    date_of_birth DATE
+    date_of_birth DATE,
+    img TEXT
 );
 
 CREATE TABLE tasks (
