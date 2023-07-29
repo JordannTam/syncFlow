@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, date
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
-
+import os
 
 router = APIRouter()
 
@@ -138,24 +138,25 @@ def get_profile(profile_id: str):
     
     first_name, last_name, email_address, date_of_birth, img = profile
     
-    if img is "":
-        with open("message.txt", "r") as f:
-            img = f.read
-    
+    if img is None:
+
+        with open("routers/message.txt", "r") as f:
+            img = f.read()
+            
     profile_dict = {
         'profile_id': profile_id,
         'first_name': first_name,
         'last_name': last_name,
         'email': email_address,
         'date_of_birth': date_of_birth,
-        'img': img
+        'image': img
     }
-
+    
     return profile_dict
 
 class UserProfile(BaseModel):
     image: Union[str, None]
-    profile_id: int
+    profile_id: Union[int, None]
     first_name: Union[str, None]
     last_name: Union[str, None]
     email: Union[str, None]
@@ -174,6 +175,39 @@ async def read_profile(profile_id: Union[str, None], token: str = Depends(oauth2
     # TODO CHECK IF CONNECTED OR SELF
     return get_profile(profile_id)
 
+@router.put("/edit_profile")
+async def edit_profile(UserProfile: UserProfile, token: str = Depends(oauth2_scheme)):
+    user_id = verify_token(token)
+    
+    args = []
+    requests = []
+    for tup in UserProfile:
+        if tup[1] is not None:
+            args.append(tup[1])
+            requests.append(tup[0])
+    
+    updateProfileSQL = '''
+        UPDATE PROFILES
+        SET
+    '''
+    
+    for column in requests:
+        updateProfileSQL += f" {column} = %s,"
+        
+    updateProfileSQL = updateProfileSQL[:-1]
+    updateProfileSQL += '\nWHERE id = %s'
+    args.append(user_id)
+    
+    conn = get_db_conn()
+    cur = conn.cursor()
+    
+    cur.execute(updateProfileSQL, tuple(args))
+    
+    conn.commit()
+    cur.close() 
+    conn.close()
+    
+    return {"detail": "Profile updated successfully"}
 
 # PROFILE SCORING
 @router.get("/profile/score")

@@ -22,4 +22,7 @@ def send_email(to: str, id: int):
         server.login("msgsend1@gmail.com", "oniniqkytxhpxwhv")
         server.sendmail("msgsend1@gmail.com", to, text)
     
-send_email("1393895459@qq.com", 1)
+# send_email("1393895459@qq.com", 1)
+with open("message.txt", "r") as f:
+    img = f.readlines()
+    print(f"hi, this is the img: {img}")

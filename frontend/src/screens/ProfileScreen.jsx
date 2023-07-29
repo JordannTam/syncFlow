@@ -68,7 +68,7 @@ const ProfileScreen = () => {
             maxWidth: { xs: 250, md: 250 },
           }}
           alt="profile image"
-          src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&w=350&dpr=2"
+          src={profile.image}
         />
         <WorkloadBar value={parseInt(score)}/>
         <Typography variant="h6" component="h2" marginTop="10px">
