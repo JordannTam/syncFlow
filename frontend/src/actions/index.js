@@ -88,7 +88,7 @@ export const setConnections = (connections) => {
 export const addConnections = (user) => {
     return {
         type: "ADD_CONNECTION",
-        id: user.id,
+        u_id: user.u_id,
         first_name: user.first_name,
         last_name: user.last_name,
     };
@@ -99,4 +99,27 @@ export const deleteConnection = (id) => {
         type: "DELETE_CONNECTION",
         id,
     };
+};
+
+
+// ******************
+// Messages Functions
+// ******************
+
+
+export const setMessages = (messages) => {
+    return {
+        type: "SET_MESSAGES",
+        messages,
+    };
+};
+
+export const addMessage = (message) => {
+    return {
+        type: "ADD_MESSAGE",
+        content: message.content,
+        profile_id: message.profile_id, 
+        first_name: message.first_name, 
+        img: message.img            
+};
 };

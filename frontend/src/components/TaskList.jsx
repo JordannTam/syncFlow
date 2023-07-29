@@ -11,7 +11,7 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircleTwoTone';
 import StopCircleIcon from '@mui/icons-material/StopCircleTwoTone';
 import HourglassTopTwoToneIcon from '@mui/icons-material/HourglassTopTwoTone';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeTaskState, deleteTasks, setTasks } from '../actions';
+import { changeTaskState, deleteTasks, setMessages, setTasks } from '../actions';
 import { useNavigate } from 'react-router-dom';
 import { apiCall } from '../utils/api';
 import Cookies from 'js-cookie';
@@ -34,7 +34,6 @@ const style = {
 export default function TaskList(props) {
   const [loading, setLoading] = React.useState(false)
   const [openChat, setOpenChat] = React.useState(false)
-  const [messages, setMessages] = React.useState([])
   const [ws, setWs] = React.useState(null);
   const { tasks } = props
   const [chatTask, setChatTask] = React.useState({});
@@ -58,27 +57,26 @@ export default function TaskList(props) {
     [dispatch],
   );
 
+  const handleChat = async (task) => {
+    try {
+      setChatTask(task)
+      handleOpenChat()
+    } catch (err) {
+      console.error(err);
+    }
+
+  }
+
+  const handleGetMessage = async (id) => {
+    const res = await apiCall(`/messages?task_id=${id}`, {}, 'GET', `bearer ${token}`);
+    dispatch(setMessages(res))
+  }
+
 
   const handleLiveChat = React.useCallback( 
-  (id) => async () => {
-      try {
-        const targetTask = tasks.find((x) => x.task_id === id)
-        setChatTask(targetTask)
-        const res = await apiCall(`/messages?task_id=${id}`, {}, 'GET', `bearer ${token}`);
-        setMessages(res)
-        console.log(`ws://localhost:8000/ws/${id}`);
-        const websocket = new WebSocket(`ws://localhost:8000/ws/${id}`)
-        setWs(websocket)
-        
-        websocket.onmessage = (event) => {
-          const message = JSON.parse(event.data);
-          setMessages((prevMessages) => [...prevMessages, message]);
-        }    
-        console.log(websocket);
-        handleOpenChat()
-      } catch (err) {
-        console.error(err);
-      }
+  (task) => async () => {
+    handleGetMessage(task.row.task_id)
+    handleChat(task.row)
   },
     [],
   );
@@ -153,13 +151,14 @@ export default function TaskList(props) {
     { field: 'task_id', headerName: 'ID', width: 30, sortable: false},
     {
       field: 'liveChat',
+      headerName: 'Live Chat',
       type: 'actions',
-      width: 50,
+      width: 100,
       getActions: (params) => [
         <GridActionsCellItem
-          icon={<ChatIcon />}
+          icon={<ChatIcon color='primary'/>}
           label="Live Chat"
-          onClick={handleLiveChat(params.id)}
+          onClick={handleLiveChat(params)}
         />,
       ],
     },  
@@ -169,7 +168,7 @@ export default function TaskList(props) {
       field: 'deadline',
       headerName: 'Deadline',
       type: 'Date',
-      width: 200,
+      width: 100,
     },
     {
       field: 'progress',
@@ -332,7 +331,7 @@ export default function TaskList(props) {
       aria-describedby="modal-modal-description"
       >
       <Box sx={style}>
-        <LiveChat chatTask={chatTask} messages={messages} setMessages={setMessages} ws={ws}></LiveChat>
+        <LiveChat chatTask={chatTask}></LiveChat>
       </Box>
     </Modal>
     </>

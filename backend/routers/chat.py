@@ -28,7 +28,7 @@ async def websocket_endpoint(websocket: WebSocket, task_id: int):
             data = await websocket.receive_text()
             print(data)
             message = json.loads(data)
-            text = message.get('text')
+            content = message.get('content')
             profile_id = message.get('profile_id')
             currentTime = datetime.now()
             # save messages
@@ -36,12 +36,12 @@ async def websocket_endpoint(websocket: WebSocket, task_id: int):
             INSERT INTO MESSAGES (profile_id, task_id, content, time_send)
             VALUES (%s, %s, %s, %s);
             """
-            cur.execute(saveMessageSQL, (profile_id, task_id, text, currentTime))
+            cur.execute(saveMessageSQL, (profile_id, task_id, content, currentTime))
             conn.commit()
 
             # propagate text message to relavent users
             for client in connected_clients[task_id]:
-                await client.send_text(json.dumps({"message": text}))
+                await client.send_text(json.dumps({"profile_id": profile_id,"content": content}))
         
     except Exception as e:
         print(e)

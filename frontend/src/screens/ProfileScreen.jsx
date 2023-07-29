@@ -10,6 +10,7 @@ import SearchBar from '../components/SearchBar';
 import { useParams } from 'react-router-dom';
 import { setTasks } from '../actions';
 import WorkloadBar from '../components/WorkloadBar';
+import { RowBox } from '../components/FlexBox';
 
 const ProfileScreen = () => {
   const dispatch = useDispatch()
@@ -59,6 +60,11 @@ const ProfileScreen = () => {
         <Typography variant="h3" component="h2" marginBottom="15px">
           Profile
         </Typography>
+        <RowBox sx={{
+          display: 'flex',
+          alignItems: 'flex-end',
+        }}>
+          
         <Box
           component="img"
           sx={{
@@ -70,7 +76,11 @@ const ProfileScreen = () => {
           alt="profile image"
           src={profile.image}
         />
+        <RowBox >
         <WorkloadBar value={parseInt(score)}/>
+        </RowBox>
+        </RowBox>
+
         <Typography variant="h6" component="h2" marginTop="10px">
           Name: {profile.first_name} {profile.last_name}
         </Typography>

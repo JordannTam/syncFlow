@@ -24,7 +24,6 @@ const DashboardScreen = () => {
 
   // CHAT DEMO STUFF CHAT DEMO STUFF
 
-  const [messages, setMessages] = useState([])
   const [messageText, setMessageText] = useState('');
   const [ws, setWs] = useState(null);
 

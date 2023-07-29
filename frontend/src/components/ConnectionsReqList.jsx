@@ -37,6 +37,7 @@ export default function ConnectionReqList(props) {
             }
             await apiCall('/connection_request_management', object, 'POST', `bearer ${token}`);
             dispatch(addConnections(user))
+            console.log(user);
             const rs = connections
             const ls = rs.filter((x) => user.u_id !== x.u_id)
             props.setConnectionsReqs(ls)
