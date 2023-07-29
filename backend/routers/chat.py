@@ -13,6 +13,7 @@ connected_clients: Dict[int, List[WebSocket]] = {}
 async def websocket_endpoint(websocket: WebSocket, task_id: int):
     
     await websocket.accept()
+    
     # initialized list for given task_id if not exist already
     if task_id not in connected_clients:
         connected_clients[task_id] = []
@@ -25,10 +26,11 @@ async def websocket_endpoint(websocket: WebSocket, task_id: int):
         while True:
             # receive data from user
             data = await websocket.receive_text()
+            print(data)
             message = json.loads(data)
             text = message.get('text')
             profile_id = message.get('profile_id')
-            currentTime = datetime.now().time()
+            currentTime = datetime.now()
             # save messages
             saveMessageSQL = """
             INSERT INTO MESSAGES (profile_id, task_id, content, time_send)
@@ -39,7 +41,7 @@ async def websocket_endpoint(websocket: WebSocket, task_id: int):
 
             # propagate text message to relavent users
             for client in connected_clients[task_id]:
-                await client.send_text(text)
+                await client.send_text(json.dumps({"message": text}))
         
     except Exception as e:
         print(e)
