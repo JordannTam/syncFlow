@@ -50,6 +50,8 @@ CREATE TABLE connection_requests (
 
 CREATE TABLE messages (
     message_id SERIAL PRIMARY KEY,
+    profile_id INTEGER NOT NULL,
+    task_id INTEGER NOT NULL,
     FOREIGN KEY (profile_id) REFERENCES profiles(id) ON DELETE CASCADE,
     FOREIGN KEY (task_id) REFERENCES tasks (id) ON DELETE CASCADE,
     content TEXT NOT NULL,
