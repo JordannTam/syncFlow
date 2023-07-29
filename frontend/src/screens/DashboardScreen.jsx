@@ -122,7 +122,7 @@ const DashboardScreen = () => {
         <Button variant='contained' onClick={() => navigate('/task/new')}>Create Task</Button>
       </RowBox>
       <SearchBar taskStorage={taskStorage}/>
-      <TaskList tasks={tasks} id={userId} rowNums={10} height='800'/>
+      <TaskList tasks={tasks} id={parseInt(userId)} rowNums={10} height='800'/>
     </PageContainer>
   );
 };

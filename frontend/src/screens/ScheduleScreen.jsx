@@ -109,7 +109,7 @@ const ProfileScreen = () => {
             </Button>
           </Box>
           
-          <SmallTaskList tasks={taskStorage} handleDeleteTask={handleDeleteTask} id={userId} rowNums={10} height='800'/>
+          <SmallTaskList tasks={taskStorage} handleDeleteTask={handleDeleteTask} id={parseInt(userId)} rowNums={10} height='800'/>
           </Box>
           <Box sx={{
             flexGrow: 10, 

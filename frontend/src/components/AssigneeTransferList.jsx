@@ -9,6 +9,7 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { useSelector } from 'react-redux';
 import { Avatar, Box, Typography } from '@mui/material';
+import Cookies from 'js-cookie';
 
 function not(a, b) {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -24,7 +25,10 @@ export default function TransferList(props) {
   const right = props.right;
   const rightId = right.map((x) => x.u_id)
   const setRight = props.setRight;
-  const [left, setLeft] = React.useState(connections.filter((x) => !rightId.includes(x.u_id))); // Delete after backend implemented
+  const profile = useSelector(state => state.profileReducer)
+  const userId = Cookies.get("userId")
+  const hasRightUser = rightId.includes(parseInt(userId))
+  const [left, setLeft] = React.useState(hasRightUser ? connections.filter((x) => !rightId.includes(x.u_id)) : [ { u_id: profile.profile_id, email: profile.email, first_name: profile.first_name, last_name: profile.last_name}, ...connections.filter((x) => !rightId.includes(x.u_id))]); // Delete after backend implemented
 //   const [left, setLeft] = React.useState([...props.connections])
 
   const leftChecked = intersection(checked, left);
@@ -68,12 +72,12 @@ export default function TransferList(props) {
   const customList = (items) => (
     <Paper sx={{ width: 200, height: 230, overflow: 'auto' }}>
       <List dense component="div" role="list">
-        {items.map((value) => {
+        {items.map((value, index) => {
           const labelId = `transfer-list-item-${value}-label`;
 
           return (
             <ListItem
-              key={value.u_id}
+              key={index}
               role="listitem"
               button
               onClick={handleToggle(value)}
@@ -90,7 +94,7 @@ export default function TransferList(props) {
               </ListItemIcon>
               <Box display="flex" columnGap="10px">
               <Avatar src={value.icon}></Avatar>
-              <ListItemText id={labelId} primary={`${value.first_name}`} />
+              <ListItemText id={labelId} primary={value.u_id === parseInt(userId) ? '( Me )' : value.first_name} />
 
               </Box>
             </ListItem>

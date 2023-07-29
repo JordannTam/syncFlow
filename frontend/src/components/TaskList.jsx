@@ -285,7 +285,7 @@ export default function TaskList(props) {
     ],
   },
 ]
-  if (userId !== props.id) {
+  if (parseInt(userId) !== props.id) {
     columnsDetail.splice(2,1)
     columnsDetail.splice(4,1)
     columnsDetail.splice(4,1)
