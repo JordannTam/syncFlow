@@ -130,7 +130,7 @@ export default function MiniDrawer() {
     { text: 'Home', link: '/', icon: <HomeIcon /> },
     { text: 'Profile', link: `/profile/${userId}`, icon: <AccountBoxIcon /> },
     { text: 'Connections', link: '/connections', icon: <GroupsIcon /> },
-    { text: 'Schedule', link: '/', icon: <EventNoteIcon /> },
+    { text: 'Schedule', link: '/schedule', icon: <EventNoteIcon /> },
   ];
 
   const handleDrawerOpen = () => {

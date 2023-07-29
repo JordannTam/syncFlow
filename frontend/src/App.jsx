@@ -9,6 +9,7 @@ import ProtectedRoute from './utils/ProtectedRoute';
 import SignupPage from './screens/SignupScreen';
 import Navbar from './components/Navbar'
 import CreateTaskScreen from './screens/CreateTaskScreen'
+import ScheduleScreen from './screens/ScheduleScreen'
 import TaskScreen from './screens/TaskScreen'
 import { Box, Typography } from '@mui/material';
 import ConnectionsScreen from './screens/ConnectionScreen';
@@ -32,6 +33,7 @@ function App() {
             <Route path="/task/:id" element={<TaskScreen />} />
             <Route path="/task/:id/edit" element={<EditTaskScreen />} />
             <Route path="/connections" element={<ConnectionsScreen />} />
+            <Route path="/schedule" element={<ScheduleScreen />} />
           </Route>
           <Route path="*" element={
             <Typography variant="h1" component="h1">
