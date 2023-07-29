@@ -63,3 +63,4 @@ The frontend is built with React.js and can be started using npm.
 ### Database
 
 This project uses a PostgreSQL database. Make sure you have PostgreSQL installed and properly configured on your system. Update the database configuration details as per your setup in the required files.
+The database set up is in 'setup.sql'
