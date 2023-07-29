@@ -49,8 +49,9 @@ The backend requires a number of Python packages. These dependencies are listed 
 The frontend is built with React.js and can be started using npm.
 
 1. Navigate to the frontend directory (assuming you're in the project root).
-
+    ```
     cd frontend
+    ```
 
 2. Install necessary npm packages.
 
