@@ -28,34 +28,34 @@ const DashboardScreen = () => {
   const [messageText, setMessageText] = useState('');
   const [ws, setWs] = useState(null);
 
-  const getMessages = async () => {
-    try {
-      const res = await apiCall('/messages', {}, 'GET', `bearer ${token}`);
-      setMessages(res)
-    } catch (err) {
-      console.error(err);
-    }
-  }
+  // const getMessages = async () => {
+  //   try {
+  //     const res = await apiCall('/messages', {}, 'GET', `bearer ${token}`);
+  //     setMessages(res)
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // }
   
-  useEffect(() => {
-    getMessages()
-    const websocket = new WebSocket("ws://localhost:8000/ws")
-    setWs(websocket)
+  // useEffect(() => {
+  //   getMessages()
+  //   const websocket = new WebSocket("ws://localhost:8000/ws")
+  //   setWs(websocket)
 
-    websocket.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-        setMessages((prevMessages) => [...prevMessages, message]);
-    }
-    return () => {websocket.close()}
-    }, []);
+  //   websocket.onmessage = (event) => {
+  //       const message = JSON.parse(event.data);
+  //       setMessages((prevMessages) => [...prevMessages, message]);
+  //   }
+  //   return () => {websocket.close()}
+  //   }, []);
 
   
-  const sendMessage = (text, profile_id) => {
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      const message = { text, profile_id }
-      ws.send(JSON.stringify(message))
-    }
-  }
+  // const sendMessage = (text, profile_id) => {
+  //   if (ws && ws.readyState === WebSocket.OPEN) {
+  //     const message = { text, profile_id }
+  //     ws.send(JSON.stringify(message))
+  //   }
+  // }
 
   // END OF CHAT DEMO STUFF
 
@@ -95,7 +95,7 @@ const DashboardScreen = () => {
     <PageContainer maxWidth="lg" marginTop="0px" >
 
       {/* CHAT APP DEMO STUFF CHAT APP DEMO STUFF */}
-      <div>
+      {/* <div>
         <List>
           {messages.map((message, index) => (
             <ListItem key={index}>
@@ -112,7 +112,7 @@ const DashboardScreen = () => {
           sendMessage(messageText, userId)
           setMessageText('')
         }}>Send</Button>
-      </div>
+      </div> */}
 
       {/*  END OF CHAT APP DEMO STUFF END OF CHAT APP DEMO STUFF */}
 

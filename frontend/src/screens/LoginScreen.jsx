@@ -47,7 +47,10 @@ const LoginScreen = () => {
       handleFetchProfileId(token)
       navigate('/home')
     } catch (err) {
-      console.error(err);
+      if (err === 401) {
+        setError("Invalid Email or Password")
+      }
+      setHasError(true)
     }
   }
 
