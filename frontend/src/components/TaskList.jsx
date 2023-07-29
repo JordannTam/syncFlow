@@ -4,7 +4,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SecurityIcon from '@mui/icons-material/Security';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import { randomCreatedDate, randomUpdatedDate } from '@mui/x-data-grid-generator';
-import { Avatar } from '@mui/material';
+import { Avatar, Box, Modal, Typography } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircleTwoTone';
 import AutorenewIcon from '@mui/icons-material/AutorenewTwoTone';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircleTwoTone';
@@ -15,16 +15,36 @@ import { changeTaskState, deleteTasks, setTasks } from '../actions';
 import { useNavigate } from 'react-router-dom';
 import { apiCall } from '../utils/api';
 import Cookies from 'js-cookie';
+import Button from './Button';
+import ChatIcon from '@mui/icons-material/Chat';
+import LiveChat from './LiveChat'
 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 800,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  borderRadius: '16px',
+  p: 4,
+};
 
 export default function TaskList(props) {
   const [loading, setLoading] = React.useState(false)
+  const [openChat, setOpenChat] = React.useState(false)
+  const [messages, setMessages] = React.useState([])
+  const [ws, setWs] = React.useState(null);
   const { tasks } = props
+  const [chatTask, setChatTask] = React.useState({});
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const profile = useSelector(state => state.profileReducer)
   const token = Cookies.get('loginToken')
   const userId = Cookies.get('userId')
+  const handleCloseChat = () => {setOpenChat(false); if (!!ws) {ws.close()};}
+  const handleOpenChat = () => setOpenChat(true)
 
 
   const handleDeleteTask = React.useCallback(
@@ -37,6 +57,32 @@ export default function TaskList(props) {
     },
     [dispatch],
   );
+
+
+  const handleLiveChat = React.useCallback( 
+  (id) => async () => {
+      try {
+        const targetTask = tasks.find((x) => x.task_id === id)
+        setChatTask(targetTask)
+        const res = await apiCall(`/messages?task_id=${id}`, {}, 'GET', `bearer ${token}`);
+        setMessages(res)
+        console.log(`ws://localhost:8000/ws/${id}`);
+        const websocket = new WebSocket(`ws://localhost:8000/ws/${id}`)
+        setWs(websocket)
+        
+        websocket.onmessage = (event) => {
+          const message = JSON.parse(event.data);
+          setMessages((prevMessages) => [...prevMessages, message]);
+        }    
+        console.log(websocket);
+        handleOpenChat()
+      } catch (err) {
+        console.error(err);
+      }
+  },
+    [],
+  );
+  
 
   const handleDeleteTaskAPI = async (id) => {
     try {
@@ -104,7 +150,19 @@ export default function TaskList(props) {
 
 
   const columnsDetail = [
-    { field: 'task_id', headerName: 'ID', width: 200, sortable: false},
+    { field: 'task_id', headerName: 'ID', width: 30, sortable: false},
+    {
+      field: 'liveChat',
+      type: 'actions',
+      width: 50,
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<ChatIcon />}
+          label="Live Chat"
+          onClick={handleLiveChat(params.id)}
+        />,
+      ],
+    },  
     { field: 'assignee', headerName: 'Assignee', width: 200, renderCell:params=>params.row.assignees.map((a,index) => <Avatar key={index} src={null} />), sortable: false}, // TODO: set the src of Avatar
     { field: 'title', headerName: 'Task Name', width: 200, sortable: false},
     {
@@ -220,12 +278,6 @@ export default function TaskList(props) {
         onClick={handleDeleteTask(params.id)}
       />,
       // <GridActionsCellItem
-      //   icon={<SecurityIcon />}
-      //   label="Toggle Admin"
-      //   onClick={toggleAdmin(params.id)}
-      //   showInMenu
-      // />,
-      // <GridActionsCellItem
       //   icon={<FileCopyIcon />}
       //   label="Duplicate User"
       //   onClick={duplicateUser(params.id)}
@@ -235,6 +287,7 @@ export default function TaskList(props) {
   },
 ]
   if (userId !== props.id) {
+    columnsDetail.splice(2,1)
     columnsDetail.splice(4,1)
     columnsDetail.splice(4,1)
   }
@@ -249,6 +302,7 @@ export default function TaskList(props) {
   }
 
   return (
+    <>
     <div style={{ height: props.height, width: '100%' }}>
       <DataGrid 
       sx={{
@@ -270,5 +324,18 @@ export default function TaskList(props) {
         />
       
     </div>
+
+    <Modal
+      open={openChat}
+      onClose={handleCloseChat}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+      >
+      <Box sx={style}>
+        <LiveChat chatTask={chatTask} messages={messages} setMessages={setMessages} ws={ws}></LiveChat>
+      </Box>
+    </Modal>
+    </>
+
   );
 }
