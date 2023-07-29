@@ -12,12 +12,10 @@ export const apiCall = (path, data, type, token) => {
         }).then(async (response) => {
             if (response.status === 200) {
                 return response.json().then(resolve);
-            } else if (response.status === 400) {
-                const res = await response.json();
-                reject(res.error);
             } else {
-                throw new Error(`${response.status} Error with API call`);
-            }
+                const res = await response.json();
+                reject(response.status);
+            } 
         });
     });
 };
