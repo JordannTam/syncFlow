@@ -1,8 +1,7 @@
-# capstone-project-3900w11bendgame
-# Task Management System
+# Task Management System - capstone-project-3900w11bendgame
 ## Efficiently manage and track your tasks with our system
 
-### Description
+## Description
 
 The Task Management System is a powerful tool designed to foster clear, real-time understanding of task allocation and progress in a collaborative setting. It provides a comprehensive overview of the status of the tasks that each member of the team is working on, significantly reducing the chance of misunderstanding, task duplication, and inefficient use of resources. 
 
