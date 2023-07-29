@@ -33,9 +33,9 @@ Ensure you have the following installed on your system:
 The backend requires a number of Python packages. These dependencies are listed in the requirements.txt file in the /backend directory.
 
 1. Navigate to the /backend directory.
-
+    ```
     cd backend
-
+    ```
 2. Install the necessary Python packages using pip.
 
     pip install -r requirements.txt
