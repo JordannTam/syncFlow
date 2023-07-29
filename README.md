@@ -37,29 +37,29 @@ The backend requires a number of Python packages. These dependencies are listed 
     cd backend
     ```
 2. Install the necessary Python packages using pip.
-
+    ```
     pip install -r requirements.txt
-
+    ```
 3. Start the backend server using uvicorn.
-
+    ```
     uvicorn main:app --reload
-
+    ```
 ### Frontend
 
 The frontend is built with React.js and can be started using npm.
 
 1. Navigate to the frontend directory (assuming you're in the project root).
-
+    ```
     cd frontend
-
+    ```
 2. Install necessary npm packages.
-
+    ```
     npm install
-
+    ```
 3. Start the frontend application.
-
+    ```
     npm start
-
+    ```
 
 ### Database
 
