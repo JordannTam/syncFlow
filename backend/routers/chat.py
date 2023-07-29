@@ -57,7 +57,7 @@ async def get_messages(task_id: int, token: str = Depends(oauth2_scheme)):
     fetch_messageSQL = """
     SELECT m.content as content, p.id as profile_id, p.first_name, p.img from MESSAGES m
         JOIN TASKS t ON t.id = m.task_id
-        JOIN PROFILES p in p.id = m.profile_id
+        JOIN PROFILES p on p.id = m.profile_id
     WHERE t.id = %s
     ORDER BY m.time_send
     """

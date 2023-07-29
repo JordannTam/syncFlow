@@ -8,12 +8,14 @@ const LiveChat  = (props) => {
     const messagesEndRef = useRef(null);
     const userId = Cookies.get('userId')
     const [msg, setMsg] = useState("")
+
     const sendMessage = (text, profile_id) => {
         if (props.ws && props.ws.readyState === WebSocket.OPEN) {
           const message = { text, profile_id }
           props.ws.send(JSON.stringify(message))
         }
       }
+      
     const handleSendMessage = () => {
         sendMessage(msg, userId)
         console.log(msg);
