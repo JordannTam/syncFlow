@@ -18,7 +18,7 @@ const LiveChat  = (props) => {
 
     const sendMessage = (text, profile_id) => {
         if (ws && ws.readyState === WebSocket.OPEN) {
-          const a = { content: text, profile_id , first_name: "test", img: null}
+          const a = { content: text, profile_id , first_name: "test", image: null}
           ws.send(JSON.stringify(a))
         }
       }
