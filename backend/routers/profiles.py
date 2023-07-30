@@ -136,12 +136,12 @@ def get_profile(profile_id: str):
     if profile is None:
         raise HTTPException(status_code=405)
     
-    first_name, last_name, email_address, date_of_birth, img = profile
+    first_name, last_name, email_address, date_of_birth, image = profile
     
-    if img is None:
+    if image is None:
 
         with open("routers/message.txt", "r") as f:
-            img = f.read()
+            image = f.read()
             
     profile_dict = {
         'profile_id': profile_id,
@@ -149,7 +149,7 @@ def get_profile(profile_id: str):
         'last_name': last_name,
         'email': email_address,
         'date_of_birth': date_of_birth,
-        'image': img
+        'image': image
     }
     
     return profile_dict

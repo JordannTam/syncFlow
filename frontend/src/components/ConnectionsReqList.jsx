@@ -81,7 +81,7 @@ export default function ConnectionReqList(props) {
             >
             <ListItemButton onClick={() => handleProfile(con.u_id)}>
               <ListItemIcon>
-                <Avatar></Avatar>
+                <Avatar src={con.image}></Avatar>
               </ListItemIcon>
               <ListItemText primary={`${con.first_name} ${con.last_name}`} />
             </ListItemButton>

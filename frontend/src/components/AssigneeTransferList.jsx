@@ -93,7 +93,7 @@ export default function TransferList(props) {
                 />
               </ListItemIcon>
               <Box display="flex" columnGap="10px">
-              <Avatar src={value.icon}></Avatar>
+              <Avatar src={value.image}></Avatar>
               <ListItemText id={labelId} primary={value.u_id === parseInt(userId) ? '( Me )' : value.first_name} />
 
               </Box>

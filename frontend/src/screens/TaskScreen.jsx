@@ -71,6 +71,7 @@ const TaskScreen = () => {
                             <ListItemAvatar>
                                 <Avatar
                                 alt={`Avatar n°${index + 1}`}
+                                src={assignee.image}
                                 />
                             </ListItemAvatar>
                             <ListItemText id={index} primary={`${assignee.first_name} ${assignee.last_name}`} />
