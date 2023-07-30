@@ -75,6 +75,7 @@ const CreateTaskScreen = () => {
           first_name: profile.first_name,
           last_name: profile.last_name,
           email: profile.email,
+          image: profile.image
       }
 
         const ass = assignType === "assignToMe" ? [userDetails] : assignees
