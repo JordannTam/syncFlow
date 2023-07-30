@@ -54,7 +54,7 @@ export default function SmallTaskList(props) {
   };
 
 
-  if (userId !== id) {
+  if (parseInt(userId) !== id) {
     columnsDetail.splice(4,1)
     columnsDetail.splice(4,1)
   }

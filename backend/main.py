@@ -17,6 +17,7 @@ class User_profile(BaseModel):
     email: str
     first_name: str
     last_name: str
+    image: Union[str, None]
 class Task(BaseModel):
     title: str
     assignees: Union[List[User_profile], None]
@@ -64,6 +65,56 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     logging.error(f"{request}: {exc_str}")
     content = {'status_code': 10422, 'message': exc_str, 'data': None}
     return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+from scheduling_simulation import TaskScheduler
+
+class ScheduleRequest(BaseModel):
+    tasks: List[Task]
+    removedTasks: List[int]
+    dailyTime: int
+    shortest_possible: Optional[bool] = False
+
+@app.get("/schedule")
+async def create_schedule(reschedule: bool = True,
+                          removedTasks: List[Task] = [],
+                          time: float = None,
+                          shortestPossible: bool = False,
+                          token: str = Depends(oauth2_scheme)):
+    id = verify_token(token)
+    print(removedTasks, time, shortestPossible)
+
+    select_task_list = """
+        SELECT tasks.id, tasks.title, tasks.deadline, tasks.progress, tasks.mean, tasks.stddev
+        FROM tasks               
+            JOIN task_assignees ON tasks.id = task_assignees.task_id
+            JOIN profiles ON task_assignees.profile_id = profiles.id
+        WHERE profiles.id = %s
+        ORDER BY tasks.deadline, tasks.mean;
+        """
+
+    conn = get_db_conn()
+    cur = conn.cursor()
+    cur.execute(select_task_list, (id,))
+    tasks = cur.fetchall()
+    cur.close()
+    conn.close()
+    column_names = [desc[0] for desc in cur.description]
+    tasks_dict = {task[0]: dict(zip(column_names, task)) for task in tasks}
+    tasks = list(tasks_dict.values())
+    # print(tasks)
+
+    print("Generating Schedule...")
+    ts = TaskScheduler(tasks)
+    schedule,time = ts.get_schedule(reschedule, shortestPossible, time)
+    print("Schedule Complete...")
+    dailies = [{k: v for k, v in task.items() if k in ['title', 'deadline', 'id']} for task in schedule[0]]
+    # print(schedule)
+    # print(dailies)
+    return {"daily_tasks": dailies, "schedule": schedule, "time": time}
+    
+
+# if __name__ == "__main__":
+#     schedule() # TODO REMOVE
 
 @app.post("/task")
 async def create_task(task: Task, token: str = Depends(oauth2_scheme)):
@@ -220,7 +271,7 @@ def get_tasks(page: str , profile_id: Union[int, None] = None, token: str = Depe
     tasks_dict = {task[0]: dict(zip(column_names, task)) for task in tasks}
     
     select_assignees_sql = '''
-    SELECT p.id, p.email_address as email, p.first_name as first_name, p.last_name as last_name 
+    SELECT p.id, p.email_address as email, p.first_name as first_name, p.last_name as last_name, p.image as img 
     FROM task_assignees t
         JOIN PROFILES p on p.id = t.profile_id
     WHERE t.task_id = %s
@@ -230,12 +281,12 @@ def get_tasks(page: str , profile_id: Union[int, None] = None, token: str = Depe
     for task_id, task in tasks_dict.items():
         cur.execute(select_assignees_sql, (task_id,))
         # assignees = [item[0] for item in cur.fetchall()]
-        assignees = [User_profile(u_id=item[0], email=item[1], first_name=item[2], last_name=item[3]) for item in cur.fetchall()]
+        assignees = [User_profile(u_id=item[0], email=item[1], first_name=item[2], last_name=item[3], image=item[4]) for item in cur.fetchall()]
         task["assignees"] = assignees
 
     # Convert back to a list
     tasks = list(tasks_dict.values())
-
+    print(tasks)
     cur.close()
     conn.close()
 

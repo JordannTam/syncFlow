@@ -37,6 +37,7 @@ export default function ConnectionReqList(props) {
             }
             await apiCall('/connection_request_management', object, 'POST', `bearer ${token}`);
             dispatch(addConnections(user))
+            console.log(user);
             const rs = connections
             const ls = rs.filter((x) => user.u_id !== x.u_id)
             props.setConnectionsReqs(ls)
@@ -80,7 +81,7 @@ export default function ConnectionReqList(props) {
             >
             <ListItemButton onClick={() => handleProfile(con.u_id)}>
               <ListItemIcon>
-                <Avatar></Avatar>
+                <Avatar src={con.image}></Avatar>
               </ListItemIcon>
               <ListItemText primary={`${con.first_name} ${con.last_name}`} />
             </ListItemButton>

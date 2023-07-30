@@ -58,6 +58,22 @@ export const setProfile = (profile) => {
     };
 };
 
+export const editProfileNames = (object) => {
+    return {
+        type: "EDIT_PROFILE_NAMES",
+        first_name: object.first_name,
+        last_name: object.last_name
+    };
+};
+
+export const editProfileImg = (object) => {
+    return {
+        type: "EDIT_PROFILE_IMG",
+        image: object.image,
+    };
+};
+
+
 // **************
 // Login Function
 // **************
@@ -88,7 +104,7 @@ export const setConnections = (connections) => {
 export const addConnections = (user) => {
     return {
         type: "ADD_CONNECTION",
-        id: user.id,
+        u_id: user.u_id,
         first_name: user.first_name,
         last_name: user.last_name,
     };
@@ -99,4 +115,27 @@ export const deleteConnection = (id) => {
         type: "DELETE_CONNECTION",
         id,
     };
+};
+
+
+// ******************
+// Messages Functions
+// ******************
+
+
+export const setMessages = (messages) => {
+    return {
+        type: "SET_MESSAGES",
+        messages,
+    };
+};
+
+export const addMessage = (message) => {
+    return {
+        type: "ADD_MESSAGE",
+        content: message.content,
+        profile_id: message.profile_id, 
+        first_name: message.first_name, 
+        image: message.image            
+};
 };
