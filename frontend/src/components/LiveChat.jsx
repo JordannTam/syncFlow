@@ -18,7 +18,7 @@ const LiveChat  = (props) => {
 
     const sendMessage = (text, profile_id) => {
         if (ws && ws.readyState === WebSocket.OPEN) {
-          const a = { content: text, profile_id , first_name: "test", img: null}
+          const a = { content: text, profile_id , first_name: "test", image: null}
           ws.send(JSON.stringify(a))
         }
       }
@@ -46,6 +46,7 @@ const LiveChat  = (props) => {
   
         websocket.onmessage = (event) => {
             const message = JSON.parse(event.data);
+            console.log(message);
             dispatch(addMessage(message))
           }
 
@@ -86,7 +87,7 @@ const LiveChat  = (props) => {
             </div>
             <div id="messages" className={`flex flex-col space-y-4 p-3 overflow-y-auto ${styles.scrollbarThumbBlue} ${styles.scrollbarThumbRound} ${styles.scrollbarTrackBlueLighter} ${styles.scrollbarW2} scrolling-touch`}>
                 {messages.map((message, index) => {
-                    if (message.profile_id !== parseInt(userId)){
+                    if (parseInt(message.profile_id) !== parseInt(userId)){
                         return (
                             <div key={index} className="chat-message" ref={messagesEndRef}>
                                 <div className="flex items-end">

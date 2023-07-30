@@ -162,7 +162,7 @@ export default function TaskList(props) {
         />,
       ],
     },  
-    { field: 'assignee', headerName: 'Assignee', width: 200, renderCell:params=>params.row.assignees.map((a,index) => <Avatar key={index} src={null} />), sortable: false}, // TODO: set the src of Avatar
+    { field: 'assignee', headerName: 'Assignee', width: 200, renderCell:params=>params.row.assignees.map((a,index) => <Avatar key={index} src={a.image} />), sortable: false}, // TODO: set the src of Avatar
     { field: 'title', headerName: 'Task Name', width: 200, sortable: false},
     {
       field: 'deadline',
@@ -267,7 +267,7 @@ export default function TaskList(props) {
       ],
     },
     {
-    field: 'actions',
+    field: 'delete',
     type: 'actions',
     width: 80,
     getActions: (params) => [
@@ -285,17 +285,18 @@ export default function TaskList(props) {
     ],
   },
 ]
-  if (parseInt(userId) !== props.id) {
-    columnsDetail.splice(2,1)
-    columnsDetail.splice(4,1)
-    columnsDetail.splice(4,1)
-  }
-
-
-  const columns = React.useMemo(
-    () => columnsDetail,
+if (parseInt(userId) !== parseInt(props.id)) {
+  columnsDetail.splice(1,1)
+  columnsDetail.splice(4,1)
+  columnsDetail.splice(4,1)
+}
+React.useEffect(() => {
+  console.log("props.id", props.id);
+}, [])
+  const columns = React.useMemo(() => parseInt(userId) === parseInt(props.id) || parseInt(props.id) === NaN ? columnsDetail : columnsDetail.filter((x) => !(x.field === "liveChat" || x.field === "progress" || x.field === "delete")),
     [handleCompleted, handleInProgress, handleNotStarted, handleBlocked, props.tasks, tasks, handleDeleteTask],
   );
+
   if (!tasks) {
     return <>Loading</>
   }

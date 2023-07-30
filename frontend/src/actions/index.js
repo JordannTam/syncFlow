@@ -69,7 +69,7 @@ export const editProfileNames = (object) => {
 export const editProfileImg = (object) => {
     return {
         type: "EDIT_PROFILE_IMG",
-        img: object.img,
+        image: object.image,
     };
 };
 
@@ -136,6 +136,6 @@ export const addMessage = (message) => {
         content: message.content,
         profile_id: message.profile_id, 
         first_name: message.first_name, 
-        img: message.img            
+        image: message.image            
 };
 };

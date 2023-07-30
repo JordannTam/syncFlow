@@ -98,21 +98,21 @@ const ProfileScreen = () => {
 
   }
 
-  const handleEditImg = async () => {
+  const handleEditImg = async (res) => {
     try {
       const object = {
-        image: img,
+        image: res,
       }
       await apiCall(`/edit_profile`, object, 'PUT', `bearer ${token}`);
       dispatch(editProfileImg(object))
       console.log("DONE", object);
-      setProfile({...profile, image:object.img, last_name:object.last_name })
+      setProfile({...profile, image:object.image, last_name:object.last_name })
     } catch (err) {
       console.error(err);
     }
   }
 
-  const handleFileUpload = (event) => {
+  const handleFileUpload = async (event) => {
     setLoadingImg(true)
     const file = event.target.files[0];
     console.log(file); // Do something with the uploaded file
@@ -122,8 +122,11 @@ const ProfileScreen = () => {
       reader.onload = () => resolve(reader.result);
     });
     reader.readAsDataURL(file);
-    dataUrlPromise.then((res) => 
+    await dataUrlPromise.then((res) => 
+    {
+      console.log("// ProfileScreen.jsx [handleFileUpload] : res: ", res)
       handleEditImg(res)
+    }
     )
     setLoadingImg(false)
   }
