@@ -41,11 +41,20 @@ const ProfileScreen = () => {
     }
   }
 
+  // In case you need it
+  const handleDeleteTaskAPI = async (id) => {
+    try {
+      const res = await apiCall(`/task?task_id=${id}`, {}, 'DELETE', `bearer ${token}`);
+      console.log(res);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   const handleDeleteTask = (id) => {
     // remove task from storage and append task_id in another list
     setTaskStorage(taskStorage.filter(item => item.task_id !== id))
     setRemovedTaskStorage([...removedTaskStorage, id])
-    console.log(removedTaskStorage)
   }
 
   useEffect(() => {
@@ -130,11 +139,9 @@ const ProfileScreen = () => {
 
 export default ProfileScreen;
 
-// "schedule" : {"date": {"task_id": task_id, title:"title", "mean": }}
 
 // Weeklyschedule 
-// receives list of tasks
+// receives list of tasks "schedule" : {"date": {"task_id": task_id, title:"title", "mean": }}
 // display in weekly batches with first element being today.  (doesn't have to start at monday like in figma, can use dates or day of week whateveryou want)
 // user can use arrows to move back and forward between batches (endpoint gives a schedule including all stasks)
 // scale the component of each block according to mean relative to maximium hours workable
-// if you can make it so you click on task block and get more details of task that would be great but if you dont have time, no worries
