@@ -128,7 +128,7 @@ async def read_profile(token: str = Depends(oauth2_scheme)):
 def get_profile(profile_id: str):
     conn = get_db_conn()
     cur = conn.cursor()
-    cur.execute("SELECT first_name, last_name, email_address, date_of_birth, img FROM PROFILES WHERE id=%s", (profile_id,))
+    cur.execute("SELECT first_name, last_name, email_address, date_of_birth, image FROM PROFILES WHERE id=%s", (profile_id,))
     profile = cur.fetchone()
     cur.close()
     conn.close()
