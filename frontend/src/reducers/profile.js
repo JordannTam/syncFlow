@@ -13,7 +13,7 @@ const profileReducer = (state = {}, action) => {
         case "EDIT_PROFILE_EDIT":
             return {
                 ...state,
-                img: action.img,
+                image: action.image,
             };
         case "SET_PROFILE":
             return action.profile;
