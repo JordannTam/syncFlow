@@ -84,6 +84,7 @@ const DashboardScreen = () => {
       // setLoading(true)
       handleFetchConnections()
       handleFetchTasks()
+      console.log("// DashBoard: userId", parseInt(userId));
   }, [])
 
   if (!tasks) {
