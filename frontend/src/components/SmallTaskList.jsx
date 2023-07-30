@@ -17,10 +17,6 @@ import TableRow from '@mui/material/TableRow';
 
 export default function SmallTaskList(props) {
   const { tasks, handleDeleteTask, id, rowNums } = props
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const profile = useSelector(state => state.profileReducer)
-  const token = Cookies.get('loginToken')
   const userId = Cookies.get('userId')
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(rowNums);
