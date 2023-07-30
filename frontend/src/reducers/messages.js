@@ -16,7 +16,7 @@ const message = (state, action) => {
                 content: action.content,
                 profile_id: action.profile_id, 
                 first_name: action.first_name, 
-                img: action.img            
+                image: action.image            
             };
         default:
             return state;
