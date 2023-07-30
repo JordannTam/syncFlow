@@ -17,6 +17,7 @@ class User_profile(BaseModel):
     email: str
     first_name: str
     last_name: str
+    image: Union[str, None]
 class Task(BaseModel):
     title: str
     assignees: Union[List[User_profile], None]
@@ -230,7 +231,7 @@ def get_tasks(page: str , profile_id: Union[int, None] = None, token: str = Depe
     for task_id, task in tasks_dict.items():
         cur.execute(select_assignees_sql, (task_id,))
         # assignees = [item[0] for item in cur.fetchall()]
-        assignees = [User_profile(u_id=item[0], email=item[1], first_name=item[2], last_name=item[3]) for item in cur.fetchall()]
+        assignees = [User_profile(u_id=item[0], email=item[1], first_name=item[2], last_name=item[3], image=item[4]) for item in cur.fetchall()]
         task["assignees"] = assignees
 
     # Convert back to a list
