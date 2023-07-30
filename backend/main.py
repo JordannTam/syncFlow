@@ -65,6 +65,56 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     content = {'status_code': 10422, 'message': exc_str, 'data': None}
     return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
+from scheduling_simulation import TaskScheduler
+
+class ScheduleRequest(BaseModel):
+    tasks: List[Task]
+    removedTasks: List[int]
+    dailyTime: int
+    shortest_possible: Optional[bool] = False
+
+@app.get("/schedule")
+async def create_schedule(reschedule: bool = True,
+                          removedTasks: List[Task] = [],
+                          time: float = None,
+                          shortestPossible: bool = False,
+                          token: str = Depends(oauth2_scheme)):
+    id = verify_token(token)
+    print(removedTasks, time, shortestPossible)
+
+    select_task_list = """
+        SELECT tasks.id, tasks.title, tasks.deadline, tasks.progress, tasks.mean, tasks.stddev
+        FROM tasks               
+            JOIN task_assignees ON tasks.id = task_assignees.task_id
+            JOIN profiles ON task_assignees.profile_id = profiles.id
+        WHERE profiles.id = %s
+        ORDER BY tasks.deadline, tasks.mean;
+        """
+
+    conn = get_db_conn()
+    cur = conn.cursor()
+    cur.execute(select_task_list, (id,))
+    tasks = cur.fetchall()
+    cur.close()
+    conn.close()
+    column_names = [desc[0] for desc in cur.description]
+    tasks_dict = {task[0]: dict(zip(column_names, task)) for task in tasks}
+    tasks = list(tasks_dict.values())
+    # print(tasks)
+
+    print("Generating Schedule...")
+    ts = TaskScheduler(tasks)
+    schedule,time = ts.get_schedule(reschedule, shortestPossible, time)
+    print("Schedule Complete...")
+    dailies = [{k: v for k, v in task.items() if k in ['title', 'deadline', 'id']} for task in schedule[0]]
+    # print(schedule)
+    # print(dailies)
+    return {"daily_tasks": dailies, "schedule": schedule, "time": time}
+    
+
+# if __name__ == "__main__":
+#     schedule() # TODO REMOVE
+
 @app.post("/task")
 async def create_task(task: Task, token: str = Depends(oauth2_scheme)):
     creator_id = verify_token(token)

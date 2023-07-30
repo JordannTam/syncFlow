@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PageContainer from '../components/PageContainer'
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Typography, Button, FormControlLabel, Switch } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import Cookies from 'js-cookie';
 import { apiCall } from '../utils/api';
@@ -14,21 +14,30 @@ const ProfileScreen = () => {
   const userId = Cookies.get('userId');
   const tasks = useSelector(state => state.taskReducer)
   // const profile = useSelector(state => state.profileReducer)
-  const [taskStorage, setTaskStorage] = useState([{'task_id': 1, 'title': 'Dinner with Family', 'description': '2 hours dinner', 'deadline': '2023-07-30'}, {'task_id': 6, 'title': 'Group meeting with Johnnnnnnnnnnn', 'description': '3 hours', 'deadline': '2023-08-08'}, {'task_id': 2, 'title': 'Basketball night with John', 'description': '2hours', 'deadline': '2023-08-10'}, {'task_id': 5, 'title': 'Group meeting', 'description': '3 hours', 'deadline': '2023-08-18'}, {'task_id': 4, 'title': 'Workout with Jimmy', 'description': '2 hours', 'deadline': '2023-08-23'}, {'task_id': 3, 'title': 'Dinner with Alex', 'description': 'possible 4 hours', 'deadline': '2023-08-28'}])
+  // const [taskStorage, setTaskStorage] = useState([{'task_id': 1, 'title': 'Dinner with Family', 'description': '2 hours dinner', 'deadline': '2023-07-30'}, {'task_id': 6, 'title': 'Group meeting with Johnnnnnnnnnnn', 'description': '3 hours', 'deadline': '2023-08-08'}, {'task_id': 2, 'title': 'Basketball night with John', 'description': '2hours', 'deadline': '2023-08-10'}, {'task_id': 5, 'title': 'Group meeting', 'description': '3 hours', 'deadline': '2023-08-18'}, {'task_id': 4, 'title': 'Workout with Jimmy', 'description': '2 hours', 'deadline': '2023-08-23'}, {'task_id': 3, 'title': 'Dinner with Alex', 'description': 'possible 4 hours', 'deadline': '2023-08-28'}])
+  const [taskStorage, setTaskStorage] = useState([])
   const [removedTaskStorage, setRemovedTaskStorage] = useState([])
   const [schedule, setSchedule] = useState({})
   const [dailyTime, setDailyTime] = useState(8)
 
-  const handleReschedule = async () => {
+  const [shortestPossible, setShortestPossible] = useState(false);
+
+  const handleReschedule = async (reschedule = true) => {
     try {
-      const payload = {
-        tasks: taskStorage,
-        removedTasks: removedTaskStorage,
-        dailyTime: dailyTime,
-      }
-      const schedule_data = await apiCall(`/schedule`, payload, 'GET', `bearer ${token}`);
+      const removedTasks = removedTaskStorage.join(',');
+      const time = 60 * dailyTime
+      const params = new URLSearchParams({
+        removedTasks,
+        time,
+        reschedule,
+        shortestPossible,
+      });
+  
+      console.log(params.toString())
+      const schedule_data = await apiCall(`/schedule?${params.toString()}`, {}, 'GET', `bearer ${token}`);
       setTaskStorage(schedule_data.daily_tasks)
       setSchedule(schedule_data.schedule)
+      setDailyTime(schedule_data.time/60)
       console.log("Schedule: ", schedule_data);
     } catch (err) {
       console.error(err);
@@ -49,7 +58,11 @@ const ProfileScreen = () => {
   }
 
   useEffect(() => {
-    // handleReschedule()
+    console.log(removedTaskStorage);
+  }, [removedTaskStorage]);
+
+  useEffect(() => {
+    handleReschedule(false)
   }, [])
 
   if (!tasks) {
@@ -67,6 +80,7 @@ const ProfileScreen = () => {
             <Typography variant="h5" component="h3" marginBottom="15px">
               Daily Tasks
             </Typography>
+            
             <Button sx={{
                 height: '62px',
                 marginLeft: '15px',
@@ -98,12 +112,22 @@ const ProfileScreen = () => {
             marginTop="10px"
             marginBottom="10px"
           >
+            <FormControlLabel
+              control={
+              <Switch
+                checked={shortestPossible}
+                onChange={() => setShortestPossible(!shortestPossible)}
+                name="checkedB"
+                color="primary"
+              />}
+              label="Shortest Possible Schedule"
+            />
             <Button
               sx={{
                 width: '90%',
               }}
               variant="contained"
-              onClick={handleReschedule}
+              onClick={() => handleReschedule(true)}
             >
               Reschedule
             </Button>
