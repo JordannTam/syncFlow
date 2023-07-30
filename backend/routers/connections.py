@@ -154,7 +154,7 @@ def get_connections(token: str = Depends(oauth2_scheme)):
     
     get_connectionsSql = """
         SELECT 
-        p.id as u_id, p.email_address as email, p.first_name as first_name, p.last_name as last_name
+        p.id as u_id, p.email_address as email, p.first_name as first_name, p.last_name as last_name, p.image as img
         FROM profiles p
             JOIN CONNECTIONS c on c.id2 = p.id
         WHERE c.id1 = %s
@@ -162,7 +162,7 @@ def get_connections(token: str = Depends(oauth2_scheme)):
         UNION
         
         SELECT 
-        p.id as id, p.email_address as email, p.first_name as first_name, p.last_name as last_name
+        p.id as id, p.email_address as email, p.first_name as first_name, p.last_name as last_name, p.image as img
         FROM profiles p
             JOIN CONNECTIONS c on c.id1 = p.id
         WHERE c.id2 = %s

@@ -26,7 +26,6 @@ async def websocket_endpoint(websocket: WebSocket, task_id: int):
         while True:
             # receive data from user
             data = await websocket.receive_text()
-            print(data)
             message = json.loads(data)
             content = message.get('content')
             profile_id = message.get('profile_id')
@@ -39,9 +38,18 @@ async def websocket_endpoint(websocket: WebSocket, task_id: int):
             cur.execute(saveMessageSQL, (profile_id, task_id, content, currentTime))
             conn.commit()
 
+            cur.execute("SELECT image, first_name FROM PROFILES WHERE id = %s", (profile_id,))
+            result = cur.fetchone()
+            image = None
+            first_name = None
+            
+            if result is not None:
+                image = result[0]  # Access the first column of the result
+                first_name = result[1]  # Access the second column of the result
+
             # propagate text message to relavent users
             for client in connected_clients[task_id]:
-                await client.send_text(json.dumps({"profile_id": profile_id,"content": content}))
+                await client.send_text(json.dumps({"profile_id": profile_id, "content": content, "image": image, "first_name": first_name}))
         
     except Exception as e:
         print(e)
@@ -69,16 +77,11 @@ async def get_messages(task_id: int, token: str = Depends(oauth2_scheme)):
     
     cur.execute(fetch_messageSQL, (task_id,))
     result = cur.fetchall()
-    # messages = []
     messages = [dict(row) for row in result]
 
-    
-    # get a list of messages
-    # for message, profile_id in result:
-    #     messages.append(message)
-    
     cur.close()
     conn.close()
+    
     return messages
 
 
