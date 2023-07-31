@@ -214,7 +214,7 @@ const ProfileScreen = () => {
           Date of Birth: {profile.date_of_birth} 
         </Typography>
         <SearchBar taskStorage={taskStorage}/>
-        <TaskList tasks={tasks} id={params.id} rowNums={5} height='400'/>
+        <TaskList tasks={tasks} id={parseInt(params.id)} rowNums={5} height='400'/>
       </PageContainer>
     </>
   );
