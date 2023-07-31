@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import SideBar from '../components/SideBar';
 import PageContainer from '../components/PageContainer'
 import TaskList from '../components/TaskList';
@@ -51,15 +51,6 @@ const ProfileScreen = () => {
   const params = useParams()
 
 
-  const handleFetchTasks = async () => {
-    try {
-      const res = await apiCall(`/tasks?page=profile&profile_id=${params.id}`, {}, 'GET', `bearer ${token}`);
-      dispatch(setTasks(res))
-      setTaskStorage(res)
-    } catch (err) {
-      console.error(err);
-    }
-  }
   const handleFetchProfile = async () => {
     try {
       const profile_data = await apiCall(`/profile?profile_id=${params.id}`, {}, 'GET', `bearer ${token}`);
@@ -132,11 +123,23 @@ const ProfileScreen = () => {
   }
 
 
+  const handleFetchTasks = useCallback(() => async () => {
+    try {
+      const res = await apiCall(`/tasks?page=profile&profile_id=${params.id}`, {}, 'GET', `bearer ${token}`);
+      dispatch(setTasks(res))
+      setTaskStorage(res)
+    } catch (err) {
+      console.error(err);
+    }
+  },[])
+
 
   useEffect(() => {
     handleFetchProfile()
     handleFetchTasks()
   }, [])
+
+  
 
   if (!tasks) {
     return <>Loading...</>
@@ -211,7 +214,7 @@ const ProfileScreen = () => {
           Date of Birth: {profile.date_of_birth} 
         </Typography>
         <SearchBar taskStorage={taskStorage}/>
-        <TaskList tasks={tasks} id={params.id} rowNums={5} height='400'/>
+        <TaskList tasks={tasks} id={parseInt(params.id)} rowNums={5} height='400'/>
       </PageContainer>
     </>
   );

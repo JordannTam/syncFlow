@@ -9,255 +9,22 @@ import SmallTaskList from '../components/SmallTaskList';
 import ScheduleTable from '../components/ScheduleTable';
 
 
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
+
 const ProfileScreen = () => {
   const dispatch = useDispatch()
   const token = Cookies.get('loginToken');
   const userId = Cookies.get('userId');
   const tasks = useSelector(state => state.taskReducer)
-  // const [taskStorage, setTaskStorage] = useState([])
   const [removedTaskStorage, setRemovedTaskStorage] = useState([])
-  // const [schedule, setSchedule] = useState({})
-  const [taskStorage, setTaskStorage] = useState([{'task_id': 1, 'title': 'Dinner with Family', 'description': '2 hours dinner', 'deadline': '2023-07-30'}, {'task_id': 6, 'title': 'Group meeting with Johnnnnnnnnnnn', 'description': '3 hours', 'deadline': '2023-08-08'}, {'task_id': 2, 'title': 'Basketball night with John', 'description': '2hours', 'deadline': '2023-08-10'}, {'task_id': 5, 'title': 'Group meeting', 'description': '3 hours', 'deadline': '2023-08-18'}, {'task_id': 4, 'title': 'Workout with Jimmy', 'description': '2 hours', 'deadline': '2023-08-23'}, {'task_id': 3, 'title': 'Dinner with Alex', 'description': 'possible 4 hours', 'deadline': '2023-08-28'}])
-  const [schedule, setSchedule] = useState({
-    "2023-07-30": [
-      {
-        "task_id": 1,
-        "title": "rep",
-        "mean": 60
-      },
-      {
-        "task_id": 2,
-        "title": "Complete Report",
-        "mean": 45
-      },
-      {
-        "task_id": 3,
-        "title": "Complete Report",
-        "mean": 30
-      },
-      {
-        "task_id": 4,
-        "title": "Complete Report",
-        "mean": 5
-      },
-    ],
-    "2023-07-31": [
-      {
-        "task_id": 1,
-        "title": "rep",
-        "mean": 90
-      },
-      {
-        "task_id": 2,
-        "title": "Complete Report",
-        "mean": 20
-      },
-      {
-        "task_id": 3,
-        "title": "Complete Report",
-        "mean": 100
-      },
-      {
-        "task_id": 4,
-        "title": "Complete Report",
-        "mean": 60
-      },
-    ],
-    "2023-08-01": [
-      {
-        "task_id": 1,
-        "title": "Complete Report",
-        "mean": 90
-      },
-      {
-        "task_id": 2,
-        "title": "Complete Report",
-        "mean": 20
-      },
-      {
-        "task_id": 3,
-        "title": "Complete Report",
-        "mean": 100
-      },
-      {
-        "task_id": 4,
-        "title": "Complete Report",
-        "mean": 60
-      },
-    ],
-    "2023-08-02": [
-      {
-        "task_id": 1,
-        "title": "Complete Report",
-        "mean": 90
-      },
-      {
-        "task_id": 2,
-        "title": "Complete Report",
-        "mean": 20
-      },
-      {
-        "task_id": 3,
-        "title": "Complete Report",
-        "mean": 100
-      },
-      {
-        "task_id": 4,
-        "title": "Complete Report",
-        "mean": 60
-      },
-    ],
-    "2023-08-03": [
-      {
-        "task_id": 1,
-        "title": "Complete Report",
-        "mean": 15
-      },
-      {
-        "task_id": 2,
-        "title": "Complete Report",
-        "mean": 120
-      },
-      {
-        "task_id": 3,
-        "title": "Complete Report",
-        "mean": 100
-      },
-      {
-        "task_id": 4,
-        "title": "Complete Report",
-        "mean": 60
-      },
-    ],
-    "2023-08-04": [
-      {
-        "task_id": 1,
-        "title": "Complete Report",
-        "mean": 15
-      },
-      {
-        "task_id": 2,
-        "title": "Complete Report",
-        "mean": 120
-      },
-      {
-        "task_id": 3,
-        "title": "Complete Report",
-        "mean": 100
-      },
-      {
-        "task_id": 4,
-        "title": "Complete Report",
-        "mean": 60
-      },
-    ],
-    "2023-08-05": [
-      {
-        "task_id": 1,
-        "title": "Complete Report",
-        "mean": 15
-      },
-      {
-        "task_id": 2,
-        "title": "Complete Report",
-        "mean": 120
-      },
-      {
-        "task_id": 3,
-        "title": "Complete Report",
-        "mean": 100
-      },
-      {
-        "task_id": 4,
-        "title": "Complete Report",
-        "mean": 60
-      },
-    ],
-    "2023-08-06": [
-      {
-        "task_id": 1,
-        "title": "Complete Report",
-        "mean": 15
-      },
-      {
-        "task_id": 2,
-        "title": "Complete Report",
-        "mean": 120
-      },
-      {
-        "task_id": 3,
-        "title": "Complete Report",
-        "mean": 100
-      },
-    ],
-    "2023-08-07": [
-      {
-        "task_id": 1,
-        "title": "Complete Report",
-        "mean": 15
-      },
-      {
-        "task_id": 2,
-        "title": "Complete Report",
-        "mean": 120
-      },
-      {
-        "task_id": 3,
-        "title": "Complete Report",
-        "mean": 10
-      },
-      {
-        "task_id": 4,
-        "title": "Complete Report",
-        "mean": 60
-      },
-    ],
-    "2023-08-08": [
-      {
-        "task_id": 1,
-        "title": "Complete Report",
-        "mean": 90
-      },
-      {
-        "task_id": 2,
-        "title": "Complete Report",
-        "mean": 120
-      },
-      {
-        "task_id": 3,
-        "title": "Complete Report",
-        "mean": 10
-      },
-      {
-        "task_id": 4,
-        "title": "Complete Report",
-        "mean": 60
-      },
-    ],
-    "2023-08-09": [
-      {
-        "task_id": 1,
-        "title": "Complete Report",
-        "mean": 90
-      },
-      {
-        "task_id": 2,
-        "title": "Complete Report",
-        "mean": 20
-      },
-      {
-        "task_id": 3,
-        "title": "Complete Report",
-        "mean": 100
-      },
-      {
-        "task_id": 4,
-        "title": "Complete Report",
-        "mean": 60
-      },
-    ],
-  })
-  const [dailyTime, setDailyTime] = useState(8)
+  const [taskStorage, setTaskStorage] = useState([])
+  const [schedule, setSchedule] = useState({})
+  const [dailyTime, setDailyTime] = useState(5)
   const [shortestPossible, setShortestPossible] = useState(false);
   const [insufficientTime, setInsufficientTime] = useState(false);
 
@@ -274,6 +41,7 @@ const ProfileScreen = () => {
   const handleReschedule = async (reschedule = true) => {
     try {
       const removedTasks = removedTaskStorage.join(',');
+      // setRemovedTaskStorage([])
       const time = 60 * dailyTime
       const params = new URLSearchParams({
         removedTasks,
@@ -313,10 +81,38 @@ const ProfileScreen = () => {
     }
   }
 
-  const handleDeleteTask = (id) => {
-    // remove task from storage and append task_id in another list
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState(null);
+
+  const openDeleteDialog = (taskId) => {
+    setTaskToDelete(taskId);
+    setDialogOpen(true);
+  }
+
+  const handleClose = () => {
+    setDialogOpen(false);
+  };
+  
+  const handleConfirmDeletion = () => {
+    setTaskStorage(taskStorage.filter(item => item.task_id !== taskToDelete));
+    setRemovedTaskStorage([...removedTaskStorage, taskToDelete]);
+    setDialogOpen(false);
+  };
+
+  const handleDeleteTask = (id, deadline) => {
+    const today = new Date();
+    const taskDate = new Date(deadline);
+    console.log(today)
+    console.log(taskDate)
+    if (
+      today.getDate() === taskDate.getDate() 
+    ) {
+      openDeleteDialog(id);
+    } else {
+    console.log(id)
     setTaskStorage(taskStorage.filter(item => item.task_id !== id))
     setRemovedTaskStorage([...removedTaskStorage, id])
+    }
   }
 
   useEffect(() => {
@@ -324,7 +120,7 @@ const ProfileScreen = () => {
   }, [removedTaskStorage]);
 
   useEffect(() => {
-    // handleReschedule(false)
+    handleReschedule(false)
   }, [])
 
   if (!tasks) {
@@ -415,6 +211,28 @@ const ProfileScreen = () => {
             You will not be able to meet all your deadlines with this many working hours
           </Alert>
         </Snackbar>
+        <Dialog
+          open={dialogOpen}
+          onClose={handleClose}
+          >
+          <DialogTitle>
+          {"Delete Task"}
+          </DialogTitle>
+          <DialogContent>
+          <DialogContentText>
+            This task is due today. Are you sure you want to delete it? Deletion will make it impossible for us to generate an optimal schedule for you.
+          </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+          <Button onClick={handleClose}>
+          Cancel
+          </Button>
+          <Button onClick={handleConfirmDeletion} color="primary">
+          Delete
+          </Button>
+          </DialogActions>
+        </Dialog>
+
       </PageContainer>
     </>
   );
