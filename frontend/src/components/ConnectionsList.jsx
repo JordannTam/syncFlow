@@ -77,7 +77,9 @@ export default function ConnectionList(props) {
               <ListItemIcon>
                 <Avatar src={con.image}></Avatar>
               </ListItemIcon>
-              <WorkloadBar value={getScore(con.u_id)} size={15} />
+              <ListItemIcon>
+              <WorkloadBar value={getScore(con.u_id)} size={48} />
+              </ListItemIcon>
               <ListItemText primary={`${con.first_name} ${con.last_name}`} />
             </ListItemButton>
               {/* <WorkloadBar value={100} /> */}

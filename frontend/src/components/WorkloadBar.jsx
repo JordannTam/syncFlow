@@ -3,10 +3,10 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Typography, Box } from '@mui/material';
 
 const WorkloadBar = (props) => {
-  let {value, size} = props
+  let {value, size} = props;
   let pcolor = 'success';
-  let tcolor = 'black'
-  let valueText = `${value}%`
+  let tcolor = 'black';
+  let valueText = `${value}%`;
 
   if (value <= 25) {
     pcolor = 'success';
@@ -23,6 +23,9 @@ const WorkloadBar = (props) => {
     valueText = '100%+'
   }
 
+  const defaultTypographySize = 0.7; // in rem
+  const defaultCircularProgressSize = 40; // in px
+  const typographySize = defaultTypographySize * size / defaultCircularProgressSize;
 
   return (
     <Box sx={{ position: 'relative', display: 'inline-flex', top: '-15px', left: '20px', }}>
@@ -50,6 +53,7 @@ const WorkloadBar = (props) => {
           fontWeight="bold"
           component="div"
           color={tcolor}
+          sx={{ fontSize: `${typographySize}rem` }} 
         >{valueText}</Typography>
       </Box>
     </Box>
