@@ -13,6 +13,8 @@ const LoginScreen = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('');
   const [hasError, setHasError] = React.useState(false);
+  const [hasErrorEmail, setHasErrorEmail] = React.useState(false);
+  const [hasErrorPassword, sethasErrorPassword] = React.useState(false);
   const [error, setError] = React.useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch()
@@ -31,7 +33,42 @@ const LoginScreen = () => {
     }
   }
 
+  const handleCloseAllError = () => {
+    setHasError(false)
+    setHasErrorEmail(false)
+    sethasErrorPassword(false)
+  }
+
+  const validateEmail = (email) => {
+    return String(email)
+      .match(
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+      );
+  };
+
+  const validatePassword = (password) => {
+    return password.length >= 8 && password.length <= 32
+  }
+
+
+
   const login = async () => {
+    if (!validateEmail(email)) {
+      handleCloseAllError()
+      setError("Invalid Email Syntax")
+      setHasErrorEmail(true)
+      setHasError(true)
+      return
+    }
+
+    if (!validatePassword(password)) {
+      handleCloseAllError()
+      setError("Password must be between 8 and 32 characters long")
+      sethasErrorPassword(true)
+      setHasError(true)
+      return
+    }
+
     const object = {
       email,
       password
@@ -61,8 +98,8 @@ const LoginScreen = () => {
             <Box margin={'-10px auto 0'}>
                 <h2>Login</h2>
             </Box>
-            <TextField error={ hasError } label="Email" variant="outlined" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <TextField error={ hasError } type='password' label="Password" variant="outlined" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <TextField error={ hasErrorEmail } label="Email" variant="outlined" value={email} onKeyUp={(e) => {if (e.key === "Enter") {login()}}} onChange={(e) => setEmail(e.target.value)} />
+            <TextField error={ hasErrorPassword } type='password' label="Password" variant="outlined" value={password} onKeyUp={(e) => {if (e.key === "Enter") {login()}}} onChange={(e) => setPassword(e.target.value)} />
             { hasError && <Alert severity="error" onClose={() => { setHasError(false) }}>{error}</Alert> }
             <BigButton variant='contained' onClick={() => login()}>Login</BigButton>
             <Divider />

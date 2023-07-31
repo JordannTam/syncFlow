@@ -117,7 +117,7 @@ const LiveChat  = (props) => {
             </div>
             <div className="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
                 <div className="relative flex">
-                    <input type="text" placeholder="Message..." value={msg} onKeyUp={(e) => {if (e.key === "Enter") {handleSendMessage()}}} onChange={(e) => {console.log(e.keyCode);setMsg(e.target.value)}} className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3" />
+                    <input type="text" placeholder="Message..." value={msg} onKeyUp={(e) => {if (e.key === "Enter") {handleSendMessage()}}} onChange={(e) => {setMsg(e.target.value)}} className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3" />
                     <div className="absolute right-0 items-center inset-y-0 hidden sm:flex">
                         <button onClick={() => handleSendMessage()} type="button" className="inline-flex items-center justify-center rounded-lg px-4 py-3 transition duration-500 ease-in-out text-white bg-blue-500 hover:bg-blue-400 focus:outline-none">
                         <span className="font-bold">Send</span>

@@ -124,6 +124,8 @@ export default function SmallTaskList(props) {
                     display: 'flex',
                     alignItems: 'center',
                     textAlign: 'center',
+                    width: '100%',
+                    justifyContent: 'center',
                     height: `${computeTaskBoxHeight(task.mean)}px`,
                   }}>
                     <Typography variant="caption">
