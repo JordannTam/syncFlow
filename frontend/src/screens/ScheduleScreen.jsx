@@ -9,6 +9,13 @@ import SmallTaskList from '../components/SmallTaskList';
 import ScheduleTable from '../components/ScheduleTable';
 
 
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
+
 const ProfileScreen = () => {
   const dispatch = useDispatch()
   const token = Cookies.get('loginToken');
@@ -76,11 +83,38 @@ const ProfileScreen = () => {
     }
   }
 
-  const handleDeleteTask = (id) => {
-    // remove task from storage and append task_id in another list
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState(null);
+
+  const openDeleteDialog = (taskId) => {
+    setTaskToDelete(taskId);
+    setDialogOpen(true);
+  }
+
+  const handleClose = () => {
+    setDialogOpen(false);
+  };
+  
+  const handleConfirmDeletion = () => {
+    setTaskStorage(taskStorage.filter(item => item.task_id !== taskToDelete));
+    setRemovedTaskStorage([...removedTaskStorage, taskToDelete]);
+    setDialogOpen(false);
+  };
+
+  const handleDeleteTask = (id, deadline) => {
+    const today = new Date();
+    const taskDate = new Date(deadline);
+    console.log(today)
+    console.log(taskDate)
+    if (
+      today.getDate() === taskDate.getDate() 
+    ) {
+      openDeleteDialog(id);
+    } else {
     console.log(id)
     setTaskStorage(taskStorage.filter(item => item.task_id !== id))
     setRemovedTaskStorage([...removedTaskStorage, id])
+    }
   }
 
   useEffect(() => {
@@ -179,6 +213,28 @@ const ProfileScreen = () => {
             You will not be able to meet all your deadlines with this many working hours
           </Alert>
         </Snackbar>
+        <Dialog
+          open={dialogOpen}
+          onClose={handleClose}
+          >
+          <DialogTitle>
+          {"Delete Task"}
+          </DialogTitle>
+          <DialogContent>
+          <DialogContentText>
+            This task is due today. Are you sure you want to delete it? Deletion will make it impossible for us to generate an optimal schedule for you.
+          </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+          <Button onClick={handleClose}>
+          Cancel
+          </Button>
+          <Button onClick={handleConfirmDeletion} color="primary">
+          Delete
+          </Button>
+          </DialogActions>
+        </Dialog>
+
       </PageContainer>
     </>
   );

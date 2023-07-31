@@ -146,10 +146,9 @@ class TaskScheduler:
         def get_next_task():
             if len(not_day_one) > 0 and len(schedule) > 1:
                 return not_day_one.pop(0)
-            elif len(tasks) > 0:
+            if len(tasks) > 0:
                 return tasks.pop(0)
-            else:
-                return None
+            return None
             
         while task := get_next_task():
             if task.deadline != None and task.deadline < (datetime.now() + timedelta(days=len(schedule)-1)).date():

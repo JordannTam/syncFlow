@@ -22,6 +22,7 @@ export default function SmallTaskList(props) {
   const [rowsPerPage, setRowsPerPage] = React.useState(rowNums);
 
 
+
   const columnsDetail = [
     { 
       id: 'title', 
@@ -96,7 +97,7 @@ export default function SmallTaskList(props) {
                         overflow: "hidden",
                         textOverflow: "ellipsis"}}>
                           {column.id === 'delete' && (
-                            <IconButton  size='small' onClick={() => handleDeleteTask(row.task_id)}>
+                            <IconButton  size='small' onClick={() => handleDeleteTask(row.task_id, row.deadline)}>
                               <DeleteIcon />
                             </IconButton>
                           )}
