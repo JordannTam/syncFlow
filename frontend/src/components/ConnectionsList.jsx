@@ -52,12 +52,12 @@ export default function ConnectionList(props) {
         console.error(err);
       }
 
-      }
+    }
 
-      const getScore = (id) => {
-        const profileScore = scores.find(score => score.profile_id === id);
-        return profileScore ? profileScore.score : 0;
-      }
+    const getScore = (id) => {
+      const profileScore = scores.find(score => score.profile_id === id);
+      return profileScore ? profileScore.score : 0;
+    }
   
 
   return (
@@ -77,8 +77,8 @@ export default function ConnectionList(props) {
               <ListItemIcon>
                 <Avatar src={con.image}></Avatar>
               </ListItemIcon>
-              <ListItemIcon>
-              <WorkloadBar value={getScore(con.u_id)} size={48} />
+              <ListItemIcon sx={{position: 'relative', bottom:'-15px', right: '20px'}}>
+                <WorkloadBar value={getScore(con.u_id)} size={48} />
               </ListItemIcon>
               <ListItemText primary={`${con.first_name} ${con.last_name}`} />
             </ListItemButton>
