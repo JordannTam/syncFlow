@@ -22,7 +22,7 @@ const ProfileScreen = () => {
     "2023-07-30": [
       {
         "task_id": 1,
-        "title": "Complete Report",
+        "title": "rep",
         "mean": 60
       },
       {
@@ -44,7 +44,7 @@ const ProfileScreen = () => {
     "2023-07-31": [
       {
         "task_id": 1,
-        "title": "Complete Report",
+        "title": "rep",
         "mean": 90
       },
       {

@@ -120,10 +120,12 @@ export default function SmallTaskList(props) {
                     backgroundColor:'lightgray', 
                     border:1, 
                     borderColor:'darkgray', 
+                    width: '100%',
                     padding:'4px', 
                     display: 'flex',
                     alignItems: 'center',
                     textAlign: 'center',
+                    justifyContent: 'center',
                     height: `${computeTaskBoxHeight(task.mean)}px`,
                   }}>
                     <Typography variant="caption">
