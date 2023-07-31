@@ -3,7 +3,6 @@ from datetime import datetime, date, timedelta
 from utility import get_db_conn
 
 
-
 def generate_sample_data_user1_tasks(tasks_per_day):
     conn = get_db_conn()
     cur = conn.cursor()
@@ -14,7 +13,7 @@ def generate_sample_data_user1_tasks(tasks_per_day):
     # tasks_per_day = 6
 
     start_date = datetime.now()
-    end_date = start_date + timedelta(weeks=3)
+    end_date = start_date + timedelta(weeks=4)
     num_days = (end_date - start_date).days
     # sample_tasks = []
     for day in range(num_days):
@@ -45,14 +44,66 @@ def generate_sample_data_user1_tasks(tasks_per_day):
                 """, (task_id, user_id))
             # sample_tasks.append(task)
     # sample_tasks.append({'id':'5000', 'title':'NULL_TEST'})
+
+    # VERY LONG TITLE
+    task = {
+        'creator_id': user_id, 
+        'title': 'TESTING HAVE A TASK WITH A VERY LONG TITLE NAME' + 'TEST '*25,
+        'deadline': (start_date + timedelta(days=100)).date(),
+        'mean': 30,
+        'stddev': 15
+    }
+
+    cur.execute("""
+        INSERT INTO tasks (creator_id, title, deadline, initial_date, progress, mean, stddev)
+        VALUES (%s, %s, %s, CURRENT_DATE, 'Not Started', %s, %s) RETURNING id;
+        """, (task['creator_id'], task['title'], task['deadline'], task['mean'], task['stddev']))
+
+    task_id = cur.fetchone()[0]
+    
+    cur.execute("""
+        INSERT INTO task_assignees (task_id, profile_id)
+        VALUES (%s, %s);
+        """, (task_id, user_id))
+
+    # No deadline
+    task = {'creator_id': user_id,
+            'title': 'TEST NO DEADLINE',
+            'mean': 30,
+            'stddev': 15
+    }
+    cur.execute("""
+                INSERT INTO tasks (creator_id, title, initial_date, progress, mean, stddev)
+                VALUES (%s, %s, CURRENT_DATE, 'Not Started', %s, %s) RETURNING id;
+                """, (task['creator_id'], task['title'], task['mean'], task['stddev']))
+    task_id = cur.fetchone()[0]
+    cur.execute("""
+        INSERT INTO task_assignees (task_id, profile_id)
+        VALUES (%s, %s);
+        """, (task_id, user_id))
+    
+
+    # No mean, stddev
+    task = {'creator_id': user_id,
+            'title': 'TEST NO TIME VARIABLES',
+            'deadline': (start_date + timedelta(days=100)).date(),}
+    cur.execute("""
+                INSERT INTO tasks (creator_id, title, deadline, initial_date, progress)
+                VALUES (%s, %s, %s, CURRENT_DATE, 'Not Started') RETURNING id;
+                """, (task['creator_id'], task['title'], task['deadline']))
+    task_id = cur.fetchone()[0]
+    cur.execute("""
+        INSERT INTO task_assignees (task_id, profile_id)
+        VALUES (%s, %s);
+        """, (task_id, user_id))
+
     conn.commit()
     cur.close()
     conn.close()
 
-scripts = {
-    "user1tasks": generate_sample_data_user1_tasks
-}
 
+def remake_database():
+    print("Recreating Database...")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="create sample data for endgames' task management app")
@@ -62,6 +113,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.task_create:
         generate_sample_data_user1_tasks(args.task_create)
+    if args.remake_database:
+        remake_database()
 
 
 

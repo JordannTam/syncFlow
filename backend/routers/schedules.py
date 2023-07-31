@@ -49,7 +49,7 @@ async def create_schedule(reschedule: bool = True,
     schedule,time,failure = ts.get_schedule(reschedule, shortestPossible, time)
     print("Schedule Complete...")
     today = datetime.now().date().strftime('%Y-%m-%d')
-    dailies = [{k: v for k, v in task.items() if k in ['title', 'deadline', 'id']} for task in schedule[today]]
+    dailies = [{k: v for k, v in task.items() if k in ['title', 'deadline', 'task_id']} for task in schedule[today]]
     return {"daily_tasks": dailies, "schedule": schedule, "time": time, "failure": failure}
 
 
