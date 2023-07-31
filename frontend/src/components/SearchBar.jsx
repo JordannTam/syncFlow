@@ -32,22 +32,22 @@ const SearchBar = (props) => {
         return (
           taskDeadline < deadlineValue &&
           task.task_id === Number(idValue) &&
-          task.title.includes(nameValue.toLowerCase()) && 
-          task.description.includes(descValue.toLowerCase())
+          task.title.toLowerCase().includes(nameValue.toLowerCase()) && 
+          task.description.toLowerCase().includes(descValue.toLowerCase())
         );
       }
       else if (idValue) {
-        return task.task_id === Number(idValue) && task.title.includes(nameValue.toLowerCase()) && task.description.includes(descValue.toLowerCase())
+        return task.task_id === Number(idValue) && task.title.toLowerCase().includes(nameValue.toLowerCase()) && task.description.toLowerCase().includes(descValue.toLowerCase())
       }
       else if (deadlineValue) {
         return (
           taskDeadline < deadlineValue &&
-          task.title.includes(nameValue.toLowerCase()) && 
-          task.description.includes(descValue.toLowerCase())
+          task.title.toLowerCase().includes(nameValue.toLowerCase()) && 
+          task.description.toLowerCsase().includes(descValue.toLowerCase())
         );
       }
       else {
-        return task.title.includes(nameValue.toLowerCase()) && task.description.includes(descValue.toLowerCase())
+        return task.title.toLowerCase().includes(nameValue.toLowerCase()) && task.description.toLowerCase().includes(descValue.toLowerCase())
       }
     })));
   };
