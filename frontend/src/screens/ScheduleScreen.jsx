@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PageContainer from '../components/PageContainer'
-import { Box, Typography, Button, FormControlLabel, Switch, Grid, Paper } from '@mui/material';
+import { Box, Typography, Button, FormControlLabel, Switch, Grid, Paper, Snackbar, Alert, AlertTitle } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import Cookies from 'js-cookie';
 import { apiCall } from '../utils/api';
@@ -259,6 +259,17 @@ const ProfileScreen = () => {
   })
   const [dailyTime, setDailyTime] = useState(8)
   const [shortestPossible, setShortestPossible] = useState(false);
+  const [insufficientTime, setInsufficientTime] = useState(false);
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+    setSnackbarOpen(false)
+  }
+  
 
   const handleReschedule = async (reschedule = true) => {
     try {
@@ -276,6 +287,10 @@ const ProfileScreen = () => {
       setTaskStorage(schedule_data.daily_tasks)
       setSchedule(schedule_data.schedule)
       setDailyTime(schedule_data.time/60)
+      setInsufficientTime(schedule_data.failure)
+      if (schedule_data.failure) {
+        setSnackbarOpen(true);
+      }
       console.log("Schedule: ", schedule_data);
     } catch (err) {
       console.error(err);
@@ -394,15 +409,15 @@ const ProfileScreen = () => {
             <ScheduleTable schedule={schedule} />
           </Box>
         </Box>
-        
+        <Snackbar open={snackbarOpen} autoHideDuration={10000} onClose={handleCloseSnackbar}>
+          <Alert variant='filled' onClose={handleCloseSnackbar} severity="warning">
+            <AlertTitle>Insufficient Hours</AlertTitle>
+            You will not be able to meet all your deadlines with this many working hours
+          </Alert>
+        </Snackbar>
       </PageContainer>
     </>
   );
 };
 
 export default ProfileScreen;
-
-
-// move to bottom
-
-

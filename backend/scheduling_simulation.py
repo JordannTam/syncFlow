@@ -120,11 +120,13 @@ class TaskScheduler:
         completed = 0        
         schedule = [[]]
         time = allowed_time
+        insufficient_time = False
         # self.dprint(f"NEW DAY {(datetime.now() + timedelta(days=len(schedule)-1)).date()}")
         while completed < len(self.tasks):
             task = self.tasks[completed]
-            # if task.deadline != None and task.deadline.date() < (datetime.now() + timedelta(days=len(schedule)-1)).date():
-                # self.dprint(f"FAILURE TO COMPLETE ALL TASKS {task.deadline.date()} and today {(datetime.now() + timedelta(days=len(schedule)-1)).date()}")
+            if task.deadline != None and task.deadline < (datetime.now() + timedelta(days=len(schedule)-1)).date():
+                # print(f"FAILURE TO COMPLETE ALL TASKS {task.deadline} and today {(datetime.now() + timedelta(days=len(schedule)-1)).date()}")
+                insufficient_time = True
                 # return 0
             sampled_time = task.mean
             time -= sampled_time 
@@ -140,7 +142,8 @@ class TaskScheduler:
             self.dprint(f"{(datetime.now() + timedelta(days=i)).date()}")
             self.dprint(day)
         # input()
-        return schedule
+        
+        return (schedule, insufficient_time)
 
     def simulation_tick(self, allowed_time):
         completed = 0        
@@ -174,14 +177,18 @@ class TaskScheduler:
         if reschedule == True or self.schedule == None or self.schedule["date_created"] != datetime.now().date():
             return self.generate_schedule(shortest_possible, allowed_time)            
         else:
-            return (self.schedule["data"], allowed_time)
+            return (self.schedule["data"], self.schedule["allowed_time"], self.schedule["failure"])
 
     def generate_schedule(self, shortest_possible, allowed_time):
         if shortest_possible:
             allowed_time = self.run_simulation(simulation_length=1000)
-        schedule = self.greedy_schedule(allowed_time)
-        self.schedule = {"date_created": datetime.now().date(), "data": schedule}
-        return ([[task.to_dict() for task in day_list] for day_list in schedule], allowed_time)
+        schedule, failure = self.greedy_schedule(allowed_time)
+        schedule = [[task.to_dict() for task in day_list] for day_list in schedule]
+        # print(len(schedule))
+        schedule_dict = {(datetime.now() + timedelta(days=i)).strftime('%Y-%m-%d'): day_list for i, day_list in enumerate(schedule)}
+        # print(schedule_dict)
+        self.schedule = {"date_created": datetime.now().date(), "data": schedule_dict, "allowed_time": allowed_time, "failure": failure}
+        return (schedule_dict, allowed_time, failure)
 
 if __name__ == '__main__':
     for i in range(2, 16, 2):

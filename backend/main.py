@@ -105,12 +105,13 @@ async def create_schedule(reschedule: bool = True,
 
     print("Generating Schedule...")
     ts = TaskScheduler(tasks)
-    schedule,time = ts.get_schedule(reschedule, shortestPossible, time)
+    schedule,time,failure = ts.get_schedule(reschedule, shortestPossible, time)
     print("Schedule Complete...")
-    dailies = [{k: v for k, v in task.items() if k in ['title', 'deadline', 'id']} for task in schedule[0]]
+    today = datetime.now().date().strftime('%Y-%m-%d')
+    dailies = [{k: v for k, v in task.items() if k in ['title', 'deadline', 'id']} for task in schedule[today]]
     # print(schedule)
     # print(dailies)
-    return {"daily_tasks": dailies, "schedule": schedule, "time": time}
+    return {"daily_tasks": dailies, "schedule": schedule, "time": time, "failure": failure}
     
 
 # if __name__ == "__main__":
