@@ -18,12 +18,17 @@ class ScheduleRequest(BaseModel):
 
 @router.get("/schedule")
 async def create_schedule(reschedule: bool = True,
-                          removedTasks: List[Task] = [],
+                          removedTasks: Union[str, None] = None,
                           time: float = None,
                           shortestPossible: bool = False,
                           token: str = Depends(oauth2_scheme)):
     id = verify_token(token)
-    print(removedTasks, time, shortestPossible)
+    # print(removedTasks, time, shortestPossible)
+
+    if removedTasks is not None and removedTasks != '':
+        removedTasks = [int(i) for i in removedTasks.split(',')]
+    else:
+        removedTasks = []
 
     select_task_list = """
         SELECT tasks.id, tasks.title, tasks.deadline, tasks.progress, tasks.mean, tasks.stddev
@@ -42,11 +47,12 @@ async def create_schedule(reschedule: bool = True,
     conn.close()
     column_names = [desc[0] for desc in cur.description]
     tasks_dict = {task[0]: dict(zip(column_names, task)) for task in tasks}
-    print(tasks)
+    # print(tasks)
+    print(removedTasks)
     tasks = list(tasks_dict.values())
     print(f"Generating Schedule, given time {time} minutes, shortestPossible : {shortestPossible}, and tasks not available to do today {removedTasks}...")
     ts = TaskScheduler(tasks)
-    schedule,time,failure = ts.get_schedule(reschedule, shortestPossible, time)
+    schedule,time,failure = ts.get_schedule(reschedule, shortestPossible, time, removedTasks)
     print("Schedule Complete...")
     today = datetime.now().date().strftime('%Y-%m-%d')
     dailies = [{k: v for k, v in task.items() if k in ['title', 'deadline', 'task_id']} for task in schedule[today]]
@@ -66,7 +72,7 @@ progress_map = {
 
 class TaskEntity:
     def __init__(self, id, title, progress='Not Started', deadline=None, mean = 40, stddev = 10):
-        self.id = id
+        self.id = int(id)
         self.progress = progress_map[progress]
         self.title = title
         self.mean = mean if mean != None else 40
@@ -100,106 +106,79 @@ class TaskScheduler:
         self.tasks = sorted([TaskEntity(**t) for t in tasks], key=lambda task: (task.deadline is None, task.deadline))
         self.schedule = None
 
-    def run_simulation(self, simulation_length=1000, days=1, success_threshold=0.95):
 
+
+    def run_simulation(self, not_first_day, simulation_length=1000, days=1, success_threshold=0.95):
+        print(not_first_day)
         low, high = 15, 840
         while low <= high:
             mid = (low + high) // 2
             successes = 0
             for _ in range(simulation_length):
-                successes += self.simulation_tick(mid)
+                _, insufficient_time = self.greedy(mid, not_first_day, lambda x : x.sample_duration())
+                if not insufficient_time:
+                    successes += 1
 
             success_rate = successes / simulation_length
-            self.dprint(f"Allowed Time: {mid/60} Hours, Success rate: {success_rate*100}%")
+            # print(f"Allowed Time: {mid/60} Hours, Success rate: {success_rate*100}%")
 
             if success_rate >= success_threshold: 
                 high = mid - 1
             else:
                 low = mid + 1
-        self.dprint(f"BEST TIME {mid/60} : success rate {success_rate*100}")
+        # print(f"BEST TIME {mid/60} : success rate {success_rate*100}")
         return mid
 
 
-
-    def dprint(self, text, wait=False):
-        # print(text)
-        if wait:
-            input()
-
-    def greedy_schedule(self, allowed_time):
-        completed = 0        
+    def greedy(self, allowed_time, not_first_day, sampler = lambda x : x.mean):
+        completed = 0
         schedule = [[]]
         time = allowed_time
         insufficient_time = False
-        # self.dprint(f"NEW DAY {(datetime.now() + timedelta(days=len(schedule)-1)).date()}")
-        while completed < len(self.tasks):
-            task = self.tasks[completed]
+        
+        print(not_first_day)
+        not_day_one = [task for task in self.tasks if task.id in not_first_day]
+        tasks = [task for task in self.tasks if task.id not in not_first_day]
+
+        print(not_day_one[0:10])
+        print(tasks[0:10])
+
+        def get_next_task():
+            if len(not_day_one) > 0 and len(schedule) > 1:
+                return not_day_one.pop(0)
+            elif len(tasks) > 0:
+                return tasks.pop(0)
+            else:
+                return None
+            
+        while task := get_next_task():
             if task.deadline != None and task.deadline < (datetime.now() + timedelta(days=len(schedule)-1)).date():
-                # print(f"FAILURE TO COMPLETE ALL TASKS {task.deadline} and today {(datetime.now() + timedelta(days=len(schedule)-1)).date()}")
                 insufficient_time = True
-                # return 0
-            sampled_time = task.mean
+            sampled_time = sampler(task)
             if sampled_time > allowed_time:
                 time = 0
             else:
                 time -= sampled_time
+
             if time < 0:
+                # NEW DAY
                 schedule.append([])
                 time = allowed_time
-                self.dprint(f"NEW DAY {(datetime.now() + timedelta(days=len(schedule)-1)).date()}")
             else:
                 schedule[-1].append(task)
                 completed += 1
-            print(completed)
-        
-        # for i, day in enumerate(schedule):
-        #     self.dprint(f"{(datetime.now() + timedelta(days=i)).date()}")
-        #     self.dprint(day)
-        # input()
-        
         return (schedule, insufficient_time)
 
-    def simulation_tick(self, allowed_time):
-        completed = 0        
-        schedule = [[]]
-        time = allowed_time
-        self.dprint(f"NEW DAY {(datetime.now() + timedelta(days=len(schedule)-1)).date()}")
-        while completed < len(self.tasks):
-            task = self.tasks[completed]
-            # self.dprint(task)
-            if task.deadline != None and task.deadline < (datetime.now() + timedelta(days=len(schedule)-1)).date():
-                self.dprint(f"FAILURE TO COMPLETE ALL TASKS {task.deadline} and today {(datetime.now() + timedelta(days=len(schedule)-1)).date()}")
-                return 0
-            sampled_time = task.sample_duration()
-            if sampled_time > allowed_time:
-                time = 0
-            else:
-                time -= sampled_time
-            if time < 0:
-                schedule.append([])
-                time = allowed_time
-                # self.dprint(f"NEW DAY {(datetime.now() + timedelta(days=len(schedule)-1)).date()}")
-            else:
-                schedule[-1].append(task)
-                completed += 1
-        
-        # for i, day in enumerate(schedule):
-        #     self.dprint(f"{(datetime.now() + timedelta(days=i)).date()}")
-        #     self.dprint(day)
-        # input()
-        return 1
-    
-
-    def get_schedule(self, reschedule=True, shortest_possible=False, allowed_time=8*60):
+    def get_schedule(self, reschedule=True, shortest_possible=False, allowed_time=8*60, not_today=[]):
         if reschedule == True or self.schedule == None or self.schedule["date_created"] != datetime.now().date():
-            return self.generate_schedule(shortest_possible, allowed_time)            
+            return self.generate_schedule(shortest_possible, allowed_time, not_today)            
         else:
             return (self.schedule["data"], self.schedule["allowed_time"], self.schedule["failure"])
 
-    def generate_schedule(self, shortest_possible, allowed_time):
+    def generate_schedule(self, shortest_possible, allowed_time, not_today):
         if shortest_possible:
-            allowed_time = self.run_simulation(simulation_length=1000)
-        schedule, failure = self.greedy_schedule(allowed_time)
+            allowed_time = self.run_simulation(not_today, simulation_length=1000)
+        schedule, failure = self.greedy(allowed_time, not_today)
         schedule = [[task.to_dict() for task in day_list] for day_list in schedule]
         # print(len(schedule))
         schedule_dict = {(datetime.now() + timedelta(days=i)).strftime('%Y-%m-%d'): day_list for i, day_list in enumerate(schedule)}
