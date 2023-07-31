@@ -36,6 +36,7 @@ const ProfileScreen = () => {
   const handleReschedule = async (reschedule = true) => {
     try {
       const removedTasks = removedTaskStorage.join(',');
+      // setRemovedTaskStorage([])
       const time = 60 * dailyTime
       const params = new URLSearchParams({
         removedTasks,
