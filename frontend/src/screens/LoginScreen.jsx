@@ -29,7 +29,8 @@ const LoginScreen = () => {
       console.log("// LoginScreen: ", Cookies.get('userId'))
       dispatch(setProfile(profile_data))
     } catch (err) {
-      console.error(err);
+      setHasError(false)
+      setError("Error: Fail to fetch id")
     }
   }
 

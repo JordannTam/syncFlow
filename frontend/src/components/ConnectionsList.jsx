@@ -35,7 +35,8 @@ export default function ConnectionList(props) {
         const response = await apiCall(`/profile/scores?get_connected=true`, {}, 'GET', `bearer ${token}`);
         setScores(response.scores);
       } catch (err) {
-        console.error(err);
+        props.handleOpenAlert()
+        props.setAlertMessage("Error: Failed to fetch scores")
       }
     };
 
@@ -49,7 +50,8 @@ export default function ConnectionList(props) {
         await apiCall(`/delete_connection?profile_id=${id}`, {}, 'DELETE', `bearer ${token}`);
         dispatch(deleteConnection(id))
       } catch (err) {
-        console.error(err);
+        props.handleOpenAlert()
+        props.setAlertMessage("Error: Failed to delete connection")
       }
 
     }
@@ -78,7 +80,7 @@ export default function ConnectionList(props) {
                 <Avatar src={con.image}></Avatar>
               </ListItemIcon>
               <ListItemIcon sx={{position: 'relative', bottom:'-15px', right: '20px'}}>
-                <WorkloadBar value={getScore(con.u_id)} size={48} />
+                <WorkloadBar handleOpenAlert={props.handleOpenAlert} setAlertMessage={props.setAlertMessage} value={getScore(con.u_id)} size={48} />
               </ListItemIcon>
               <ListItemText primary={`${con.first_name} ${con.last_name}`} />
             </ListItemButton>

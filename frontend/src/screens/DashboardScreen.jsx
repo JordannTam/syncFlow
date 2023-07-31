@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PageContainer from '../components/PageContainer';
-import { Box, ListItem, TextField, Typography, List } from '@mui/material';
+import { Box, ListItem, TextField, Typography, List, Snackbar } from '@mui/material';
 import TaskList from '../components/TaskList'
 import Button from '../components/Button';
 import { RowBox } from '../components/FlexBox';
@@ -10,6 +10,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setConnections, setTasks } from '../actions';
 import Cookies from 'js-cookie';
 import { apiCall } from '../utils/api';
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const DashboardScreen = () => {
   const navigate = useNavigate()
@@ -20,6 +25,20 @@ const DashboardScreen = () => {
   const userId = Cookies.get('userId')
   const [taskStorage, setTaskStorage] = useState([])
   // const [loading, setLoading] = useState(false)
+  const [openAlert, setOpenAlert] = React.useState(false)
+  const [alertMessage, setAlertMessage] = React.useState("")
+
+  const handleOpenAlert = () => {
+    setOpenAlert(true)
+  }
+
+  const handleCloseAlert = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenAlert(false);
+  };
+
 
 
   // CHAT DEMO STUFF CHAT DEMO STUFF
@@ -63,7 +82,8 @@ const DashboardScreen = () => {
       const res = await apiCall('/connections', {}, 'GET', `bearer ${token}`);
       dispatch(setConnections(res.connection_list))
     } catch (err) {
-      console.error(err);
+      setAlertMessage("Error: Failed to fetch connections")
+      handleOpenAlert()
     }
   }
 
@@ -76,7 +96,8 @@ const DashboardScreen = () => {
       setTaskStorage(res)
       console.log("tasks: ", res)
     } catch (err) {
-      console.error(err);
+      setAlertMessage("Error: Failed to fetch tasks")
+      handleOpenAlert()
     }
   }
 
@@ -123,7 +144,13 @@ const DashboardScreen = () => {
         <Button variant='contained' onClick={() => navigate('/task/new')}>Create Task</Button>
       </RowBox>
       <SearchBar taskStorage={taskStorage}/>
-      <TaskList tasks={tasks} id={parseInt(userId)} rowNums={10} height='800'/>
+      <TaskList handleOpenAlert={handleOpenAlert} setAlertMessage={setAlertMessage} tasks={tasks} id={parseInt(userId)} rowNums={10} height='800'/>
+      <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
+        <Alert onClose={handleCloseAlert} severity="error" sx={{ width: '100%' }}>
+          {alertMessage}
+        </Alert>
+      </Snackbar>
+
     </PageContainer>
   );
 };

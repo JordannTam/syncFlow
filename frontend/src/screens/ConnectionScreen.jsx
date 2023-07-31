@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PageContainer from '../components/PageContainer';
-import { Badge, Box, Modal, TextField, Typography } from '@mui/material';
+import { AlertTitle, Badge, Box, Modal, Snackbar, TextField, Typography } from '@mui/material';
 import Button from '../components/Button';
 import { ColumnBox, RowBox } from '../components/FlexBox';
 import { useNavigate } from 'react-router-dom';
@@ -11,6 +11,12 @@ import { apiCall } from '../utils/api';
 import ConnectionList from '../components/ConnectionsList';
 import ConnectionReqList from '../components/ConnectionsReqList';
 import LoadingButton from '@mui/lab/LoadingButton';
+import MuiAlert from '@mui/material/Alert';
+
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const style = {
   position: 'absolute',
@@ -23,7 +29,6 @@ const style = {
   borderRadius: '16px',
   p: 4,
 };
-
 
 const ConnectionsScreen = () => {
   const dispatch = useDispatch()
@@ -38,13 +43,27 @@ const ConnectionsScreen = () => {
   const handleOpenReq = () => setOpenReq(true)
   const handleCloseReq = () => setOpenReq(false)
   const [isManaged, setIsManaged] = React.useState(false)
+  const [openAlert, setOpenAlert] = React.useState(false)
+  const [alertMessage, setAlertMessage] = React.useState("")
+
+  const handleOpenAlert = () => {
+    setOpenAlert(true)
+  }
+
+  const handleCloseAlert = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenAlert(false);
+  };
 
   const handleFetchConnections = async () => {
     try {
       const res = await apiCall('/connections', {}, 'GET', `bearer ${token}`);
       dispatch(setConnections(res.connection_list))
     } catch (err) {
-      console.error(err);
+      setAlertMessage("Error: Failed to fetch connection list")
+      handleOpenAlert()
     }
   }
 
@@ -54,7 +73,8 @@ const ConnectionsScreen = () => {
       setConnectionsReqs(res.request_list)
       console.log(res.request_list);
     } catch (err) {
-      console.error(err);
+      setAlertMessage("Error: Failed to fetch connection request list")
+      handleOpenAlert()
     }
   }
 
@@ -70,7 +90,8 @@ const ConnectionsScreen = () => {
       setOpenSend(false)
       setEmail("")
     } catch (err) {
-      console.error(err);
+      setAlertMessage("Error: Failed to add connection")
+      handleOpenAlert()
     }
   }
 
@@ -97,7 +118,13 @@ const ConnectionsScreen = () => {
           <Button variant='contained' onClick={handleOpenAdd}>Add connection</Button>
         </RowBox>
       </RowBox>
-      <ConnectionList connections={connections} />
+      <ConnectionList handleOpenAlert={handleOpenAlert} setAlertMessage={setAlertMessage} connections={connections} />
+      <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
+        <Alert onClose={handleCloseAlert} severity="error" sx={{ width: '100%' }}>
+          {alertMessage}
+        </Alert>
+      </Snackbar>
+
 
       {/* ***************** Modal *********************** */}
       <Modal
@@ -110,7 +137,7 @@ const ConnectionsScreen = () => {
             <Typography id="modal-modal-title" variant="h6" component="h2">
               Connection Request
             </Typography>
-              <ConnectionReqList setConnectionsReqs={setConnectionsReqs} connections={connectionsReqs} />
+              <ConnectionReqList handleOpenAlert={handleOpenAlert} setAlertMessage={setAlertMessage} setConnectionsReqs={setConnectionsReqs} connections={connectionsReqs} />
             <Box display="flex" flexDirection="row-reverse" columnGap='20px'>
               <Button variant='contained' onClick={handleCloseReq}>Back</Button>
             </Box>

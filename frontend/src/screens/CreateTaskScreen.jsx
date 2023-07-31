@@ -3,7 +3,7 @@ import SideBar from '../components/SideBar';
 import PageContainer from '../components/PageContainer'
 import AssigneeTransferList from '../components/AssigneeTransferList'
 import TaskList from '../components/TaskList';
-import { Box, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField, Typography } from '@mui/material';
+import { Box, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Snackbar, TextField, Typography } from '@mui/material';
 import { ColumnBox, RowBox } from '../components/FlexBox';
 import Button from '../components/Button';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +15,11 @@ import formatDate from '../utils/formatDate';
 import ParameterSlider from '../components/ParameterSlider';
 import NormalDistribution from '../components/NormalDistribution';
 import LoadingButton from '@mui/lab/LoadingButton';
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const CreateTaskScreen = () => {
     const [mean, setMean] = useState(45);
@@ -30,9 +35,21 @@ const CreateTaskScreen = () => {
     const tasks = useSelector(state => state.taskReducer)
     const token = Cookies.get('loginToken');
     const profile = useSelector(state => state.profileReducer)
-
     const navigate = useNavigate()
-
+    const [openAlert, setOpenAlert] = React.useState(false)
+    const [alertMessage, setAlertMessage] = React.useState("")
+  
+    const handleOpenAlert = () => {
+      setOpenAlert(true)
+    }
+  
+    const handleCloseAlert = (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+      setOpenAlert(false);
+    };
+  
 
     useEffect(() => {
       const dateRegEx = /\b(\d{4})[-/](\d{2})[-/](\d{2})\b/;
@@ -59,7 +76,8 @@ const CreateTaskScreen = () => {
       setStddev(estimate.std_dev)
       setIsLoading(false)
     } catch (err) {
-      console.error(err)
+      setAlertMessage("Error: Failed to get estimation")
+      handleOpenAlert()
       setIsLoading(false)
     }
 
@@ -95,7 +113,8 @@ const CreateTaskScreen = () => {
             object.task_id = data.task_id
             dispatch(addTask(object))
           } catch (err) {
-            console.error(err);
+            setAlertMessage("Error: Failed to create task")
+            handleOpenAlert()      
           }
     }
 
@@ -169,6 +188,11 @@ const CreateTaskScreen = () => {
                 <Button variant='contained' onClick={() => handleSubmit()}>Create Task</Button>
                 <Button variant='contained' onClick={() => navigate('/home')} >Back</Button>
           </Box>
+          <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
+            <Alert onClose={handleCloseAlert} severity="error" sx={{ width: '100%' }}>
+              {alertMessage}
+            </Alert>
+          </Snackbar>
 
         </ColumnBox>
       </PageContainer>

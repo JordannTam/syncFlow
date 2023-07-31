@@ -42,7 +42,8 @@ export default function ConnectionReqList(props) {
             const ls = rs.filter((x) => user.u_id !== x.u_id)
             props.setConnectionsReqs(ls)
         } catch (err) {
-        console.error(err);
+            props.handleOpenAlert()
+            props.setAlertMessage("Error: Failed to accept")
         }
     
     }
@@ -60,7 +61,8 @@ export default function ConnectionReqList(props) {
             console.log(ls, a, user.u_id);
             props.setConnectionsReqs(a)
         } catch (err) {
-            console.error(err);
+            props.handleOpenAlert()
+            props.setAlertMessage("Error: Failed to decline")
         }
     }
 

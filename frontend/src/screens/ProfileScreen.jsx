@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import SideBar from '../components/SideBar';
 import PageContainer from '../components/PageContainer'
 import TaskList from '../components/TaskList';
-import { Box, Typography, CircularProgress, IconButton, TextField, Modal, Input  } from '@mui/material';
+import { Box, Typography, CircularProgress, IconButton, TextField, Modal, Input, Snackbar  } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import Cookies from 'js-cookie';
 import { apiCall } from '../utils/api';
@@ -16,6 +16,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import DoneIcon from '@mui/icons-material/Done';
 import Button from '../components/Button';
 import LoadingButton from '@mui/lab/LoadingButton/LoadingButton';
+import MuiAlert from '@mui/material/Alert';
+
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const style = {
   position: 'absolute',
@@ -49,6 +55,19 @@ const ProfileScreen = () => {
   const [img, setImg] = useState("")
   const userId = Cookies.get('userId')
   const params = useParams()
+  const [openAlert, setOpenAlert] = React.useState(false)
+  const [alertMessage, setAlertMessage] = React.useState("")
+
+  const handleOpenAlert = () => {
+    setOpenAlert(true)
+  }
+
+  const handleCloseAlert = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenAlert(false);
+  };
 
 
   const handleFetchProfile = async () => {
@@ -64,7 +83,8 @@ const ProfileScreen = () => {
 
       console.log("User profile: ", profile_data);
     } catch (err) {
-      console.error(err);
+      setAlertMessage("Error: Unfound User")
+      handleOpenAlert()
     }
   }
 
@@ -84,7 +104,8 @@ const ProfileScreen = () => {
       setProfileFirstNameS(object.first_name)
       setProfileLastNameS(object.last_name)
     } catch (err) {
-      console.error(err);
+      setAlertMessage("Error: Failed to edit name")
+      handleOpenAlert()
     }
 
   }
@@ -99,7 +120,8 @@ const ProfileScreen = () => {
       console.log("DONE", object);
       setProfile({...profile, image:object.image, last_name:object.last_name })
     } catch (err) {
-      console.error(err);
+      setAlertMessage("Error: Failed to edit image")
+      handleOpenAlert()
     }
   }
 
@@ -129,7 +151,8 @@ const ProfileScreen = () => {
       dispatch(setTasks(res))
       setTaskStorage(res)
     } catch (err) {
-      console.error(err);
+      setAlertMessage("Error: Failed to fetch tasks")
+      handleOpenAlert()
     }
   },[])
 
@@ -215,6 +238,12 @@ const ProfileScreen = () => {
         </Typography>
         <SearchBar taskStorage={taskStorage}/>
         <TaskList tasks={tasks} id={parseInt(params.id)} rowNums={5} height='400'/>
+        <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
+        <Alert onClose={handleCloseAlert} severity="error" sx={{ width: '100%' }}>
+          {alertMessage}
+        </Alert>
+      </Snackbar>
+
       </PageContainer>
     </>
   );

@@ -62,8 +62,9 @@ export default function TaskList(props) {
       setChatTask(task)
       handleOpenChat()
     } catch (err) {
-      console.error(err);
-    }
+      props.handleOpenAlert()
+      props.setAlertMessage("Error: Failed to fetch chat")
+}
 
   }
 
@@ -87,8 +88,8 @@ export default function TaskList(props) {
       const res = await apiCall(`/task?task_id=${id}`, {}, 'DELETE', `bearer ${token}`);
       console.log(res);
     } catch (err) {
-      console.error(err);
-    }
+      props.handleOpenAlert()
+      props.setAlertMessage("Error: Failed to delete task")}
   }
 
   const handleFetchEditState = async (id, state) => {
@@ -100,8 +101,9 @@ export default function TaskList(props) {
       const res = await apiCall('/edit_task', object, 'PUT', `bearer ${token}`);
       console.log(res);
     } catch (err) {
-      console.error(err);
-    }
+      props.handleOpenAlert()
+      props.setAlertMessage("Error: Failed to edit state")
+}
   }
 
   React.useEffect(() => {
@@ -332,7 +334,7 @@ React.useEffect(() => {
       aria-describedby="modal-modal-description"
       >
       <Box sx={style}>
-        <LiveChat chatTask={chatTask}></LiveChat>
+        <LiveChat handleOpenAlert={props.handleOpenAlert} setAlertMessage={props.setAlertMessage} chatTask={chatTask}></LiveChat>
       </Box>
     </Modal>
     </>

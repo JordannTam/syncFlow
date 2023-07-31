@@ -10,6 +10,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { apiCall } from '../utils/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTask, setTasks } from '../actions';
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const TaskScreen = () => {
     const [title, setTitle] = useState("")
@@ -21,8 +26,22 @@ const TaskScreen = () => {
     const params = useParams()
     let targetTask = tasks.find((a) => a.task_id === parseInt(params.id))
     const n = tasks.length - 1
-
     const navigate = useNavigate()
+    const [openAlert, setOpenAlert] = React.useState(false)
+    const [alertMessage, setAlertMessage] = React.useState("")
+  
+    const handleOpenAlert = () => {
+      setOpenAlert(true)
+    }
+  
+    const handleCloseAlert = (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+      setOpenAlert(false);
+    };
+  
+
 
     const handleEdit = async () => {
         navigate(`/task/${params.id}/edit`)

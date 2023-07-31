@@ -3,7 +3,7 @@ import SideBar from '../components/SideBar';
 import PageContainer from '../components/PageContainer'
 import AssigneeTransferList from '../components/AssigneeTransferList'
 import TaskList from '../components/TaskList';
-import { Box, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField, Typography } from '@mui/material';
+import { Box, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Snackbar, TextField, Typography } from '@mui/material';
 import { ColumnBox, RowBox } from '../components/FlexBox';
 import Button from '../components/Button';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -11,6 +11,12 @@ import { apiCall } from '../utils/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTask, editTask, setTasks } from '../actions';
 import Cookies from 'js-cookie';
+import MuiAlert from '@mui/material/Alert';
+
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const EditTaskScreen = () => {
     const tasks = useSelector(state => state.taskReducer)
@@ -26,7 +32,21 @@ const EditTaskScreen = () => {
     const token = Cookies.get('loginToken');
     const profile = useSelector(state => state.profileReducer)
     const navigate = useNavigate()
-
+    const [openAlert, setOpenAlert] = React.useState(false)
+    const [alertMessage, setAlertMessage] = React.useState("")
+  
+    const handleOpenAlert = () => {
+      setOpenAlert(true)
+    }
+  
+    const handleCloseAlert = (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+      setOpenAlert(false);
+    };
+  
+  
 
     const handleEdit = async () => {
         const deadline = deadlineType === "noDeadline" ? null : deadlineDate
@@ -52,7 +72,8 @@ const EditTaskScreen = () => {
             navigate(`/task/${params.id}`)
             dispatch(editTask(object))
           } catch (err) {
-            console.error(err);
+            setAlertMessage("Error: Failed to edit task")
+            handleOpenAlert()
           }
     }
 
@@ -109,6 +130,12 @@ const EditTaskScreen = () => {
                 <Button variant='contained' onClick={() => handleEdit()}>Edit Task</Button>
                 <Button variant='contained' onClick={() => navigate(`/task/${params.id}`)} >Back</Button>
           </Box>
+          <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
+            <Alert onClose={handleCloseAlert} severity="error" sx={{ width: '100%' }}>
+              {alertMessage}
+            </Alert>
+          </Snackbar>
+
 
         </ColumnBox>
       </PageContainer>
