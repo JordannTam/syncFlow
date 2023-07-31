@@ -282,7 +282,7 @@ GROUP BY
     """
 
     cur.execute(single_profile_score_select, (profile_id,))
-    score = cur.fetchone()[0] * 100
+    score = round(cur.fetchone()[0] * 100)
     cur.close()
     conn.close()
     return score
@@ -354,15 +354,26 @@ GROUP BY
 """
 
 @router.get("/profile/scores/")
-async def get_scores(ids: Union[list[int], None], token: str = Depends(oauth2_scheme)):
+async def get_scores(get_connected: Union[bool, None], token: str = Depends(oauth2_scheme)):
+    get_scores = []
+    user_id = verify_token(token)
     conn = get_db_conn()
     cur = conn.cursor()
+    if get_connected != None:
+        query = "SELECT id2 FROM connections WHERE id1 = %s UNION SELECT id1 FROM connections WHERE id2 = %s"    
+        cur.execute(query, (user_id, user_id,))
+        rows = cur.fetchall()
+        for row in rows:
+            get_scores.append(row[0])
 
-    profile_id = profile_id if profile_id != None else verify_token(token)
-
-
-    cur.execute(multiprofilescore_select, ([profile_id,]))
-    score = cur.fetchone()[0] * 100
+    # print(get_scores)
+    placeholders = ', '.join(['%s'] * len(get_scores))
+    query = multiprofilescore_select.replace('%s', placeholders)
+    cur.execute(query, get_scores)
+    # score = cur.fetchone()[0] * 100
+    scores = cur.fetchall()
+    scores = [{"profile_id": pair[0], "score": round(pair[1]*100)} for pair in scores]
+    # print(f"SCORES : {scores}")
     cur.close()
     conn.close()
-    return score
+    return {"scores": scores}

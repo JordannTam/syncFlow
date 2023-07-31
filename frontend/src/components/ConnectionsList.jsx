@@ -14,12 +14,30 @@ import { useDispatch } from 'react-redux';
 import Cookies from 'js-cookie';
 import { deleteConnection } from '../actions';
 
+import { useEffect, useState } from 'react';
+import WorkloadBar from './WorkloadBar';
+
 export default function ConnectionList(props) {
     const navigate = useNavigate()
     const { connections } = props
     const n = connections.length - 1
     const token = Cookies.get('loginToken')
     const dispatch = useDispatch()
+
+    const [scores, setScores] = useState([]);
+
+    useEffect(() => {
+      fetchScores();
+    }, []);
+
+    const fetchScores = async () => {
+      try {
+        const response = await apiCall(`/profile/scores?get_connected=true`, {}, 'GET', `bearer ${token}`);
+        setScores(response.scores);
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
 
     const handleProfile = (id) => {
@@ -35,7 +53,13 @@ export default function ConnectionList(props) {
       }
 
       }
+
+      const getScore = (id) => {
+        const profileScore = scores.find(score => score.profile_id === id);
+        return profileScore ? profileScore.score : 0;
+      }
   
+
   return (
       <List sx={{ width: '100%', maxWidth: 700, bgcolor: 'background.paper', margin: 'auto' }}>
     {
@@ -53,8 +77,10 @@ export default function ConnectionList(props) {
               <ListItemIcon>
                 <Avatar src={con.image}></Avatar>
               </ListItemIcon>
+              <WorkloadBar value={getScore(con.u_id)} size={15} />
               <ListItemText primary={`${con.first_name} ${con.last_name}`} />
             </ListItemButton>
+              {/* <WorkloadBar value={100} /> */}
           </ListItem>
             
             

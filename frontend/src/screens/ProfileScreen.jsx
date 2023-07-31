@@ -177,7 +177,7 @@ const ProfileScreen = () => {
           </ColumnBox>
 
         <RowBox >
-        <WorkloadBar value={parseInt(score)}/>
+        <WorkloadBar value={parseInt(score)} size={120}/>
         </RowBox>
         </RowBox>
           <RowBox alignItems='center' columnGap='20px'>

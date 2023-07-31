@@ -3,7 +3,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Typography, Box } from '@mui/material';
 
 const WorkloadBar = (props) => {
-  let {value} = props
+  let {value, size} = props
   let pcolor = 'success';
   let tcolor = 'black'
   let valueText = `${value}%`
@@ -30,7 +30,7 @@ const WorkloadBar = (props) => {
         color={pcolor}
         variant="determinate"
         thickness={4.5}
-        size={120}
+        size={size}
         value={value <= 100 ? value : 100}
       />
       <Box
