@@ -28,7 +28,7 @@ export default function TransferList(props) {
   const profile = useSelector(state => state.profileReducer)
   const userId = Cookies.get("userId")
   const hasRightUser = rightId.includes(parseInt(userId))
-  const [left, setLeft] = React.useState(hasRightUser ? connections.filter((x) => !rightId.includes(x.u_id)) : [ { u_id: profile.profile_id, email: profile.email, first_name: profile.first_name, last_name: profile.last_name}, ...connections.filter((x) => !rightId.includes(x.u_id))]); // Delete after backend implemented
+  const [left, setLeft] = React.useState(hasRightUser ? connections.filter((x) => !rightId.includes(x.u_id)) : [ { u_id: profile.profile_id, email: profile.email, first_name: profile.first_name, last_name: profile.last_name, image: profile.image}, ...connections.filter((x) => !rightId.includes(x.u_id))]); // Delete after backend implemented
 //   const [left, setLeft] = React.useState([...props.connections])
 
   const leftChecked = intersection(checked, left);

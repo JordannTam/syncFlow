@@ -90,8 +90,11 @@ const ConnectionsScreen = () => {
       setOpenSend(false)
       setEmail("")
     } catch (err) {
-      setAlertMessage("Error: Failed to add connection")
+      setAlertMessage("Error: No email address found")
       handleOpenAlert()
+      setIsManaged(false)
+      setEmail("")
+
     }
   }
 

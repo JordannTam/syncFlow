@@ -97,14 +97,14 @@ def login_for_access_token(login_data: LoginData):
     email = authenticate_profile(login_data.email, login_data.password)
     conn = get_db_conn()
     cur = conn.cursor()
-    cur.execute("SELECT id FROM PROFILES WHERE email_address=%s", (email,))
-    profile_id = cur.fetchone()
     if not email:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    cur.execute("SELECT id FROM PROFILES WHERE email_address=%s", (email,))
+    profile_id = cur.fetchone()
     cur.close()
     conn.close()
 

@@ -43,7 +43,7 @@ const SearchBar = (props) => {
         return (
           taskDeadline < deadlineValue &&
           task.title.toLowerCase().includes(nameValue.toLowerCase()) && 
-          task.description.toLowerCsase().includes(descValue.toLowerCase())
+          task.description.toLowerCase().includes(descValue.toLowerCase())
         );
       }
       else {

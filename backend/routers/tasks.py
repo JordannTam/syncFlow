@@ -199,7 +199,7 @@ def get_tasks(page: str , profile_id: Union[int, None] = None, token: str = Depe
 
     # Convert back to a list
     tasks = list(tasks_dict.values())
-    print(tasks)
+    # print(tasks)
     cur.close()
     conn.close()
 

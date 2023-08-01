@@ -18,7 +18,7 @@ import Cookies from 'js-cookie';
 import Button from './Button';
 import ChatIcon from '@mui/icons-material/Chat';
 import LiveChat from './LiveChat'
-
+import WarningTwoToneIcon from '@mui/icons-material/WarningTwoTone';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -51,7 +51,7 @@ export default function TaskList(props) {
       // console.log(props.tasks.find((a) => a.task_id === id))
       // console.log("id", id);
       // console.log("props.tasks", props.tasks);
-      dispatch(deleteTasks(id))
+
       handleDeleteTaskAPI(id)
     },
     [dispatch],
@@ -81,15 +81,21 @@ export default function TaskList(props) {
   },
     [],
   );
+
+  const hhhh = (params) => {
+    console.log(params.row.deadline)
+  }
   
 
   const handleDeleteTaskAPI = async (id) => {
     try {
       const res = await apiCall(`/task?task_id=${id}`, {}, 'DELETE', `bearer ${token}`);
       console.log(res);
+      dispatch(deleteTasks(id))
     } catch (err) {
+      console.log(err);
       props.handleOpenAlert()
-      props.setAlertMessage("Error: Failed to delete task")}
+      props.setAlertMessage("Error: Only creator can delete the task")}
   }
 
   const handleFetchEditState = async (id, state) => {
@@ -286,6 +292,19 @@ export default function TaskList(props) {
       // />,
     ],
   },
+  {
+    field: 'overdue',
+    headerName: 'Overdue?',
+    type: 'actions',
+    width: 100,
+    getActions: (params) => [
+      <GridActionsCellItem
+        icon={(params.row.deadline === null || new Date(params.row.deadline) > Date.now()) ? <></> : <WarningTwoToneIcon color='error'/>}
+        label="Live Chat"
+      />,
+    ],
+  },  
+
 ]
 if (parseInt(userId) !== parseInt(props.id)) {
   columnsDetail.splice(1,1)
@@ -317,7 +336,7 @@ React.useEffect(() => {
       rows={tasks}
       getRowId={(tasks)=> tasks.task_id}
       pageSizeOptions={[5, 10]}
-      initialState={{
+    initialState={{
           pagination: {
             paginationModel: { page: 0, pageSize: props.rowNums },
           },
