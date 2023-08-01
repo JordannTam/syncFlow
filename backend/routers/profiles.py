@@ -367,6 +367,9 @@ async def get_scores(get_connected: Union[bool, None], token: str = Depends(oaut
             get_scores.append(row[0])
 
     # print(get_scores)
+    if len(get_scores) == 0:
+        return {"scores": []}
+
     placeholders = ', '.join(['%s'] * len(get_scores))
     query = multiprofilescore_select.replace('%s', placeholders)
     cur.execute(query, get_scores)

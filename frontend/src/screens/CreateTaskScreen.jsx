@@ -72,8 +72,8 @@ const CreateTaskScreen = () => {
       const estimate = await apiCall(`/task_estimation?title=${title}&desc=${description}`, undefined, 'GET', `bearer ${token}`);
       console.log(estimate.mean)
       console.log(estimate.std_dev)
-      setMean(estimate.mean)
-      setStddev(estimate.std_dev)
+      setMean(parseInt(estimate.mean))
+      setStddev(parseInt(estimate.std_dev))
       setIsLoading(false)
     } catch (err) {
       setAlertMessage("Error: Failed to get estimation")
