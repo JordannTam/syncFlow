@@ -129,6 +129,12 @@ const ProfileScreen = () => {
     setLoadingImg(true)
     const file = event.target.files[0];
     console.log(file); // Do something with the uploaded file
+    if (file.size >= 500000) {
+      setAlertMessage("Error: Image is larger than 500KB")
+      handleOpenAlert()
+      setLoadingImg(false)
+      return 
+    }
     const reader = new FileReader();
     const dataUrlPromise = new Promise((resolve, reject) => {
       reader.onerror = reject;
@@ -143,7 +149,6 @@ const ProfileScreen = () => {
     )
     setLoadingImg(false)
   }
-
 
   const handleFetchTasks = useCallback(() => async () => {
     try {
