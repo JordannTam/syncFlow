@@ -24,6 +24,7 @@ class Edit_Task(BaseModel):
     assignees: Union[List[User_profile], None]
     title: Union[str, None]
     description: Union[str, None]
+    deadline: Union[str, None]
     mean: Union[str, None]
     stddev: Union[str, None]
 
@@ -93,7 +94,9 @@ async def edit_task(
         request.append(('title', edit.title)) 
     if edit.description is not None:
         request.append(('description', edit.description))
-
+    if edit.deadline is not None:
+        request.append(('deadline', edit.deadline))
+    
     if request == []:
         return
     
