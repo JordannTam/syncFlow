@@ -170,7 +170,7 @@ export default function TaskList(props) {
         />,
       ],
     },  
-    { field: 'assignee', headerName: 'Assignee', width: 200, renderCell:params=>params.row.assignees.map((a,index) => <Avatar key={index} src={a.image} />), sortable: false}, // TODO: set the src of Avatar
+    { field: 'assignee', headerName: 'Assignee', width: 200, renderCell:params=>params.row.assignees.map((a,index) => {return index < 4 ?  <Avatar key={index} src={a.image} />: <></>}), sortable: false}, // TODO: set the src of Avatar
     { field: 'title', headerName: 'Task Name', width: 200, sortable: false},
     {
       field: 'deadline',
@@ -299,7 +299,7 @@ export default function TaskList(props) {
     width: 100,
     getActions: (params) => [
       <GridActionsCellItem
-        icon={(params.row.deadline === null || new Date(params.row.deadline) > Date.now()) ? <></> : <WarningTwoToneIcon color='error'/>}
+        icon={(params.row.deadline === null || new Date(params.row.deadline) > new Date(Date.now() - 24 * 60 * 60 * 1000)) ? <></> : <WarningTwoToneIcon color='error'/>}
         label="Live Chat"
       />,
     ],

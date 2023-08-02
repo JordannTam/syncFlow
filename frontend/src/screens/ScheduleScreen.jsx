@@ -54,7 +54,7 @@ const ProfileScreen = () => {
       const schedule_data = await apiCall(`/schedule?${params.toString()}`, {}, 'GET', `bearer ${token}`);
       setTaskStorage(schedule_data.daily_tasks)
       setSchedule(schedule_data.schedule)
-      setDailyTime(schedule_data.time/60)
+      setDailyTime(parseFloat(parseInt((schedule_data.time/60)*10))/10 )
       setInsufficientTime(schedule_data.failure)
       if (schedule_data.failure) {
         setSnackbarOpen(true);
@@ -208,7 +208,7 @@ const ProfileScreen = () => {
         <Snackbar open={snackbarOpen} autoHideDuration={10000} onClose={handleCloseSnackbar}>
           <Alert variant='filled' onClose={handleCloseSnackbar} severity="warning">
             <AlertTitle>Insufficient Hours</AlertTitle>
-            You will not be able to meet all your deadlines with this many working hours
+            You will not be able to meet all your deadlines, either some of them have already passed,<br/> or you have set an insufficient number of hours to complete your schedule
           </Alert>
         </Snackbar>
         <Dialog
