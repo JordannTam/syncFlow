@@ -359,6 +359,7 @@ async def get_scores(get_connected: Union[bool, None], token: str = Depends(oaut
     user_id = verify_token(token)
     conn = get_db_conn()
     cur = conn.cursor()
+
     if get_connected != None:
         query = "SELECT id2 FROM connections WHERE id1 = %s UNION SELECT id1 FROM connections WHERE id2 = %s"    
         cur.execute(query, (user_id, user_id,))
@@ -367,9 +368,13 @@ async def get_scores(get_connected: Union[bool, None], token: str = Depends(oaut
             get_scores.append(row[0])
 
     # print(get_scores)
+    if len(get_scores) == 0: # This one, return empty list before running the query
+        return {"scores": []}
+
     placeholders = ', '.join(['%s'] * len(get_scores))
     query = multiprofilescore_select.replace('%s', placeholders)
     cur.execute(query, get_scores)
+
     # score = cur.fetchone()[0] * 100
     scores = cur.fetchall()
     scores = [{"profile_id": pair[0], "score": round(pair[1]*100)} for pair in scores]
@@ -377,3 +382,17 @@ async def get_scores(get_connected: Union[bool, None], token: str = Depends(oaut
     cur.close()
     conn.close()
     return {"scores": scores}
+
+
+
+    # if get_connected != None:
+    #     query = "SELECT id2 FROM connections WHERE id1 = %s UNION SELECT id1 FROM connections WHERE id2 = %s"    
+    #     cur.execute(query, (user_id, user_id,))
+    #     rows = cur.fetchall()
+    #     for row in rows:
+    #         get_scores.append(row[0])
+
+    # # print(get_scores)
+    # placeholders = ', '.join(['%s'] * len(get_scores))
+    # query = multiprofilescore_select.replace('%s', placeholders)
+    # cur.execute(query, get_scores)

@@ -7,6 +7,7 @@ def generate_sample_data_user1_tasks(tasks_per_day):
     conn = get_db_conn()
     cur = conn.cursor()
     user_id=1
+    user_id=5
     cur.execute(f"DELETE FROM task_assignees WHERE profile_id = {user_id}")
     conn.commit()
 
