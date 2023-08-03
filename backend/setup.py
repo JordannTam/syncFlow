@@ -7,6 +7,16 @@ import itertools, random, os
 import psycopg2
 from psycopg2 import sql
 
+
+IN_PROGRESS = 0.05
+COMPLETED = 0.05
+BLOCKED = 0.05
+ASSIGN_1_EXTRA = 0.1
+ASSIGN_ANOTHER_EXTRA = 0.2
+
+name_map= {1: "Alicia", 2:"Lucas", 3:"Jordan", 4:"Nont", 5:"Zihang"}
+
+
 def drop_and_recreate_db(database_name):
     conn = psycopg2.connect(
         dbname='postgres',  # Connect to the 'postgres' database
@@ -47,12 +57,13 @@ def generate_sample_data_user1_tasks(tasks_per_day, user_id=1):
     for day in range(num_days):
         for i in range(tasks_per_day):  # 6 tasks per day
             deadline = (start_date + timedelta(days=day)).date()
-            mean = random.randint(15, 120)
+            mean = random.randint(30, 90)
+            # mean = random.randint(45, 180)
             stddev = random.randint(5, 45)
             task = {
                 # 'id' : f'{day * 6 + i + 1}',
                 'creator_id': user_id, 
-                'title': f'Task {day * 6 + i + 1}',
+                'title': f'{name_map[user_id]} {day * 6 + i + 1}',
                 # 'deadline': deadline.strftime('%Y-%m-%d'),
                 'deadline': deadline,
                 'mean': mean,
@@ -139,7 +150,7 @@ def assign_tasks_to_users(profile_ids):
         tasks = [task[0] for task in cur.fetchall()]
         assignee_ids = [id for id in profile_ids if id != profile_id]
 
-        num_to_assign = max(1, int(len(tasks) * 0.3))
+        num_to_assign = max(1, int(len(tasks) * ASSIGN_1_EXTRA))
         tasks_to_assign = random.sample(tasks, num_to_assign)
 
         for task in tasks_to_assign:
@@ -149,7 +160,7 @@ def assign_tasks_to_users(profile_ids):
             if cur.fetchone() is None:
                 cur.execute("INSERT INTO task_assignees (task_id, profile_id) VALUES (%s, %s)", (task, assignee_id))
 
-            if random.random() < 0.3:
+            if random.random() < ASSIGN_ANOTHER_EXTRA:
                 remaining_assignee_ids = [id for id in assignee_ids if id != assignee_id]
                 if remaining_assignee_ids:  # if there is at least one remaining
                     third_assignee_id = random.choice(remaining_assignee_ids)
@@ -266,9 +277,9 @@ def random_task_progress():
     cur.execute("SELECT id FROM tasks")
     task_ids = [task[0] for task in cur.fetchall()]
 
-    num_in_progress = max(1, int(len(task_ids) * 0.2))
-    num_completed = max(1, int(len(task_ids) * 0.05))
-    num_blocked = max(1, int(len(task_ids) * 0.05))
+    num_in_progress = max(1, int(len(task_ids) * IN_PROGRESS))
+    num_completed = max(1, int(len(task_ids) * COMPLETED))
+    num_blocked = max(1, int(len(task_ids) * BLOCKED))
     random.shuffle(task_ids)
 
     for i in range(num_in_progress):
@@ -294,6 +305,28 @@ def execute(query, message=""):
     cur.close()
     conn.close()
 
+def assign_first_5_tasks_to_demo_display():
+    conn = get_db_conn()
+    cur = conn.cursor()
+    
+    assignments = {
+        1: [2, 3, 4, 5],
+        9: [2, 3],
+        # 3: [2, 3],
+        # 4: [2],
+    }
+
+    for task_id, profile_ids in assignments.items():
+        for profile_id in profile_ids:
+            cur.execute(
+                "INSERT INTO task_assignees (task_id, profile_id) VALUES (%s, %s)",
+                (task_id, profile_id)
+            )
+            
+    conn.commit()
+    cur.close()
+    conn.close()
+
 def remake_database():
     print("Recreating Database...")
     drop_and_recreate_db("endgame")
@@ -310,16 +343,21 @@ def remake_database():
     for uid in [1,2,3,4,5]:
         update_image(uid, f'images/{uid-1}.txt')
 
-    name_map= {1: "Alicia", 2:"Lucas", 3:"Jordan", 4:"Nont", 5:"Zihang"}
     for uid in range(1,6):
         print(f"Generating Sample Task data for {name_map[uid]}, assigning {6-uid} tasks per day for the next month....")
         generate_sample_data_user1_tasks(6-uid, uid)
+
+    print("Assigning some tasks...")
+    assign_first_5_tasks_to_demo_display()
 
     print("Randomly assigning users to some portion of each other's tasks...")
     assign_tasks_to_users([1,2,3,4])
 
 
-    print("Randomly settings 20% of tasks to 'In Progress', 5% to 'Completed' and 5% to 'Blocked'")
+    print(f"Randomly settings {int(IN_PROGRESS)*100}% of tasks to 'In Progress', {int(COMPLETED)*100}% to 'Completed' and {int(BLOCKED*100)}% to 'Blocked'")
+
+
+
     random_task_progress()
 
 if __name__ == "__main__":

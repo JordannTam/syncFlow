@@ -38,11 +38,23 @@ async def create_schedule(reschedule: bool = True,
         WHERE profiles.id = %s
         ORDER BY tasks.deadline, tasks.mean;
         """
+    select_task_list = """
+        SELECT tasks.id, tasks.title, tasks.deadline, tasks.progress, tasks.mean, tasks.stddev, assignee_counts.assignees as assignees
+        FROM tasks               
+            JOIN task_assignees ON tasks.id = task_assignees.task_id
+            JOIN profiles ON task_assignees.profile_id = profiles.id
+            JOIN (SELECT task_id, COUNT(profile_id) AS assignees 
+                  FROM task_assignees GROUP BY task_id) AS assignee_counts ON tasks.id = assignee_counts.task_id
+            WHERE profiles.id = %s AND tasks.progress NOT IN ('Blocked', 'Completed')
+        ORDER BY tasks.deadline, tasks.mean;
+        """
 
     conn = get_db_conn()
     cur = conn.cursor()
     cur.execute(select_task_list, (id,))
     tasks = cur.fetchall()
+    for t in sorted(tasks, key = lambda x : x[1]):
+        print(t)
     cur.close()
     conn.close()
     column_names = [desc[0] for desc in cur.description]
@@ -71,20 +83,32 @@ progress_map = {
 }
 
 class TaskEntity:
-    def __init__(self, id, title, progress='Not Started', deadline=None, mean = 40, stddev = 10):
+    def __init__(self, id, title, progress='Not Started', deadline=None, mean = 40, stddev = 10, assignees=1):
         self.id = int(id)
         self.progress = progress_map[progress]
         self.title = title
         self.mean = mean if mean != None else 40
         self.stddev = stddev if stddev != None else 10
+        self.assignees = assignees
         # self.deadline = datetime.strptime(deadline, '%Y-%m-%d') if deadline != None else None
         self.deadline = deadline
 
-    def sample_duration(self):
-        return np.random.normal(self.mean, self.stddev)*self.progress
+    def sample_duration(self, stochastic=True):
+        if stochastic:
+            base = np.random.normal(self.mean, self.stddev)
+        else:
+            base = self.mean
+        
+        # return int((base*self.progress)/self.assignees)
+        # AMDAHLS LAW APPLIED TO WORKERS
+        parallelizable_portion = 0.75
+        speedup = 1 / ((1 - parallelizable_portion) + parallelizable_portion/self.assignees)
+        new_time = base / speedup
+        remaining_time = new_time * self.progress
+        return int(remaining_time)
 
     def __repr__(self):
-        return f"TASK: {self.title}, DUE: {self.deadline}, MEAN: {self.mean}, STDDEV: {self.stddev}"
+        return f"TASK: {self.title}, DUE: {self.deadline}, MEAN: {self.mean}, STDDEV: {self.stddev}, NO. ASSIGNEES: {self.assignees}"
     
     def get_deadline(self):
         return self.deadline.strftime('%Y-%m-%d') if self.deadline != None else ""
@@ -93,6 +117,7 @@ class TaskEntity:
         return {
             'task_id': self.id,
             # 'progress': self.progress,
+            # 'assignees': self.assignees,
             'title': self.title,
             'mean': self.mean,
             'stddev': self.stddev,
@@ -113,7 +138,7 @@ class TaskScheduler:
             mid = (low + high) // 2
             successes = 0
             for _ in range(simulation_length):
-                _, insufficient_time = self.greedy(mid, not_first_day, lambda x : x.sample_duration())
+                _, insufficient_time = self.greedy(mid, not_first_day, lambda x : x.sample_duration(stochastic=True))
                 if not insufficient_time:
                     successes += 1
 
@@ -128,7 +153,7 @@ class TaskScheduler:
         return mid
 
 
-    def greedy(self, allowed_time, not_first_day, sampler = lambda x : x.mean):
+    def greedy(self, allowed_time, not_first_day, sampler = lambda x : x.sample_duration()):
         completed = 0
         schedule = [[]]
         time = allowed_time
