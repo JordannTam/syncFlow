@@ -106,9 +106,7 @@ class TaskScheduler:
         self.tasks = sorted([TaskEntity(**t) for t in tasks], key=lambda task: (task.deadline is None, task.deadline))
         self.schedule = None
 
-
-
-    def run_simulation(self, not_first_day, simulation_length=1000, days=1, success_threshold=0.95):
+    def run_simulation(self, not_first_day, simulation_length=1000, success_threshold=0.95):
         print(not_first_day)
         low, high = 15, 840
         while low <= high:
@@ -136,12 +134,12 @@ class TaskScheduler:
         time = allowed_time
         insufficient_time = False
         
-        print(not_first_day)
+        # print(not_first_day)
         not_day_one = [task for task in self.tasks if task.id in not_first_day]
         tasks = [task for task in self.tasks if task.id not in not_first_day]
 
-        print(not_day_one[0:10])
-        print(tasks[0:10])
+        # print(not_day_one[0:10])
+        # print(tasks[0:10])
 
         def get_next_task():
             if len(not_day_one) > 0 and len(schedule) > 1:
