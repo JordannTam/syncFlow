@@ -166,7 +166,7 @@ const ConnectionsScreen = () => {
             <Typography id="modal-modal-title" variant="h6" component="h2">
               Add Connections
             </Typography>
-            <TextField id="outlined-basic" value={email} onChange={(e) => setEmail(e.target.value)} label="email" variant="standard" />
+            <TextField id="outlined-basic" value={email} onKeyDown={(e) => {if(e.key === "Enter") {handleAddConnection()} }} onChange={(e) => setEmail(e.target.value)} label="email" variant="standard" />
             <Box display="flex" flexDirection="row-reverse" columnGap='20px'>
               <LoadingButton sx={{ backgroundColor:'#4A4E69', borderRadius: 20 }} loading={isManaged} variant='contained' onClick={handleAddConnection}>Send Invitation</LoadingButton>
               <Button variant='outlined' onClick={handleCloseAdd}>Back</Button>

@@ -44,15 +44,20 @@ export default function TaskList(props) {
   const userId = Cookies.get('userId')
   const handleCloseChat = () => {setOpenChat(false); if (!!ws) {ws.close()};}
   const handleOpenChat = () => setOpenChat(true)
+  const [openDelete, setOpenDelete] = React.useState(false)
+  const handleCloseDelete = () => {setOpenDelete(false); setTargetDelete(0)}
+  const handleOpenDelete = () => setOpenDelete(true)
+  const [targetDelete, setTargetDelete] = React.useState(0)
+
 
 
   const handleDeleteTask = React.useCallback(
-    (id) => () => {
+    (params) => () => {
       // console.log(props.tasks.find((a) => a.task_id === id))
       // console.log("id", id);
       // console.log("props.tasks", props.tasks);
-
-      handleDeleteTaskAPI(id)
+      handleOpenDelete()
+      setTargetDelete(params)
     },
     [dispatch],
   );
@@ -86,16 +91,26 @@ export default function TaskList(props) {
     console.log(params.row.deadline)
   }
   
-
-  const handleDeleteTaskAPI = async (id) => {
+//   const handleDeleteTaskTemp = React.useCallback(() => () =>{
+//     // console.log(props.tasks.find((a) => a.task_id === id))
+//     // console.log("id", id);
+//     // console.log("props.tasks", props.tasks);
+//     handleDeleteTaskAPI()
+//   },
+//   [dispatch],
+// );
+  const handleDeleteTaskAPI = async () => {
     try {
-      const res = await apiCall(`/task?task_id=${id}`, {}, 'DELETE', `bearer ${token}`);
+      const res = await apiCall(`/task?task_id=${targetDelete.id}`, {}, 'DELETE', `bearer ${token}`);
       console.log(res);
-      dispatch(deleteTasks(id))
+      dispatch(deleteTasks(targetDelete.id))
+      handleCloseDelete()
     } catch (err) {
       console.log(err);
       props.handleOpenAlert()
       props.setAlertMessage("Error: Only creator can delete the task")}
+      handleCloseDelete()
+
   }
 
   const handleFetchEditState = async (id, state) => {
@@ -295,7 +310,7 @@ export default function TaskList(props) {
       <GridActionsCellItem
         icon={<DeleteIcon />}
         label="Delete"
-        onClick={handleDeleteTask(params.id)}
+        onClick={handleDeleteTask(params)}
       />,
       // <GridActionsCellItem
       //   icon={<FileCopyIcon />}
@@ -357,6 +372,26 @@ React.useEffect(() => {
         <LiveChat handleOpenAlert={props.handleOpenAlert} setAlertMessage={props.setAlertMessage} chatTask={chatTask}></LiveChat>
       </Box>
     </Modal>
+    <Modal
+    open={openDelete}
+    onClose={handleCloseDelete}
+    aria-labelledby="modal-modal-title"
+    aria-describedby="modal-modal-description"
+    >
+      <Box sx={style} display='flex' flexDirection='column' rowGap='20px'>
+        <Typography id="modal-modal-title" variant="h4" component="h2">
+          Confirmation
+        </Typography>
+        <Typography id="modal-modal-title" variant="h6" component="h4">
+          Are you sure you want to delete this task?
+        </Typography>
+        <Box display="flex" flexDirection="row-reverse" columnGap='20px'>
+          <Button variant='contained' color='error' onClick={handleDeleteTaskAPI}>Confirm</Button>
+          <Button variant='contained' onClick={handleCloseDelete}>Back</Button>
+        </Box>
+      </Box>
+    </Modal>
+
     </>
 
   );

@@ -99,8 +99,8 @@ const LoginScreen = () => {
             <Box margin={'-10px auto 0'}>
                 <h2>Login</h2>
             </Box>
-            <TextField error={ hasErrorEmail } label="Email" variant="outlined" value={email} onKeyUp={(e) => {if (e.key === "Enter") {login()}}} onChange={(e) => setEmail(e.target.value)} />
-            <TextField error={ hasErrorPassword } type='password' label="Password" variant="outlined" value={password} onKeyUp={(e) => {if (e.key === "Enter") {login()}}} onChange={(e) => setPassword(e.target.value)} />
+            <TextField error={ hasErrorEmail } label="Email" variant="outlined" value={email} onKeyDown={(e) => {if (e.key === "Enter") {login()}}} onChange={(e) => setEmail(e.target.value)} />
+            <TextField error={ hasErrorPassword } type='password' label="Password" variant="outlined" value={password} onKeyDown={(e) => {if (e.key === "Enter") {login()}}} onChange={(e) => setPassword(e.target.value)} />
             { hasError && <Alert severity="error" onClose={() => { setHasError(false) }}>{error}</Alert> }
             <BigButton variant='contained' onClick={() => login()}>Login</BigButton>
             <Divider />
