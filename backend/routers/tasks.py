@@ -31,6 +31,7 @@ class Edit_Task(BaseModel):
 
 router = APIRouter()
 
+# create tasks with details given
 @router.post("/task")
 async def create_task(task: Task, token: str = Depends(oauth2_scheme)):
     creator_id = verify_token(token)
@@ -62,7 +63,6 @@ async def create_task(task: Task, token: str = Depends(oauth2_scheme)):
         INSERT INTO task_assignees (task_id, profile_id)
         VALUES (%s, %s)
     """
-    # cur.execute(insert_assignees_sql, (task_id, creator_id))
 
     if assignees is not None:
         for assignee in assignees:
@@ -77,6 +77,7 @@ async def create_task(task: Task, token: str = Depends(oauth2_scheme)):
 
     return {"task_id": task_id}
 
+# edit task with changes given
 @router.put("/edit_task")
 async def edit_task(
     edit: Edit_Task, token: str = Depends(oauth2_scheme)
@@ -85,7 +86,6 @@ async def edit_task(
     request = []
     task_id = edit.task_id
     assignees = edit.assignees
-    # unassignees = edit.unassignees
     
     args = []
     
@@ -98,6 +98,7 @@ async def edit_task(
     if edit.deadline is not None:
         request.append(('deadline', edit.deadline))
     
+    # if no change is made
     if request == []:
         return
     
@@ -147,6 +148,7 @@ async def edit_task(
     conn.close()
     return {"detail": "Task updated successfully"}
 
+# return the task list based on the page type
 @router.get("/tasks")
 def get_tasks(page: str , profile_id: Union[int, None] = None, token: str = Depends(oauth2_scheme)):
     user_id = verify_token(token)
@@ -158,6 +160,7 @@ def get_tasks(page: str , profile_id: Union[int, None] = None, token: str = Depe
     
     select_task_list = None
 
+    # include only the assined task for profile
     if page == 'profile':
         select_task_list = """
         SELECT tasks.id as task_id, tasks.title, tasks.description, tasks.deadline, tasks.progress
@@ -168,6 +171,8 @@ def get_tasks(page: str , profile_id: Union[int, None] = None, token: str = Depe
         ORDER BY tasks.deadline;
         """
         cur.execute(select_task_list, (user_id,))
+    
+    # include the assined task or created task for dashboard
     elif page == 'dashboard':
         select_task_list = """
         SELECT tasks.id as task_id, tasks.title, tasks.description, tasks.deadline, tasks.progress
@@ -203,12 +208,12 @@ def get_tasks(page: str , profile_id: Union[int, None] = None, token: str = Depe
 
     # Convert back to a list
     tasks = list(tasks_dict.values())
-    # print(tasks)
     cur.close()
     conn.close()
 
     return tasks
 
+# delete task with given task id
 @router.delete("/task")
 def delete_task(task_id: int, token: str = Depends(oauth2_scheme)):
     # TODO: Only the task creator can delete teh task
@@ -479,7 +484,7 @@ class Estimator:
     def get_task_estimate(self, title, desc, max_tokens = 128):
         
         if not self.initialise_llm():
-            return {"mean": 30, "std_dev": 5}        
+            return {"mean": int(np.random.normal(45, 15)), "std_dev": int(np.random.normal(15, 5))}        
 
         mean, std_dev = None, None
         attempt = 1
@@ -493,8 +498,8 @@ class Estimator:
                 # print(output_text)
                 attempt += 1
                 if attempt > 3:
-                    mean = np.random.normal(45, 15)
-                    std_dev = np.random.normal(15, 5)
+                    mean = int(np.random.normal(45, 15))
+                    std_dev = int(np.random.normal(15, 5))
                     # mean, std_dev = 30, 15
                     print("LLM FAILURE")
             else:

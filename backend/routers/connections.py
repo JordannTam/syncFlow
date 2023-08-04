@@ -36,6 +36,7 @@ def send_email(to: str, body):
         server.login("msgsend1@gmail.com", "oniniqkytxhpxwhv")
         server.sendmail("msgsend1@gmail.com", to, text)
         
+# send the connection request to another task master
 @router.post("/connection_request")
 def send_connection_request(Send: Send_Request, token: str = Depends(oauth2_scheme)):
     email = Send.email
@@ -97,6 +98,7 @@ def send_connection_request(Send: Send_Request, token: str = Depends(oauth2_sche
     return {'sender_id': id1,
             'receiver_id': id2}
 
+# manage request connection
 @router.post("/connection_request_management")
 def manage_connection_request(management: Connection_request_Management, token: str = Depends(oauth2_scheme)):
     
@@ -124,10 +126,12 @@ def manage_connection_request(management: Connection_request_Management, token: 
     """
     
     cur.execute(RemoveRequestRecordSQL, (sender_id, receiver_id))
-        
+    
+    # connection is declined
     if decision is False:
         msg_body = f"Hi! \nYour connection request to {receiver_name} with id: {receiver_id} is failed."
-       
+    
+    # connection is accpeted
     elif decision is True:
         EstablishConnectionSQL = """
             INSERT INTO CONNECTIONS (id1, id2)
@@ -148,6 +152,7 @@ def manage_connection_request(management: Connection_request_Management, token: 
     return {'sender_id': sender_id,
             'receiver_id': receiver_id}
 
+# return connection list
 @router.get("/connections")
 def get_connections(token: str = Depends(oauth2_scheme)):
     user_id = verify_token(token)
@@ -186,7 +191,8 @@ def get_connections(token: str = Depends(oauth2_scheme)):
     conn.close()
 
     return {'connection_list': connection_list}
-    
+
+# return connection request list
 @router.get("/connection_requests")
 def get_connection_requests(token: str = Depends(oauth2_scheme)):
     user_id = verify_token(token)
@@ -218,6 +224,7 @@ def get_connection_requests(token: str = Depends(oauth2_scheme)):
 
     return {'request_list': connectionRequests_list}
 
+# delete connection
 @router.delete("/delete_connection")
 def delete_connection(profile_id: int, token: str = Depends(oauth2_scheme)):
     
