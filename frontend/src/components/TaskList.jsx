@@ -166,7 +166,9 @@ export default function TaskList(props) {
 
   const handleRowClick = (params) => {
     console.log(params);
-    navigate('/task/' + params.id )
+    if (params.row.assignees.find(ass => ass.u_id === parseInt(userId))){
+      navigate('/task/' + params.id )
+    }
   }
 
 

@@ -43,7 +43,7 @@ export default function SmallTaskList(props) {
   };
 
   const computeTaskBoxHeight = (time) => {
-    let height = 50
+    let height = 25
     height += time > 30 ? 0.4*(time-30) : 0
     height += time > 60 ? 0.2*(time-60) : 0
     height += time > 90 ? 0.1*(time-90) : 0
