@@ -479,7 +479,7 @@ class Estimator:
     def get_task_estimate(self, title, desc, max_tokens = 128):
         
         if not self.initialise_llm():
-            return {"mean": 30, "std_dev": 5}        
+            return {"mean": int(np.random.normal(45, 15)), "std_dev": int(np.random.normal(15, 5))}        
 
         mean, std_dev = None, None
         attempt = 1
@@ -493,8 +493,8 @@ class Estimator:
                 # print(output_text)
                 attempt += 1
                 if attempt > 3:
-                    mean = np.random.normal(45, 15)
-                    std_dev = np.random.normal(15, 5)
+                    mean = int(np.random.normal(45, 15))
+                    std_dev = int(np.random.normal(15, 5))
                     # mean, std_dev = 30, 15
                     print("LLM FAILURE")
             else:
