@@ -42,6 +42,7 @@ const ProfileScreen = () => {
   const tasks = useSelector(state => state.taskReducer)
   // const profile = useSelector(state => state.profileReducer)
   const [taskStorage, setTaskStorage] = useState([])
+  const [tasksProfile, setTasksProfile] = useState([])
   const [profile, setProfile] = useState([])
   const [score, setScore] = useState(0)
   const [openEdit, setOpenEdit] = useState(false)
@@ -150,16 +151,17 @@ const ProfileScreen = () => {
     setLoadingImg(false)
   }
 
-  const handleFetchTasks = useCallback(() => async () => {
+  const handleFetchTasks = async () => {
     try {
       const res = await apiCall(`/tasks?page=profile&profile_id=${params.id}`, {}, 'GET', `bearer ${token}`);
-      dispatch(setTasks(res))
+      console.log(res);
+      setTasksProfile(res)
       setTaskStorage(res)
     } catch (err) {
       setAlertMessage("Error: Failed to fetch tasks")
       handleOpenAlert()
     }
-  },[])
+  }
 
 
   useEffect(() => {
@@ -169,7 +171,7 @@ const ProfileScreen = () => {
 
   
 
-  if (!tasks) {
+  if (!tasksProfile) {
     return <>Loading...</>
   }
 
@@ -242,7 +244,7 @@ const ProfileScreen = () => {
           Date of Birth: {profile.date_of_birth} 
         </Typography>
         <SearchBar taskStorage={taskStorage}/>
-        <TaskList tasks={tasks} id={parseInt(params.id)} rowNums={5} height='400'/>
+        <TaskList tasks={tasksProfile} id={parseInt(params.id)} rowNums={5} height='400'/>
         <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
         <Alert onClose={handleCloseAlert} severity="error" sx={{ width: '100%' }}>
           {alertMessage}

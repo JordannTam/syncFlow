@@ -24,7 +24,7 @@ const LoginScreen = () => {
     try {
       const id = await apiCall('/token/id', {}, 'GET', `bearer ${token}`);
       const profile_data = await apiCall(`/profile?page=profile&profile_id=${id}`, {}, 'GET', `bearer ${token}`);
-      Cookies.set('userId', id);
+      Cookies.set('userId', id, { expires: 365 });
       // Cookies.set('userId', profile_data.profile_id);
       console.log("// LoginScreen: ", Cookies.get('userId'))
       dispatch(setProfile(profile_data))
@@ -80,7 +80,7 @@ const LoginScreen = () => {
       // Calculate the expiry date 2 minutes from the current time
       // const expiryDate = new Date();
       // expiryDate.setTime(expiryDate.getTime() + 10 * 60 * 1000);
-      Cookies.set('loginToken', token);
+      Cookies.set('loginToken', token, { expires: 365 });
       // dispatch(login())
       await handleFetchProfileId(token)
       navigate('/home')
