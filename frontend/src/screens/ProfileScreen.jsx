@@ -167,7 +167,7 @@ const ProfileScreen = () => {
   useEffect(() => {
     handleFetchProfile()
     handleFetchTasks()
-  }, [])
+  }, [params.id])
 
   
 

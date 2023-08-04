@@ -116,7 +116,7 @@ export default function SmallTaskList(props) {
             <Grid style={{ height: '82%', width: '100%', display:'flex', alignItems:'flex-end'}}>
               <Stack padding='10px' flex={1} alignItems='flex-end' sx={{ marginTop: 'auto' }}>
                 {schedule[date] && schedule[date].map((task, index) => (
-                  <Box key={index} sx={{
+                  <Box key={index} component="div"  sx={{
                     backgroundColor:'lightgray', 
                     border:1, 
                     borderColor:'darkgray', 
@@ -127,6 +127,8 @@ export default function SmallTaskList(props) {
                     width: '100%',
                     justifyContent: 'center',
                     height: `${computeTaskBoxHeight(task.mean)}px`,
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
                   }}>
                     <Typography variant="caption">
                       {task.title}

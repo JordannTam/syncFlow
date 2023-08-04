@@ -47,7 +47,7 @@ export default function TaskList(props) {
   const [openDelete, setOpenDelete] = React.useState(false)
   const handleCloseDelete = () => {setOpenDelete(false); setTargetDelete(0)}
   const handleOpenDelete = () => setOpenDelete(true)
-  const [targetDelete, setTargetDelete] = React.useState(0)
+  const [targetDelete, setTargetDelete] = React.useState({})
 
 
 
@@ -164,9 +164,9 @@ export default function TaskList(props) {
     [dispatch],
   );
 
-  const handleRowClick = (id) => {
-    console.log("TEST");
-    navigate('/task/' + id )
+  const handleRowClick = (params) => {
+    console.log(params);
+    navigate('/task/' + params.id )
   }
 
 
@@ -357,7 +357,7 @@ React.useEffect(() => {
             paginationModel: { page: 0, pageSize: props.rowNums },
           },
         }}
-        onRowClick={(params) => handleRowClick(params.id)}
+        onRowClick={(params) => handleRowClick(params)}
         />
       
     </div>
