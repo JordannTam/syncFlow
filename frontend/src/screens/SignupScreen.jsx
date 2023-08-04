@@ -5,6 +5,7 @@ import PageContainer from '../components/PageContainer';
 import { apiCall } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 import { ColumnBox } from '../components/FlexBox';
+import formatDate from '../utils/formatDate'
 
 export default function SignupScreen () {
   const [email, setEmail] = React.useState('');
@@ -12,7 +13,7 @@ export default function SignupScreen () {
   const [passwordC, setPasswordC] = React.useState('');
   const [first_name, setFirstName] = React.useState('');
   const [last_name, setLastName] = React.useState('');
-  const [dob, setDob] = React.useState('');
+  const [dob, setDob] = React.useState(formatDate(new Date()));
   const [hasError, setHasError] = React.useState(false);
   const [hasErrorEmail, setHasErrorEmail] = React.useState(false);
   const [hasErrorName, setHasErrorName] = React.useState(false);

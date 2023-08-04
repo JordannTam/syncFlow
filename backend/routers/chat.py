@@ -49,7 +49,8 @@ async def websocket_endpoint(websocket: WebSocket, task_id: int):
 
             # propagate text message to relavent users
             for client in connected_clients[task_id]:
-                await client.send_text(json.dumps({"profile_id": profile_id, "content": content, "image": image, "first_name": first_name}))
+                await client.send_text(json.dumps({"profile_id": profile_id, "content": content, 
+                        "image": image, "first_name": first_name}))
         
     except Exception as e:
         print(e)
@@ -72,7 +73,6 @@ async def get_messages(task_id: int, token: str = Depends(oauth2_scheme)):
     ORDER BY m.time_send
     """
     conn = get_db_conn()
-    # cur = conn.cursor()
     cur = conn.cursor(cursor_factory=extras.DictCursor)
     
     cur.execute(fetch_messageSQL, (task_id,))
