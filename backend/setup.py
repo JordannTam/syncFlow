@@ -64,6 +64,7 @@ def generate_sample_data_user1_tasks(tasks_per_day, user_id=1):
                 # 'id' : f'{day * 6 + i + 1}',
                 'creator_id': user_id, 
                 'title': f'{name_map[user_id]} {day * 6 + i + 1}',
+                'description': f'{name_map[user_id]} {day * 6 + i + 1}',
                 # 'deadline': deadline.strftime('%Y-%m-%d'),
                 'deadline': deadline,
                 'mean': mean,
@@ -71,9 +72,9 @@ def generate_sample_data_user1_tasks(tasks_per_day, user_id=1):
             }
 
             cur.execute("""
-                INSERT INTO tasks (creator_id, title, deadline, initial_date, progress, mean, stddev)
-                VALUES (%s, %s, %s, CURRENT_DATE, 'Not Started', %s, %s) RETURNING id;
-                """, (task['creator_id'], task['title'], task['deadline'], task['mean'], task['stddev']))
+                INSERT INTO tasks (creator_id, title, description, deadline, initial_date, progress, mean, stddev)
+                VALUES (%s, %s, %s, %s, CURRENT_DATE, 'Not Started', %s, %s) RETURNING id;
+                """, (task['creator_id'], task['title'], task['description'], task['deadline'], task['mean'], task['stddev']))
 
             task_id = cur.fetchone()[0]
            
@@ -88,15 +89,16 @@ def generate_sample_data_user1_tasks(tasks_per_day, user_id=1):
     task = {
         'creator_id': user_id, 
         'title': 'TESTING HAVE A TASK WITH A VERY LONG TITLE NAME' + 'TEST '*25,
+        'description': 'TESTING HAVE A TASK WITH A VERY LONG DESCRIPTION',
         'deadline': (start_date + timedelta(days=100)).date(),
         'mean': 30,
         'stddev': 15
     }
 
     cur.execute("""
-        INSERT INTO tasks (creator_id, title, deadline, initial_date, progress, mean, stddev)
-        VALUES (%s, %s, %s, CURRENT_DATE, 'Not Started', %s, %s) RETURNING id;
-        """, (task['creator_id'], task['title'], task['deadline'], task['mean'], task['stddev']))
+        INSERT INTO tasks (creator_id, title, description, deadline, initial_date, progress, mean, stddev)
+        VALUES (%s, %s, %s, %s, CURRENT_DATE, 'Not Started', %s, %s) RETURNING id;
+        """, (task['creator_id'], task['title'], task['description'], task['deadline'], task['mean'], task['stddev']))
 
     task_id = cur.fetchone()[0]
     
@@ -108,13 +110,14 @@ def generate_sample_data_user1_tasks(tasks_per_day, user_id=1):
     # No deadline
     task = {'creator_id': user_id,
             'title': 'TEST NO DEADLINE',
+            'description': 'TEST NO DEADLINE',
             'mean': 30,
             'stddev': 15
     }
     cur.execute("""
-                INSERT INTO tasks (creator_id, title, initial_date, progress, mean, stddev)
-                VALUES (%s, %s, CURRENT_DATE, 'Not Started', %s, %s) RETURNING id;
-                """, (task['creator_id'], task['title'], task['mean'], task['stddev']))
+                INSERT INTO tasks (creator_id, title, description, initial_date, progress, mean, stddev)
+                VALUES (%s, %s, %s, CURRENT_DATE, 'Not Started', %s, %s) RETURNING id;
+                """, (task['creator_id'], task['title'], task['description'], task['mean'], task['stddev']))
     task_id = cur.fetchone()[0]
     cur.execute("""
         INSERT INTO task_assignees (task_id, profile_id)
@@ -125,11 +128,12 @@ def generate_sample_data_user1_tasks(tasks_per_day, user_id=1):
     # No mean, stddev
     task = {'creator_id': user_id,
             'title': 'TEST NO TIME VARIABLES',
+            'description': 'TEST NO TIME VARIABLES',
             'deadline': (start_date + timedelta(days=100)).date(),}
     cur.execute("""
-                INSERT INTO tasks (creator_id, title, deadline, initial_date, progress)
-                VALUES (%s, %s, %s, CURRENT_DATE, 'Not Started') RETURNING id;
-                """, (task['creator_id'], task['title'], task['deadline']))
+                INSERT INTO tasks (creator_id, title, description, deadline, initial_date, progress)
+                VALUES (%s, %s, %s, %s, CURRENT_DATE, 'Not Started') RETURNING id;
+                """, (task['creator_id'], task['title'], task['description'], task['deadline']))
     task_id = cur.fetchone()[0]
     cur.execute("""
         INSERT INTO task_assignees (task_id, profile_id)
