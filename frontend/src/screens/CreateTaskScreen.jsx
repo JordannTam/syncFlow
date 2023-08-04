@@ -38,6 +38,9 @@ const CreateTaskScreen = () => {
     const navigate = useNavigate()
     const [openAlert, setOpenAlert] = React.useState(false)
     const [alertMessage, setAlertMessage] = React.useState("")
+    const [openErrorTitle, setOpenErrorTitle] = React.useState(false)
+    const [openErrorDes, setOpenErrorDes] = React.useState(false)
+    const [alertMessageCreateTask, setAlertMessageCreateTask] = React.useState("")
   
     const handleOpenAlert = () => {
       setOpenAlert(true)
@@ -80,42 +83,54 @@ const CreateTaskScreen = () => {
       handleOpenAlert()
       setIsLoading(false)
     }
-
-
-      }
+  }
 
     const handleSubmit = async () => {
-
-
-        const deadline = deadlineType === "noDeadline" ? null : deadlineDate
-        const userDetails = {
-          u_id: profile.profile_id,
-          first_name: profile.first_name,
-          last_name: profile.last_name,
-          email: profile.email,
-          image: profile.image
+      handleCloseAllError()
+      if (title === '') {
+        setOpenErrorTitle(true)
+        setAlertMessageCreateTask("Title can not be empty")
+        return
       }
+      if (description === '') {
+        setOpenErrorDes(true)
+        setAlertMessageCreateTask("Description can not be empty")
+        return
+      }
+      const deadline = deadlineType === "noDeadline" ? null : deadlineDate
+      const userDetails = {
+        u_id: profile.profile_id,
+        first_name: profile.first_name,
+        last_name: profile.last_name,
+        email: profile.email,
+        image: profile.image
+    }
 
-        const ass = assignType === "assignToMe" ? [userDetails] : assignees
-        console.log(profile);
-        const object = {
-            title,
-            assignees : ass,
-            description,
-            deadline,
-            mean,
-            stddev
-          }
-          try {
-            console.log(object)
-            const data = await apiCall('/task', object, 'POST', `bearer ${token}`, );
-            navigate('/home')
-            object.task_id = data.task_id
-            dispatch(addTask(object))
-          } catch (err) {
-            setAlertMessage("Error: Failed to create task")
-            handleOpenAlert()      
-          }
+      const ass = assignType === "assignToMe" ? [userDetails] : assignees
+      console.log(profile);
+      const object = {
+          title,
+          assignees : ass,
+          description,
+          deadline,
+          mean,
+          stddev
+        }
+        try {
+          console.log(object)
+          const data = await apiCall('/task', object, 'POST', `bearer ${token}`, );
+          navigate('/home')
+          object.task_id = data.task_id
+          dispatch(addTask(object))
+        } catch (err) {
+          setAlertMessage("Error: Failed to create task")
+          handleOpenAlert()      
+        }
+    }
+
+    const handleCloseAllError = () => {
+      setOpenErrorDes(false)
+      setOpenErrorTitle(false)
     }
 
     const handleFetchTasks = async () => {
@@ -143,8 +158,8 @@ const CreateTaskScreen = () => {
             Create Task
             </Typography>
         <ColumnBox rowGap='40px' padding='0px 100px'>
-            <TextField id="outlined-basic" value={title} onChange={(e) => setTitle(e.target.value)} label="Title" variant="standard" />
-            <TextField id="outlined-basic" value={description} onChange={(e) => setDescription(e.target.value)} label="Description" variant="standard" />
+            <TextField error={openErrorTitle} id="outlined-basic" value={title} onChange={(e) => setTitle(e.target.value)} label="Title" variant="standard" helperText={openErrorTitle ? "Title can not be empty" : ""} />
+            <TextField error={openErrorDes} id="outlined-basic" value={description} onChange={(e) => setDescription(e.target.value)} label="Description" variant="standard" helperText={openErrorDes ? "Description can not be empty" : ""} />
           <FormControl>
             <FormLabel id="demo-radio-buttons-group-label">Deadline</FormLabel>
             <RadioGroup
@@ -183,7 +198,7 @@ const CreateTaskScreen = () => {
                     <ParameterSlider name="Standard Deviation" min={1} max={20} value={stddev} onChange={setStddev}/>
               </ColumnBox>
             </Box>
-
+          {openErrorDes || openErrorTitle ? <Alert severity="error">{alertMessageCreateTask}</Alert> : <></>}
           <Box display="flex" flexDirection="row-reverse" columnGap='20px'>
                 <Button variant='contained' onClick={() => handleSubmit()}>Create Task</Button>
                 <Button variant='contained' onClick={() => navigate('/home')} >Back</Button>
