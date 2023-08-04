@@ -53,6 +53,8 @@ def send_connection_request(Send: Send_Request, token: str = Depends(oauth2_sche
     
     if id2 is None:
         raise HTTPException(status_code=400, detail="Email does not Exist")
+    if int(id1) == int(id2[0]):
+        raise HTTPException(status_code=405, detail="Connection can not self directed")
     
     # Check if the user is already connected
     connectionCheckSQL = """
@@ -199,7 +201,7 @@ def get_connection_requests(token: str = Depends(oauth2_scheme)):
     
     get_connectionsSql = """
         SELECT 
-        p.id as u_id, p.email_address as email, p.first_name as first_name, p.last_name as last_name
+        p.id as u_id, p.email_address as email, p.first_name as first_name, p.last_name as last_name, p.image as image
         FROM profiles p
             JOIN CONNECTION_REQUESTS c on c.sender_id = p.id
         WHERE c.receiver_id = %s

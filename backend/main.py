@@ -6,7 +6,7 @@ from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
 import logging
 import routers.profiles, routers.connections, routers.chat, routers.tasks, routers.schedules
- 
+
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",

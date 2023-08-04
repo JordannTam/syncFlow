@@ -53,8 +53,8 @@ async def create_schedule(reschedule: bool = True,
     cur = conn.cursor()
     cur.execute(select_task_list, (id,))
     tasks = cur.fetchall()
-    for t in sorted(tasks, key = lambda x : x[1]):
-        print(t)
+    # for t in sorted(tasks, key = lambda x : x[1]):
+    #     print(t)
     cur.close()
     conn.close()
     column_names = [desc[0] for desc in cur.description]

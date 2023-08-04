@@ -4,7 +4,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SecurityIcon from '@mui/icons-material/Security';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import { randomCreatedDate, randomUpdatedDate } from '@mui/x-data-grid-generator';
-import { Avatar, Box, Modal, Typography } from '@mui/material';
+import { Avatar, AvatarGroup, Box, Modal, Typography } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircleTwoTone';
 import AutorenewIcon from '@mui/icons-material/AutorenewTwoTone';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircleTwoTone';
@@ -156,6 +156,18 @@ export default function TaskList(props) {
 
 
   const columnsDetail = [
+    {
+      field: 'overdue',
+      headerName: 'Overdue?',
+      type: 'actions',
+      width: 90,
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={(params.row.deadline === null || new Date(params.row.deadline) > new Date(Date.now() - 24 * 60 * 60 * 1000)) ? <></> : <WarningTwoToneIcon color='error'/>}
+          label="Live Chat"
+        />,
+      ],
+    },    
     { field: 'task_id', headerName: 'ID', width: 30, sortable: false},
     {
       field: 'liveChat',
@@ -170,7 +182,8 @@ export default function TaskList(props) {
         />,
       ],
     },  
-    { field: 'assignee', headerName: 'Assignee', width: 200, renderCell:params=>params.row.assignees.map((a,index) => {return index < 4 ?  <Avatar key={index} src={a.image} />: <></>}), sortable: false}, // TODO: set the src of Avatar
+    // { field: 'assignee', headerName: 'Assignee', width: 200, renderCell:params=>params.row.assignees.map((a,index) => {return index < 4 ?  <Avatar key={index} src={a.image} /> : index === 4 ? <Typography className='relative top-3'>...</Typography> : <></>}), sortable: false}, // TODO: set the src of Avatar
+    { field: 'assignee', headerName: 'Assignee', width: 200, renderCell:params=><AvatarGroup max={5}>{params.row.assignees.map((a, index) => <Avatar key={index} src={a.image} /> )}</AvatarGroup>, sortable: false}, // TODO: set the src of Avatar
     { field: 'title', headerName: 'Task Name', width: 200, sortable: false},
     {
       field: 'deadline',
@@ -292,24 +305,12 @@ export default function TaskList(props) {
       // />,
     ],
   },
-  {
-    field: 'overdue',
-    headerName: 'Overdue?',
-    type: 'actions',
-    width: 100,
-    getActions: (params) => [
-      <GridActionsCellItem
-        icon={(params.row.deadline === null || new Date(params.row.deadline) > new Date(Date.now() - 24 * 60 * 60 * 1000)) ? <></> : <WarningTwoToneIcon color='error'/>}
-        label="Live Chat"
-      />,
-    ],
-  },  
 
 ]
 if (parseInt(userId) !== parseInt(props.id)) {
-  columnsDetail.splice(1,1)
-  columnsDetail.splice(4,1)
-  columnsDetail.splice(4,1)
+  columnsDetail.splice(2,1)
+  columnsDetail.splice(5,1)
+  columnsDetail.splice(5,1)
 }
 React.useEffect(() => {
   console.log("props.id", props.id);

@@ -67,15 +67,15 @@ const SearchBar = (props) => {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <RowBox columnGap="5px" justifyContent="space-between">
 
-      <CustomTextField sx={{ flexGrow: 0, width: 70}} label="ID" variant="outlined" value={idValue} onChange={(event) => {
+      <CustomTextField sx={{ flexGrow: 0, width: 70}} label="ID" variant="outlined" value={idValue} onKeyDown={(e) => {if (e.key === "Enter") {searchSubmit()}}} onChange={(event) => {
         const inputValue = event.target.value;
         const regex = /^[0-9]*$/;
         if (regex.test(inputValue)) {
           setIdValue(inputValue);
         }
       }}/>
-      <CustomTextField sx={{ flexGrow: 0}} label="Name" variant="outlined" value={nameValue} onChange={(event) => {setNameValue(event.target.value)}}/>
-      <CustomTextField sx={{ flexGrow: 5}} label="Description" variant="outlined" value={descValue} onChange={(event) => {setDescValue(event.target.value)}}/>
+      <CustomTextField sx={{ flexGrow: 0}} label="Name" variant="outlined" value={nameValue} onKeyDown={(e) => {if (e.key === "Enter") {searchSubmit()}}} onChange={(event) => {setNameValue(event.target.value)}}/>
+      <CustomTextField sx={{ flexGrow: 5}} label="Description" variant="outlined" value={descValue} onKeyDown={(e) => {if (e.key === "Enter") {searchSubmit()}}} onChange={(event) => {setDescValue(event.target.value)}}/>
       <DatePicker sx={{ flexGrow: 0}} label="Deadline" slotProps={{ textField: { error: false, }, }} value={deadlineValue} onChange={(newValue) => {setDeadlineValue(newValue)}}/>
       <CustomButton variant='contained' onClick={() => searchSubmit()}>Search</CustomButton>
       <CustomButton variant='outlined' onClick={() => { handleClear() }}>Clear</CustomButton>
