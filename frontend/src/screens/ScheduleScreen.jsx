@@ -14,6 +14,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import LoadingButton from '@mui/lab/LoadingButton/LoadingButton';
 
 
 const ProfileScreen = () => {
@@ -27,7 +28,7 @@ const ProfileScreen = () => {
   const [dailyTime, setDailyTime] = useState(5)
   const [shortestPossible, setShortestPossible] = useState(false);
   const [insufficientTime, setInsufficientTime] = useState(false);
-
+  const [isReschedule, setIsReschedule] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const handleCloseSnackbar = (event, reason) => {
@@ -39,6 +40,7 @@ const ProfileScreen = () => {
   
 
   const handleReschedule = async (reschedule = true) => {
+    setIsReschedule(true)
     try {
       const removedTasks = removedTaskStorage.join(',');
       // setRemovedTaskStorage([])
@@ -60,9 +62,11 @@ const ProfileScreen = () => {
         setSnackbarOpen(true);
       }
       console.log("Schedule: ", schedule_data);
+
     } catch (err) {
       console.error(err);
     }
+    setIsReschedule(false)
   }
 
   const setNewDailyTime = (adding) => {
@@ -180,7 +184,8 @@ const ProfileScreen = () => {
               />}
               label="Shortest Possible Schedule"
             />
-            <Button
+            <LoadingButton 
+              loading={isReschedule}
               sx={{
                 width: '90%',
               }}
@@ -188,7 +193,7 @@ const ProfileScreen = () => {
               onClick={() => handleReschedule(true)}
             >
               Reschedule
-            </Button>
+            </LoadingButton>
           </Box>
           
           <SmallTaskList tasks={taskStorage} handleDeleteTask={handleDeleteTask} id={parseInt(userId)} rowNums={10} height='800px'/>

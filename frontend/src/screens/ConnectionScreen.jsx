@@ -90,11 +90,21 @@ const ConnectionsScreen = () => {
       setOpenSend(false)
       setEmail("")
     } catch (err) {
+      if (err === 409) {
+        setAlertMessage("Error: The user is already in your connections")
+        handleOpenAlert()
+        setIsManaged(false)
+        return
+      }
+      if (err === 405) {
+        setAlertMessage("Error: Connection can not self directed")
+        handleOpenAlert()
+        setIsManaged(false)
+        return
+      }
       setAlertMessage("Error: No email address found")
       handleOpenAlert()
       setIsManaged(false)
-      setEmail("")
-
     }
   }
 

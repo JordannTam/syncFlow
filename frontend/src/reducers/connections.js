@@ -20,6 +20,7 @@ const connection = (state, action) => {
                 u_id: action.u_id,
                 first_name: action.first_name,
                 last_name: action.last_name,
+                image: action.image,
             };
         default:
             return state;
