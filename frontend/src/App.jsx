@@ -37,7 +37,7 @@ function App() {
           </Route>
           <Route path="*" element={
             <Typography variant="h1" component="h1">
-              <h1> COMP390011WBEndGame: 404 Page not found</h1>
+              <h1>404 Page not found</h1>
             </Typography>
           } />
         </Routes>
