@@ -1,4 +1,4 @@
-# Task Management System (capstone-project-3900w11bendgame)
+# Task Management System
 # Efficiently manage and track your tasks with our system 
 
 ## Description
