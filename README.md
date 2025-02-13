@@ -64,3 +64,16 @@ The frontend is built with React.js and can be started using npm.
 
 This project uses a PostgreSQL database. Make sure you have PostgreSQL installed and properly configured on your system. Update the database configuration details as per your setup in the required files. The database set up is in 'setup.sql'
 
+### System Architecture
+
+![Taskmaster](https://github.com/user-attachments/assets/d1cb9080-6cd2-4eaa-b62e-483bdc32ea87)
+
+### Screenshot
+![Password](https://github.com/user-attachments/assets/224c5412-cbb5-4835-b5c3-adf98eaa1ef5)
+![Create Task](https://github.com/user-attachments/assets/65430126-0b4b-4b3d-886c-23407c82e0db)
+![Dashboard](https://github.com/user-attachments/assets/b6f83cc0-73a5-4b45-801f-e85e7aebad47)
+![Connection](https://github.com/user-attachments/assets/b3e39eb2-b7fe-41d5-add8-cc3d35af225f)
+![Profile](https://github.com/user-attachments/assets/c2972385-e14a-4b57-940d-1617c12a2406)
+![Live Chat](https://github.com/user-attachments/assets/628d47ad-2ab6-473f-901f-6a1f4b917a0f)
+![AD_4nXd5L_rHIA1kZqLQW9gavCYNoTnmgvIdX9cH6a5Eq-2h75TvfwBIn-QfdeMOiWrcaPzRYqaikns5l9n9iS4r6CFdIK27oPGpfvEMowgO_e7N8HlhB6eBnE_v](https://github.com/user-attachments/assets/7b9e2171-2cb8-4e70-8200-6d63bf867c60)
+
